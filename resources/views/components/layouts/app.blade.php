@@ -12,6 +12,7 @@
     </head>
     <body>
 
+        @if (!request()->is("/"))
         <!--*******************
             Preloader start
         ********************-->
@@ -85,8 +86,10 @@
                         </ol>
                     </div>
                 </div>
-
+ 
+                @endif
                 {{ $slot }}
+        @if (!request()->is("/"))
                 
             </div>
         </div>
@@ -116,7 +119,8 @@
     <!--**********************************
         Main wrapper end
     ***********************************-->
-
+ 
+    @endif
 
         <script src="themes/vendor/global/global.min.js"></script>
         <script src="themes/js/quixnav-init.js"></script>
