@@ -1,3 +1,3 @@
 <div>
-    <h1>Page de connexion</h1>
+    <button class="btn btn-success" type="button" wire:click='dashboard'>Tableau de bord</button>
 </div>
