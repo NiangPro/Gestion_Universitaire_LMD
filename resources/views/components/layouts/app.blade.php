@@ -133,6 +133,7 @@
 
 
         <script src="{{asset('themes/js/dashboard/dashboard-2.js')}}"></script>
+        
         @livewireScripts
     </body>
 </html>

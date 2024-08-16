@@ -18,8 +18,8 @@
             </a></li>
             
             <li class="nav-label">Gestion Etablissements</li>
-            <li><a wire:navigate href="/" aria-expanded="false">
-                <i class="icon icon-single-copy-06"></i><span
+            <li><a wire:navigate href="/etablissements" aria-expanded="false">
+                <i class="fa fa-institution"></i><span
                 class="nav-text">Etablissement</span>
             </a></li>
 
