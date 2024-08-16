@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <title>{{ $title ?? 'Page Title' }}</title>
-        <link href="themes/vendor/pg-calendar/css/pignose.calendar.min.css" rel="stylesheet">
-        <link href="themes/vendor/chartist/css/chartist.min.css" rel="stylesheet">
-        <link href="themes/css/style.css" rel="stylesheet">
+        <link href="{{asset('themes/vendor/pg-calendar/css/pignose.calendar.min.css')}}" rel="stylesheet">
+        <link href="{{asset('themes/vendor/chartist/css/chartist.min.css')}}" rel="stylesheet">
+        <link href="{{asset('themes/css/style.css')}}" rel="stylesheet">
         @livewireStyles
     </head>
     <body>
@@ -16,13 +16,13 @@
         <!--*******************
             Preloader start
         ********************-->
-        <div id="preloader">
+        {{-- <div id="preloader">
             <div class="sk-three-bounce">
                 <div class="sk-child sk-bounce1"></div>
                 <div class="sk-child sk-bounce2"></div>
                 <div class="sk-child sk-bounce3"></div>
             </div>
-        </div>
+        </div> --}}
         <!--*******************
             Preloader end
         ********************-->
@@ -122,17 +122,17 @@
  
     @endif
 
-        <script src="themes/vendor/global/global.min.js"></script>
-        <script src="themes/js/quixnav-init.js"></script>
-        <script src="themes/js/custom.min.js"></script>
+        <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
+        <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
+        <script src="{{asset('themes/js/custom.min.js')}}"></script>
 
-        <script src="themes/vendor/chartist/js/chartist.min.js"></script>
+        <script src="{{asset('themes/vendor/chartist/js/chartist.min.js')}}"></script>
 
-        <script src="themes/vendor/moment/moment.min.js"></script>
-        <script src="themes/vendor/pg-calendar/js/pignose.calendar.min.js"></script>
+        <script src="{{asset('themes/vendor/moment/moment.min.js')}}"></script>
+        <script src="{{asset('themes/vendor/pg-calendar/js/pignose.calendar.min.js')}}"></script>
 
 
-        <script src="themes/js/dashboard/dashboard-2.js"></script>
+        <script src="{{asset('themes/js/dashboard/dashboard-2.js')}}"></script>
         @livewireScripts
     </body>
 </html>

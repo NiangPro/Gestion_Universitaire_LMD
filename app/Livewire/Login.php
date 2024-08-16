@@ -10,7 +10,7 @@ use Livewire\Component;
 class Login extends Component
 {
     public function dashboard(){
-        redirect(route("dashboard"));
+        $this->redirect("/tableau_de_bord", navigate: false);
     }
     
     #[Layout("components.layouts.app")]

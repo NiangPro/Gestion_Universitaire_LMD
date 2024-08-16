@@ -5,17 +5,27 @@
             <!-- <li><a href="index.html"><i class="icon icon-single-04"></i><span class="nav-text">Dashboard</span></a>
             </li> -->
             <li><a wire:navigate href="/tableau_de_bord" aria-expanded="false">
-                <i class="icon icon-home"></i><span
-                class="nav-text">Dashboard</span>
+                <i class="fa fa-dashboard"></i><span
+                class="nav-text">Tableau de bord</span>
+            </a></li>
+            <li><a wire:navigate href="/" aria-expanded="false">
+                <i class="fa fa-male"></i><span
+                class="nav-text">Professeur</span>
             </a></li>
             <li><a wire:navigate href="/" aria-expanded="false">
                 <i class="icon icon-lock"></i><span
-                class="nav-text">Connexion</span>
+                class="nav-text">Deconnexion</span>
+            </a></li>
+            
+            <li class="nav-label">Gestion Etablissements</li>
+            <li><a wire:navigate href="/" aria-expanded="false">
+                <i class="icon icon-single-copy-06"></i><span
+                class="nav-text">Etablissement</span>
             </a></li>
 
             <li class="nav-label">Apps</li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-app-store"></i><span class="nav-text">Parametres</span></a>
+                        class="fa fa-cog"></i><span class="nav-text">Parametres</span></a>
                 <ul aria-expanded="false">
                     <li><a href="./app-profile.html">Profile</a></li>
                     <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
