@@ -5,9 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <title>{{ $title ?? 'Page Title' }}</title>
+        @if (!request()->is("/"))
         <link href="{{asset('themes/vendor/pg-calendar/css/pignose.calendar.min.css')}}" rel="stylesheet">
         <link href="{{asset('themes/vendor/chartist/css/chartist.min.css')}}" rel="stylesheet">
         <link href="{{asset('themes/css/style.css')}}" rel="stylesheet">
+        @else 
+            <link rel="stylesheet" href="{{asset('login.css')}}">
+            <link rel="stylesheet" href="{{asset('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css')}}"/>
+            
+        @endif
         @livewireStyles
     </head>
     <body>
@@ -120,19 +126,22 @@
         Main wrapper end
     ***********************************-->
  
+    
+    <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
+    <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
+    <script src="{{asset('themes/js/custom.min.js')}}"></script>
+    
+    <script src="{{asset('themes/vendor/chartist/js/chartist.min.js')}}"></script>
+    
+    <script src="{{asset('themes/vendor/moment/moment.min.js')}}"></script>
+    <script src="{{asset('themes/vendor/pg-calendar/js/pignose.calendar.min.js')}}"></script>
+    
+    
+    <script src="{{asset('themes/js/dashboard/dashboard-2.js')}}"></script>
+    @else  
+    <script src="{{asset('login.js')}}"></script>
     @endif
-
-        <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
-        <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
-        <script src="{{asset('themes/js/custom.min.js')}}"></script>
-
-        <script src="{{asset('themes/vendor/chartist/js/chartist.min.js')}}"></script>
-
-        <script src="{{asset('themes/vendor/moment/moment.min.js')}}"></script>
-        <script src="{{asset('themes/vendor/pg-calendar/js/pignose.calendar.min.js')}}"></script>
-
-
-        <script src="{{asset('themes/js/dashboard/dashboard-2.js')}}"></script>
+    @yield('script')
         
         @livewireScripts
     </body>

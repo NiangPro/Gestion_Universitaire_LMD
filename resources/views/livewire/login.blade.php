@@ -1,45 +1,47 @@
-<div class="authincation h-100">
-    <div class="container-fluid h-100">
-        <div class="row justify-content-center h-100 align-items-center">
-            <div class="col-md-6">
-                <div class="authincation-content">
-                    <div class="row no-gutters">
-                        <div class="col-xl-12">
-                            <div class="auth-form">
-                                <h4 class="text-center mb-4">Sign in your account</h4>
-                                <form wire:submit.prevent='dashboard'>
-                                    <div class="form-group">
-                                        <label><strong>Email</strong></label>
-                                        <input type="email" class="form-control" value="hello@example.com">
-                                    </div>
-                                    <div class="form-group">
-                                        <label><strong>Password</strong></label>
-                                        <input type="password" class="form-control" value="Password">
-                                    </div>
-                                    <div class="form-row d-flex justify-content-between mt-4 mb-2">
-                                        <div class="form-group">
-                                            <div class="form-check ml-2">
-                                                <input class="form-check-input" type="checkbox" id="basic_checkbox_1">
-                                                <label class="form-check-label" for="basic_checkbox_1">Remember me</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <a href="page-forgot-password.html">Forgot Password?</a>
-                                        </div>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary btn-block">Sign me in</button>
-                                    </div>
-                                </form>
-                                <div class="new-account mt-3">
-                                    <p>Don't have an account? <a class="text-primary" href="./page-register.html">Sign up</a></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="container" id="container">
+        
+    <div class="form-container sign-up">
+        <form>
+            <h2>Mot de passe oublié</h2>
+            <div class="social-icons">
+               <h4>Vous avez oublié votre mot de passe</h4>
+            </div>
+            <span>pour réinitiliser votre mot de passe, saisissez l'adresse email que vous utilisez pour vous connecter 
+                à votre compte. Il peut s'agit de votre adresse Gmail ou d'une autre adresse que vous avez associé à votre compte.
+            </span>
+            <input type="email" placeholder="Votre adresse email" required>
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+
+    <div class="form-container sign-in">
+        <form wire:submit.prevent='dashboard'>
+            <h1>Connexion</h1>
+            <div class="social-icons">
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-google-plus-g"></i></a>
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+            </div>
+            <span>Ou</span>
+            <input type="email" placeholder="Email" >
+            <input type="password" placeholder="Mot de passe" >
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+
+    <div class="toggle-container">
+        <div class="toggle">
+            <div class="toggle-panel toggle-left">
+                <h1>Bienvenue</h1>
+                <p>Entrez vos coordonnées pour accéder aux fonctionnalités de ce site</p>
+                <button class="hidden" id="login">Connexion</button>
+            </div>
+            <div class="toggle-panel toggle-right">
+                <h1>Bienvenue</h1>
+                <p>Saisissez vos coordonnées et commencez à travailler !</p>
+                <button class="hidden" id="register">Mot de passe oublié</button>
             </div>
         </div>
     </div>
 </div>
-

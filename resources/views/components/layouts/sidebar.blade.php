@@ -4,7 +4,7 @@
             <li class="nav-label first">Main Menu</li>
             <!-- <li><a href="index.html"><i class="icon icon-single-04"></i><span class="nav-text">Dashboard</span></a>
             </li> -->
-            <li><a wire:navigate href="/tableau_de_bord" aria-expanded="false">
+            <li><a href="{{route('dashboard')}}" aria-expanded="false">
                 <i class="fa fa-dashboard"></i><span
                 class="nav-text">Tableau de bord</span>
             </a></li>
@@ -18,7 +18,7 @@
             </a></li>
             
             <li class="nav-label">Gestion Etablissements</li>
-            <li><a wire:navigate href="/etablissements" aria-expanded="false">
+            <li><a href="{{route('etablissement')}}" aria-expanded="false">
                 <i class="fa fa-institution"></i><span
                 class="nav-text">Etablissement</span>
             </a></li>
