@@ -19,10 +19,16 @@
                 class="nav-text">Campus</span>
             </a></li>
             @endif
-            <li><a href="{{route('professeur')}}" aria-expanded="false">
-                <i class="fa fa-male"></i><span
-                class="nav-text">Professeur</span>
-            </a></li>
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                class="fa fa-male"></i><span class="nav-text">Personnel</span></a>
+                <ul aria-expanded="false">
+                    <li><a href="{{route('professeur')}}">Professeurs</a></li>
+                    <li><a href="{{route('surveillant')}}">Surveillants</a></li>
+                    <li><a href="{{route('etudiant')}}">Etudiants</a></li>
+                    <li><a href="{{route('parent')}}">Parents</a></li>
+                    
+                </ul>
+            </li>
            
 
             <li class="nav-label">Apps</li>
