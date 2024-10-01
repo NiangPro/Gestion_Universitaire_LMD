@@ -78,7 +78,7 @@
                     </li>
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
-                            <i class="mdi mdi-account"></i>
+                            <img src="{{asset('images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} <i class="fa fa-chevron-down"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a href="./app-profile.html" class="dropdown-item">
@@ -89,10 +89,7 @@
                                 <i class="icon-envelope-open"></i>
                                 <span class="ml-2">Inbox </span>
                             </a>
-                            <a href="./page-login.html" class="dropdown-item">
-                                <i class="icon-key"></i>
-                                <span class="ml-2">Logout </span>
-                            </a>
+                            <livewire:logout />
                         </div>
                     </li>
                 </ul>

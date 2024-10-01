@@ -17,10 +17,22 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'prenom',
+        'nom',
+        'username',
+        'tel',
+        'role',
+        'sexe',
+        'campus_id',
+        'adresse',
+        'image',
         'email',
         'password',
     ];
+
+    public function campus(){
+        return $this->belongsTo(Campus::class, "campus_id");
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -43,5 +55,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function estSuperAdmin()
+    {
+        return $this->role == "superadmin";
+    }
+
+    public function estAdmin()
+    {
+        return $this->role == "superadmin";
     }
 }

@@ -1,27 +1,29 @@
 <div class="quixnav">
     <div class="quixnav-scroll">
         <ul class="metismenu" id="menu">
-            <li class="nav-label first">Main Menu</li>
+            {{-- <li class="nav-label first">Main Menu</li> --}}
             <!-- <li><a href="index.html"><i class="icon icon-single-04"></i><span class="nav-text">Dashboard</span></a>
             </li> -->
             <li><a href="{{route('dashboard')}}" aria-expanded="false">
                 <i class="fa fa-dashboard"></i><span
                 class="nav-text">Tableau de bord</span>
             </a></li>
-            <li><a wire:navigate href="/" aria-expanded="false">
+            @if(Auth()->user()->estSuperAdmin())
+            <li class="nav-label">Gestion Etablissements</li>
+            <li><a href="{{route('pack')}}" aria-expanded="false">
+                <i class="fa fa-server"></i><span
+                class="nav-text">Packs</span>
+            </a></li>
+            <li><a href="{{route('etablissement')}}" aria-expanded="false">
+                <i class="fa fa-institution"></i><span
+                class="nav-text">Campus</span>
+            </a></li>
+            @endif
+            <li><a href="{{route('professeur')}}" aria-expanded="false">
                 <i class="fa fa-male"></i><span
                 class="nav-text">Professeur</span>
             </a></li>
-            <li><a wire:navigate href="/" aria-expanded="false">
-                <i class="icon icon-lock"></i><span
-                class="nav-text">Deconnexion</span>
-            </a></li>
-            
-            <li class="nav-label">Gestion Etablissements</li>
-            <li><a href="{{route('etablissement')}}" aria-expanded="false">
-                <i class="fa fa-institution"></i><span
-                class="nav-text">Etablissement</span>
-            </a></li>
+           
 
             <li class="nav-label">Apps</li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
