@@ -16,81 +16,11 @@
         <link href="{{asset('themes/vendor/datatables/css/jquery.dataTables.min.css')}}" rel="stylesheet">
         @elseif(request()->is("/")) 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            /* Custom styles for pricing cards */
-            .pricing-section {
-              background-color: #f5f5f5;
-              padding: 50px 0;
-            }
-            .card-pricing {
-              background-color: #000;
-              color: #fff;
-              border: none;
-              border-radius: 15px;
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-              margin-bottom: 30px;
-              position: relative;
-              overflow: hidden;
-            }
-            .card-header {
-              padding: 20px;
-              text-align: center;
-              font-size: 1.5rem;
-              font-weight: bold;
-              border-radius: 10px 10px 0 0;
-              color: #fff;
-            }
-            .bg-green {
-              background-color: #6BCB77;
-            }
-            .bg-blue {
-              background-color: #5bc0de;
-            }
-            .bg-pink {
-              background-color: #f06292;
-            }
-            .pricing-price {
-              font-size: 2.5rem;
-              font-weight: bold;
-              margin: 20px 0;
-            }
-            .pricing-subtext {
-              font-size: 1rem;
-              margin-bottom: 20px;
-              color: #bdbdbd;
-            }
-            .pricing-list {
-              list-style: none;
-              padding: 0;
-              margin-bottom: 30px;
-              text-align: left;
-            }
-            .pricing-list li {
-              margin-bottom: 15px;
-              font-size: 1.1rem;
-            }
-            .btn-pricing {
-              padding: 10px 30px;
-              border-radius: 30px;
-              font-size: 1.1rem;
-              font-weight: bold;
-            }
-            .icon-check {
-              width: 1.5rem;
-              height: 1.5rem;
-              margin-right: 10px;
-              vertical-align: middle;
-            }
-            /* Adjustments for card styling */
-            .medium-card {
-              top: -20px;
-              border-radius: 20px;
-            }
-            .card-body {
-              padding: 20px 30px;
-            }
-        </style>
+        
         @endif
+        <link href="{{asset('iziToast.min.css')}}" rel="stylesheet">
+
+        
         
         @yield('css')
         @livewireStyles
@@ -241,6 +171,8 @@
     @elseif(request()->is("/"))  
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @endif
+    <script src="{{ asset('iziToast.min.js')}}"></script>
+
     @yield('script')
         
         @livewireScripts

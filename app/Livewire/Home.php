@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Pack;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -12,6 +13,8 @@ class Home extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        return view('livewire.home');
+        return view('livewire.home', [
+            "packs" => Pack::orderBy("annuel", "ASC")->get()
+        ]);
     }
 }

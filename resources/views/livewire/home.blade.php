@@ -61,77 +61,100 @@
   <section class="pricing-section text-center">
     <div class="container">
       <h2 class="mb-5">TARIFS SIMPLES ET SANS SURPRISES</h2>
-      <h4 class="mb-5 text-primary">NOS OFFRES</h4>
       <div class="row justify-content-center">
   
+        @foreach ($packs as $p)
+            
         <!-- Small Plan -->
         <div class="col-lg-4 col-md-6">
           <div class="card card-pricing">
-            <div class="card-header bg-green">
-              SMALL PLAN
+            <div class="card-header" style="background: {{$p->couleur}};color:{{$p->text}};">
+              {{$p->nom}}
             </div>
             <div class="card-body">
-              <h3 class="pricing-price">450 000 XOF</h3>
-              <p class="pricing-subtext">0 à 599 élèves <br> soit 50 000 / mois facturé annuellement (9 mois)</p>
+              <h3 class="pricing-price">{{ number_format($p->annuel, 0, ",", " ") }} XOF/an</h3>
+              <p class="pricing-subtext">0 à {{$p->limite}} élèves <br>  {{ number_format($p->mensuel, 0, ",", " ") }} / mois facturé annuellement ({{floor($p->annuel/$p->mensuel)}} mois)</p>
               <ul class="pricing-list">
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Toutes les fonctionnalités My-Scool</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Utilisateur illimité</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Application mobile</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Accès parents / profs / administration</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Disponible 24/24 - 7/7</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Maintenance et évolution inclus</li>
               </ul>
-              <a href="#" class="btn btn-success btn-pricing">SOUSCRIRE</a>
+              <a href="#" class="btn btn-pricing" style="background: {{$p->couleur}};color:{{$p->text}}">SOUSCRIRE</a>
             </div>
           </div>
         </div>
-  
-        <!-- Medium Plan -->
-        <div class="col-lg-4 col-md-6">
-          <div class="card card-pricing medium-card">
-            <div class="card-header bg-blue">
-              MEDIUM PLAN
-            </div>
-            <div class="card-body">
-              <h3 class="pricing-price">720 000 XOF</h3>
-              <p class="pricing-subtext">600 à 1099 élèves <br> soit 80 000 / mois facturé annuellement (9 mois)</p>
-              <ul class="pricing-list">
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Toutes les fonctionnalités My-Scool</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Utilisateur illimité</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Application mobile</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Accès parents / profs / administration</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Disponible 24/24 - 7/7</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Maintenance et évolution inclus</li>
-              </ul>
-              <a href="#" class="btn btn-info btn-pricing">SOUSCRIRE</a>
-            </div>
-          </div>
-        </div>
-  
-        <!-- Large Plan -->
-        <div class="col-lg-4 col-md-6">
-          <div class="card card-pricing">
-            <div class="card-header bg-pink">
-              LARGE PLAN
-            </div>
-            <div class="card-body">
-              <h3 class="pricing-price">990 000 XOF</h3>
-              <p class="pricing-subtext">1100 à 1999 élèves <br> soit 110 000 / mois facturé annuellement (9 mois)</p>
-              <ul class="pricing-list">
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Toutes les fonctionnalités My-Scool</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Utilisateur illimité</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Application mobile</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Accès parents / profs / administration</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Disponible 24/24 - 7/7</li>
-                <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Maintenance et évolution inclus</li>
-              </ul>
-              <a href="#" class="btn btn-danger btn-pricing">SOUSCRIRE</a>
-            </div>
-          </div>
-        </div>
+        @endforeach
   
       </div>
     </div>
   </section>
   
 </div>
+@section('css')
+<style>
+  /* Custom styles for pricing cards */
+  .pricing-section {
+    background-color: #f5f5f5;
+    padding: 50px 0;
+  }
+  .card-pricing {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+    color: #fff;
+  }
+  .pricing-price {
+    font-size: 2.0rem;
+    font-weight: bold;
+    margin: 20px 0;
+  }
+  .pricing-subtext {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #bdbdbd;
+  }
+  .pricing-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  .pricing-list li {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+  }
+  .btn-pricing {
+    padding: 10px 30px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  .icon-check {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  /* Adjustments for card styling */
+  .medium-card {
+    top: -20px;
+    border-radius: 20px;
+  }
+  .card-body {
+    padding: 20px 30px;
+  }
+</style>
+@endsection
