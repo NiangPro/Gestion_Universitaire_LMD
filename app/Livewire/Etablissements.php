@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Campus;
 use App\Models\Outils;
-use App\Rules\SenegalPhone;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
@@ -14,6 +13,9 @@ use Livewire\Component;
 #[Title("Campus")]
 class Etablissements extends Component
 {
+    public $status = "list";
+    public $title = "Liste des établissements";
+    public $camp;
     public $outils;
 
     #[Rule('required', message:'Le champ nom est obligatoire')]
@@ -27,17 +29,29 @@ class Etablissements extends Component
     public $email;
     public $id;
     public $image;
+    public $etat;
 
     // 'email' => 'required|email|unique:campuses,email', // Validation de l'email unique
    
     public function getCampus($id){
         $c = Campus::where("id", $id)->first();
+        $this->camp = $c;
 
         $this->nom = $c->nom;
         $this->image = $c->image;
         $this->telephone = $c->tel;
         $this->adresse = $c->adresse;
         $this->email = $c->email;
+        $this->etat = $c->statut;
+
+        $this->status = "info";
+        $this->title = "Les informations de `$this->nom`";
+    }
+
+    public function change($status){
+        $this->status = $status;
+
+        $this->title = "Liste des établissements";
     }
 
     public function submit()

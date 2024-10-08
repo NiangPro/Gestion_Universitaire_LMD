@@ -1,6 +1,6 @@
 <div class="footer">
-    <div class="copyright">
-        <p>Copyright © Designed &amp; Developed by <a href="#" target="_blank">Quixkit</a> 2019</p>
-        <p>Distributed by <a href="https://themewagon.com/" target="_blank">Themewagon</a></p>
+    <div class="copyright d-flex justify-content-between">
+        <p>Copyright ©2024</p>
+        <p>Conçu par <a href="https://sunucode.com/" target="_blank">Sunucode</a></p>
     </div>
 </div>

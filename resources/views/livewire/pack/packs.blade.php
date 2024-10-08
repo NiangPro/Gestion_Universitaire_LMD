@@ -26,7 +26,7 @@
               <div class="d-flex justify-content-between">
 
                 <button wire:click='info({{$p->id}})' class="btn btn-pricing" style="background: {{$p->couleur}};color:{{$p->text}};width:40px"><i class="fa fa-edit"></i></button>
-                <button wire:click='info({{$p->id}})' class="btn btn-pricing btn-danger"><i class="fa fa-trash"></i></button>
+                {{-- <button wire:click='info({{$p->id}})' class="btn btn-pricing btn-danger"><i class="fa fa-trash"></i></button> --}}
               </div>
             </div>
           </div>
@@ -62,6 +62,7 @@
         font-weight: bold;
         border-radius: 10px 10px 0 0;
         text-align: center;
+        justify-content: center;
       }
       .pricing-price {
         font-size: 1.5rem;
@@ -87,12 +88,19 @@
   </style>
 @endsection
 
-@section('js')
+@section('script')
     <script>
       window.addEventListener('addSuccessful', event =>{
         iziToast.success({
         title: 'Pack',
         message: 'Ajout avec succes',
+        position: 'topRight'
+        });
+    });
+    window.addEventListener('updateSuccessful', event =>{
+        iziToast.success({
+        title: 'Pack',
+        message: 'Mis à jour avec succes',
         position: 'topRight'
         });
     });

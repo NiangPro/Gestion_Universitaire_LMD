@@ -76,6 +76,7 @@ class Packs extends Component
                 $p->text = $this->text;
 
                 $p->save();
+                $this->dispatch("updateSuccessful");
             }
         }else{
 

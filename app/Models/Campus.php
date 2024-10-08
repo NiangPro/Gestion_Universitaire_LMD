@@ -26,6 +26,22 @@ class Campus extends Model
         return $this->hasMany(User::class);
     }
 
+    public function admins(){
+        return $this->users()->where('role', 'admin');
+    }
+
+    public function eleves(){
+        return $this->users()->where('role', 'eleve');
+    }
+
+    public function professeurs(){
+        return $this->users()->where('role', 'professeur');
+    }
+
+    public function parents(){
+        return $this->users()->where('role', 'parent');
+    }
+
     public function pack(){
         return $this->belongsTo(Pack::class, "pack_id");
     }
