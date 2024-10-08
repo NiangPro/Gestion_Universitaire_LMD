@@ -18,10 +18,15 @@ class Campus extends Model
         "email",
         "image",
         "statut",
-        "date_fermeture"
+        "date_fermeture",
+        "pack_id"
     ];
 
     public function users(){
         return $this->hasMany(User::class);
+    }
+
+    public function pack(){
+        return $this->belongsTo(Pack::class, "pack_id");
     }
 }

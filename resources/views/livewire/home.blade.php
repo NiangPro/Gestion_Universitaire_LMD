@@ -73,14 +73,14 @@
             </div>
             <div class="card-body">
               <h3 class="pricing-price">{{ number_format($p->annuel, 0, ",", " ") }} XOF/an</h3>
-              <p class="pricing-subtext">0 à {{$p->limite}} élèves <br>  {{ number_format($p->mensuel, 0, ",", " ") }} / mois facturé annuellement ({{floor($p->annuel/$p->mensuel)}} mois)</p>
+              <p class="pricing-subtext">0 à {{$p->limite}} élèves <br>  {{ number_format($p->mensuel, 0, ",", " ") }} / mois facturé annuellement <br> sur ({{floor($p->annuel/$p->mensuel)}} mois)</p>
               <ul class="pricing-list">
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Utilisateur illimité</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Accès parents / profs / administration</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Disponible 24/24 - 7/7</li>
                 <li><img src="https://img.icons8.com/color/48/000000/checkmark.png" class="icon-check"/>Maintenance et évolution inclus</li>
               </ul>
-              <a href="#" class="btn btn-pricing" style="background: {{$p->couleur}};color:{{$p->text}}">SOUSCRIRE</a>
+              <a href="{{route('register',['id'=>$p->id])}}" class="btn btn-pricing" style="background: {{$p->couleur}};color:{{$p->text}}">SOUSCRIRE</a>
             </div>
           </div>
         </div>

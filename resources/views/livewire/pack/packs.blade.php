@@ -83,7 +83,6 @@
       .btn-pricing {
         border-radius: 30px;
         font-size: 1.1rem;
-        padding: 10px;
       }
   </style>
 @endsection

@@ -13,6 +13,7 @@ use Livewire\Component;
 #[Title("Inscription")]
 class Register extends Component
 {
+    public $idpack;
     public $prenom, $nom, $username, $adresse, $tel, $sexe, $email, $password, $password_confirmation;
     public $nomc, $emailc, $telc, $adressec;
 
@@ -70,6 +71,7 @@ class Register extends Component
             'image' => "campus.jpg",
             'tel' => $this->telc,
             'adresse' => $this->adressec,
+            'pack_id' => $this->idpack,
             'date_fermeture' => Carbon::now()->addWeek(), // Définit la date de fermeture à une semaine à partir de maintenant
         ]);
 
@@ -95,6 +97,10 @@ class Register extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        return view('livewire.register2');
+        return view('livewire.register');
+    }
+
+    function mount($id){
+        $this->idpack = $id;
     }
 }

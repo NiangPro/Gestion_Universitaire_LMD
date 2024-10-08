@@ -19,4 +19,8 @@ class Pack extends Model
         "text",
         "couleur"
     ];
+
+    public function campuses(){
+        return $this->hasMany(Campus::class);
+    }
 }

@@ -15,13 +15,14 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table wire:ignore.self id="example2" class="display table-bordered" style="width:100%">
+                <table wire:ignore.self id="example2" class="display text-center table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th>Image</th>
                             <th>Nom</th>
                             <th>Téléphone</th>
                             <th>Email</th>
+                            <th>Etat</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -35,8 +36,20 @@
                                 <td>{{$c->tel}}</td>
                                 <td>{{$c->email}}</td>
                                 <td>
-                                    <button type="button"wire:click='getCampus({{$c->id}})' class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-eye"></i></button>
-                                    <a href="#" class="btn btn-danger" wire:confirm='Etes vous sur'><i class="fa fa-trash"></i></a>
+                                    @if($c->statut == 1)
+                                        <span class="badge badge-success">Ouvert</span>
+                                    @else 
+                                        <span class="badge badge-danger">Fermé</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button type="button" wire:click='getCampus({{$c->id}})' class="btn btn-sm btn-primary" title="Modifier"><i class="fa fa-eye"></i></button>
+                                    @if($c->statut == 1)
+                                        <button type="button" class="btn btn-sm btn-warning" title="Fermer"><i class="fa fa-lock"></i></button>
+                                    @else 
+                                        <button type="button" class="btn btn-sm btn-warning" title="Ouvrir"><i class="fa fa-unlock"></i></button>
+                                    @endif
+                                    <button class="btn btn-sm btn-danger"  title="Supprimer" wire:confirm='Etes vous sur'><i class="fa fa-trash"></i></button>
                                 </td>
                                 @include('livewire.campus.info')
                             </tr>

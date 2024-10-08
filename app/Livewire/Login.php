@@ -47,7 +47,7 @@ class Login extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        return view('livewire.login2');
+        return view('livewire.login');
     }
 
     public function mount(){

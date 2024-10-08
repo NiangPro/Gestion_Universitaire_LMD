@@ -64,6 +64,6 @@ class User extends Authenticatable
 
     public function estAdmin()
     {
-        return $this->role == "superadmin";
+        return $this->role == "admin";
     }
 }

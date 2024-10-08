@@ -18,7 +18,7 @@ Route::get("/tableau_de_bord", Dashboard::class)->name("dashboard");
 Route::get("/etablissements", Etablissements::class)->name("etablissement");
 Route::get("/professeurs", Professeur::class)->name("professeur");
 Route::get("/packs", Packs::class)->name("pack");
-Route::get("/inscription", Register::class)->name("register");
+Route::get("/inscription/{id}", Register::class)->name("register");
 Route::get("/surveillants", Surveillant::class)->name("surveillant");
 Route::get("/etudiants", Etudiant::class)->name("etudiant");
 Route::get("/parents", Parents::class)->name("parent");

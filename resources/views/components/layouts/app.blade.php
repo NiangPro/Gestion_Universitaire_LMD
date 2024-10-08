@@ -27,7 +27,7 @@
     </head>
     <body>
 
-        @if (!request()->is("/") && !request()->is("inscription") &&  !request()->is("connexion"))
+        @if (Auth()->user())
         <!--*******************
             Preloader start
         ********************-->
@@ -87,7 +87,7 @@
         ***********************************-->
         <div class="content-body">
             <div class="container-fluid">
-                <div class="row page-titles mx-0">
+                {{-- <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
                             <h4>{{ $title ?? 'Accueil' }}</h4>
@@ -100,11 +100,11 @@
                             <li class="breadcrumb-item active"><a href="javascript:void(0)">Blank</a></li>
                         </ol>
                     </div>
-                </div>
+                </div> --}}
  
                 @endif
                 {{ $slot }}
-        @if (!request()->is("/") && !request()->is("inscription") && !request()->is("connexion"))
+        @if (Auth()->user())
                 
             </div>
         </div>
