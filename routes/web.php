@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Activations;
 use App\Livewire\Dashboard;
 use App\Livewire\Etablissements;
 use App\Livewire\Etudiant;
@@ -22,3 +23,4 @@ Route::get("/inscription/{id}", Register::class)->name("register");
 Route::get("/surveillants", Surveillant::class)->name("surveillant");
 Route::get("/etudiants", Etudiant::class)->name("etudiant");
 Route::get("/parents", Parents::class)->name("parent");
+Route::get("/activations", Activations::class)->name("activation");

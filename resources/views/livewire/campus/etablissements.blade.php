@@ -49,11 +49,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button type="button" wire:click='getCampus({{$c->id}})' class="btn btn-sm btn-primary" title="Modifier"><i class="fa fa-eye"></i></button>
+                                        <button type="button" wire:click='getCampus({{$c->id}})' class="btn btn-sm btn-primary" title="Information"><i class="fa fa-eye"></i></button>
                                         @if($c->statut == 1)
-                                            <button type="button" class="btn btn-sm btn-warning" title="Fermer"><i class="fa fa-lock"></i></button>
+                                            <button type="button" class="btn btn-sm btn-warning" title="Fermer" wire:click='changeStatus({{$c->id}}, "ferme")'><i class="fa fa-lock"></i></button>
                                         @else 
-                                            <button type="button" class="btn btn-sm btn-warning" title="Ouvrir"><i class="fa fa-unlock"></i></button>
+                                            <button type="button" class="btn btn-sm btn-warning" title="Ouvrir" wire:click='changeStatus({{$c->id}}, "actif")'><i class="fa fa-unlock"></i></button>
                                         @endif
                                         {{-- <button class="btn btn-sm btn-danger"  title="Supprimer" wire:confirm='Etes vous sur'><i class="fa fa-trash"></i></button> --}}
                                     </td>
@@ -74,6 +74,24 @@
         iziToast.success({
         title: 'Inscription',
         message: 'Ajout avec succes',
+        position: 'topRight'
+        });
+    });
+
+    window.addEventListener('actif', event =>{
+        $('#basicModal').modal('hide');
+        iziToast.success({
+        title: 'Campus',
+        message: 'ouvert avec succes',
+        position: 'topRight'
+        });
+    });
+
+    window.addEventListener('ferme', event =>{
+        $('#basicModal').modal('hide');
+        iziToast.warning({
+        title: 'Campus',
+        message: 'fermé avec succes',
         position: 'topRight'
         });
     });

@@ -5,7 +5,7 @@
      <!-- Section Tarifs (avec l'image) -->
   <section class="pricing-section">
     <div class="container">
-      <button wire:click='changeStatus("add")' class="btn btn-success btn-lg">Ajouter</button>
+      <button wire:click='changeStatus("add")' class="btn btn-success"><span class="btn-icon-left text-success"><i class="fa fa-plus-circle"></i></span>Ajouter</button>
       <div class="row justify-content-center mt-2">
   
         @foreach ($pks as $p)
@@ -26,7 +26,51 @@
               <div class="d-flex justify-content-between">
 
                 <button wire:click='info({{$p->id}})' class="btn btn-pricing" style="background: {{$p->couleur}};color:{{$p->text}};width:40px"><i class="fa fa-edit"></i></button>
-                {{-- <button wire:click='info({{$p->id}})' class="btn btn-pricing btn-danger"><i class="fa fa-trash"></i></button> --}}
+                <button type="button" data-toggle="modal"
+                data-target="#modalId" class="btn btn-pricing btn-danger"><i class="fa fa-trash"></i></button>
+                <!-- Button trigger modal -->
+               
+                
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="modalId"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="modalTitleId"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitleId">
+                          Suppression
+                        </h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        Êtes-vous sûr de vouloir supprimer?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-success"
+                          data-dismiss="modal"
+                        >
+                          Non
+                        </button>
+                        <button type="button" wire:click='delete({{$p->id}})'  class="btn btn-danger">Oui</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                
               </div>
             </div>
           </div>
@@ -103,6 +147,14 @@
         message: 'Mis à jour avec succes',
         position: 'topRight'
         });
+    });
+    window.addEventListener('deletePack', event =>{
+        iziToast.success({
+        title: 'Pack',
+        message: 'Supprimé avec succes',
+        position: 'topRight'
+        });
+        $('#modalId').modal('hide');
     });
     </script>
 @endsection

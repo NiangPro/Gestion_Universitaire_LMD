@@ -45,6 +45,13 @@ class Packs extends Component
         'text.required' => 'La couleur du text est obligatoire.',
     ];
 
+    public function delete($id){
+        $pack = Pack::where("id", $id)->first();
+        $pack->delete();
+
+        $this->dispatch("deletePack");
+    }
+
     public function info($id){
         $p = Pack::where("id", $id)->first();
 

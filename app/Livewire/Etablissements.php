@@ -54,6 +54,18 @@ class Etablissements extends Component
         $this->title = "Liste des établissements";
     }
 
+    public function changeStatus($id, $etat){
+        $val = $etat == "actif" ? 1 : 0;
+
+        $camp = Campus::where("id", $id)->first();
+
+        $camp->statut = $val;
+
+        $camp->save();
+
+        $this->dispatch($etat);
+    }
+
     public function submit()
     {
         $this->validate();

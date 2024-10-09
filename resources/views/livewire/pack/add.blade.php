@@ -2,7 +2,7 @@
     <div class="card-header row">
         <h3 class="col-md-10">Formulaire d'@if($status == 'edit') édition @else ajout @endif pack</h3>
         <div class="col-md-2 text-right">
-            <button wire:click='changeStatus("list")' class="btn btn-warning">Retour</button>
+            <button wire:click='changeStatus("list")' class="btn btn-warning"><span class="btn-icon-left text-warning"><i class="fa fa-hand-o-left"></i></span>Retour</button>
         </div>
     </div>
     <div class="card-body">

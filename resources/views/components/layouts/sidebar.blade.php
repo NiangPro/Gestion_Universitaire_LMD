@@ -18,6 +18,10 @@
                 <i class="fa fa-institution"></i><span
                 class="nav-text">Campus</span>
             </a></li>
+            <li><a href="{{route('activation')}}" aria-expanded="false">
+                <i class="fa fa-key"></i><span
+                class="nav-text">Activation</span>
+            </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i

@@ -77,17 +77,98 @@
                             <div class="tab-content">
                                 <div id="my-posts" class="tab-pane fade active show">
                                     <div class="my-post-content pt-3">
-                                        <div class="profile-uoloaded-post border-bottom-1 pb-5">
-                                            <img src="images/profile/8.jpg" alt="" class="img-fluid">
-                                            <a class="post-title" href="javascript:void()">
-                                                <h4>Collection of textile samples lay spread</h4>
-                                            </a>
-                                            <p>A wonderful serenity has take possession of my entire soul like these sweet morning of spare which enjoy whole heart.A wonderful serenity has take possession of my entire soul like these sweet morning
-                                                of spare which enjoy whole heart.</p>
-                                            <button class="btn btn-primary mr-3"><span class="mr-3"><i
-                                                        class="fa fa-heart"></i></span>Like</button>
-                                            <button class="btn btn-secondary"><span class="mr-3"><i
-                                                        class="fa fa-reply"></i></span>Reply</button>
+                                        <div class="row">
+                                            @foreach($camp->admins as $a)
+                                                <div class="card mb-3 col-md-6">
+                                                    <img class="card-img-top img-fluid" src="{{asset('storage/images/'.$a->image)}}" alt="Card image cap">
+                                                    <div class="card-header">
+                                                        <h3 class="card-title">{{$a->prenom}} {{$a->nom}}</h3>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <button class="btn btn-info btn-rounded" data-toggle="modal"
+                                                        data-target="#modalId{{$a->id}}"><i class="fa fa-eye"></i></button>
+                                                        <!-- Button trigger modal -->
+                                                        
+                                                        <!-- Modal -->
+                                                        <div
+                                                            class="modal fade"
+                                                            id="modalId{{$a->id}}"
+                                                            tabindex="-1"
+                                                            role="dialog"
+                                                            aria-labelledby="modalTitleId"
+                                                            aria-hidden="true"
+                                                        >
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="modalTitleId">
+                                                                            Information de {{$a->prenom}} {{$a->nom}}
+                                                                        </h5>
+                                                                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="container-fluid">
+                                                                            <div class="profile-personal-info">
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-4">
+                                                                                        <h5 class="f-w-500">N° téléphone <span class="pull-right">:</span>
+                                                                                        </h5>
+                                                                                    </div>
+                                                                                    <div class="col-8"><span>{{$a->tel}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-4">
+                                                                                        <h5 class="f-w-500">Email <span class="pull-right">:</span>
+                                                                                        </h5>
+                                                                                    </div>
+                                                                                    <div class="col-8"><span>{{$a->email}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-4">
+                                                                                        <h5 class="f-w-500">Adresse <span class="pull-right">:</span></h5>
+                                                                                    </div>
+                                                                                    <div class="col-8"><span>{{$a->adresse}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-4">
+                                                                                        <h5 class="f-w-500">Username <span class="pull-right">:</span>
+                                                                                        </h5>
+                                                                                    </div>
+                                                                                    <div class="col-8"><span>{{$a->username}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-4">
+                                                                                        <h5 class="f-w-500">Sexe <span class="pull-right">:</span></h5>
+                                                                                    </div>
+                                                                                    <div class="col-8"><span>{{$a->sexe}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-danger"
+                                                                            data-dismiss="modal"
+                                                                        >
+                                                                        <span class="btn-icon-left text-danger"><i class="fa fa-times-circle"></i></span>
+                                                                            Fermer
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
