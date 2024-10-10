@@ -88,7 +88,7 @@
                                         @error('emailc') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label><strong>Nom du campus</strong></label>
+                                        <label><strong>N° téléphone du campus</strong></label>
                                         <input type="text" wire:model='telc'  class="form-control @error('telc') error @enderror" placeholder="Entrer le numéro de téléphone du campus">
                                         @error('telc') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>

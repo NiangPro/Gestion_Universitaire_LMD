@@ -26,10 +26,11 @@
               <div class="d-flex justify-content-between">
 
                 <button wire:click='info({{$p->id}})' class="btn btn-pricing" style="background: {{$p->couleur}};color:{{$p->text}};width:40px"><i class="fa fa-edit"></i></button>
-                <button type="button" data-toggle="modal"
-                data-target="#modalId" class="btn btn-pricing btn-danger"><i class="fa fa-trash"></i></button>
-                <!-- Button trigger modal -->
-               
+                @if($deleteItem == 1)
+                  <button type="button" data-toggle="modal"
+                  data-target="#modalId" class="btn btn-pricing btn-danger"><i class="fa fa-trash"></i></button>
+                  <!-- Button trigger modal -->
+                @endif
                 
                 <!-- Modal -->
                 <div

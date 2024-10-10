@@ -55,7 +55,9 @@
                                         @else 
                                             <button type="button" class="btn btn-sm btn-warning" title="Ouvrir" wire:click='changeStatus({{$c->id}}, "actif")'><i class="fa fa-unlock"></i></button>
                                         @endif
-                                        <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalId" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                        @if($deleteItem == 1)
+                                            <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalId" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                        @endif
 
                                         <!-- Modal -->
                                         <div
@@ -90,7 +92,8 @@
                                                 >
                                                     Non
                                                 </button>
-                                                <button type="button" wire:click='delete({{$c->id}})'  class="btn btn-danger">Oui</button>
+    
+                                                    <button type="button" wire:click='delete({{$c->id}})'  class="btn btn-danger">Oui</button>
                                                 </div>
                                             </div>
                                             </div>

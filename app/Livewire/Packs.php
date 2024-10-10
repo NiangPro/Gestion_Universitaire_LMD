@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Activation;
 use App\Models\Pack;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -10,6 +11,7 @@ use Livewire\Component;
 #[Title("Packs")]
 class Packs extends Component
 {
+    public $deleteItem;
     public $status = "list";
     public $nom;
     public $limite;
@@ -120,5 +122,9 @@ class Packs extends Component
 
     public function init(){
         $this->reset(['nom', 'limite', 'mensuel', 'annuel', 'couleur', 'text', 'id']);
+    }
+
+    public function mount(){
+        $this->deleteItem = Activation::where("nom", "packs")->first()->status;
     }
 }

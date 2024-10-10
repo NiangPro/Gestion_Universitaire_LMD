@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Activation;
 use App\Models\Campus;
 use App\Models\Outils;
 use Carbon\Carbon;
@@ -17,6 +18,7 @@ class Etablissements extends Component
     public $title = "Liste des établissements";
     public $camp;
     public $outils;
+    public $deleteItem;
 
     #[Rule('required', message:'Le champ nom est obligatoire')]
     public $nom;
@@ -109,5 +111,6 @@ class Etablissements extends Component
     public function mount(){
         $this->outils = new Outils();
         $this->outils->isLogged();
+        $this->deleteItem = Activation::where("nom", "campuses")->first()->status;
     }
 }

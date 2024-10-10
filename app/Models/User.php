@@ -28,6 +28,7 @@ class User extends Authenticatable
         'image',
         'email',
         'password',
+        'acces'
     ];
 
     public function campus(){

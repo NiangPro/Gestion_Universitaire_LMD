@@ -14,9 +14,9 @@
                             <span class="col-md-9">{{ucfirst($t->nom)}}</span>
                             <span class="col-md-3 text-right">
                                 @if($t->status == 0) 
-                                <button class="btn btn-outline-danger btn-rounded">Activer</button>
+                                <button wire:click='changeStatus({{$t->id}}, "actif")' class="btn btn-outline-danger btn-rounded">Activer</button>
                                 @else
-                                <button class="btn btn-outline-success btn-rounded">Désactiver</button>
+                                <button wire:click='changeStatus({{$t->id}}, "ferme")' class="btn btn-outline-success btn-rounded">Désactiver</button>
                                 @endif
                             </span>
                         </div>
@@ -26,3 +26,20 @@
         </div>
     </div>
 </div>
+<script>
+    window.addEventListener('actif', event =>{
+        iziToast.success({
+        title: 'Suppression',
+        message: 'activé avec succes',
+        position: 'topRight'
+        });
+    });
+
+    window.addEventListener('ferme', event =>{
+        iziToast.warning({
+        title: 'Suppression',
+        message: 'désactivé avec succes',
+        position: 'topRight'
+        });
+    });
+</script>
