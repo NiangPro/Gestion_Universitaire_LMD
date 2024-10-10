@@ -42,7 +42,7 @@ class Outils extends Model
         $nom = "Tables_in_".$databaseName;
 
         foreach($tables as $t){
-            if (!in_array($t->$nom, ["activations", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
+            if (!in_array($t->$nom, ["activations", "messages", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
                 $act = Activation::where("nom", $t->$nom)->first();
                 if(!$act){
                     Activation::create([

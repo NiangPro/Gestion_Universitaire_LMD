@@ -1,7 +1,7 @@
 <div>
     <div class="card transparent-card">
         <div class="card-header row">
-            <h4 class="card-title col-md-8">Accepter les suppressions des tables</h4>
+            <h4 class="card-title col-md-8">Validation de la Suppression des Éléments dans les Tables</h4>
             <div class="col-md-2 text-right">
                 <button wire:click='' class="btn btn-success"><span class="btn-icon-left text-success"><i class="fa fa-plus-circle"></i></span>Ajouter</button>
             </div>

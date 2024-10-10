@@ -20,7 +20,11 @@
             </a></li>
             <li><a href="{{route('activation')}}" aria-expanded="false">
                 <i class="fa fa-key"></i><span
-                class="nav-text">Activation</span>
+                class="nav-text">Activations</span>
+            </a></li>
+            <li><a href="{{route('message')}}" aria-expanded="false">
+                <i class="fa fa-envelope"></i><span
+                class="nav-text">Messages</span>
             </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
