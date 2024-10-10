@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Activation;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -14,7 +15,7 @@ class Activations extends Component
     public function render()
     {
         return view('livewire.activations',[
-            "tables" => DB::select('SHOW TABLES')
+            "tables" => Activation::orderBy("nom", "ASC")->get()
         ]);
     }
 }

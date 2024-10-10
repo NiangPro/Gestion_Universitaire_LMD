@@ -9,11 +9,16 @@
         <div class="card-body">
             <div id="accordion-ten" class="accordion accordion-header-shadow accordion-rounded">
                 @foreach($tables as $t)
-                    <div class="accordion__item">
-                        <div class="accordion__header accordion__header--success collapsed" data-toggle="collapse" data-target="#{{$t->Tables_in_gestion_universitaire_lmd}}" aria-expanded="false">
-                            <span class="accordion__header--icon"></span>
-                            <span class="accordion__header--text">{{$t->Tables_in_gestion_universitaire_lmd}}</span>
-                            <span class="accordion__header--indicator"></span>
+                    <div class="accordion__item" id="item_{{$t->id}}">
+                        <div class="accordion__header accordion__header--success row">
+                            <span class="col-md-9">{{ucfirst($t->nom)}}</span>
+                            <span class="col-md-3 text-right">
+                                @if($t->status == 0) 
+                                <button class="btn btn-outline-danger btn-rounded">Activer</button>
+                                @else
+                                <button class="btn btn-outline-success btn-rounded">Désactiver</button>
+                                @endif
+                            </span>
                         </div>
                     </div>
                 @endforeach

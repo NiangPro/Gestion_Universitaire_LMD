@@ -55,7 +55,46 @@
                                         @else 
                                             <button type="button" class="btn btn-sm btn-warning" title="Ouvrir" wire:click='changeStatus({{$c->id}}, "actif")'><i class="fa fa-unlock"></i></button>
                                         @endif
-                                        {{-- <button class="btn btn-sm btn-danger"  title="Supprimer" wire:confirm='Etes vous sur'><i class="fa fa-trash"></i></button> --}}
+                                        <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalId" title="Supprimer"><i class="fa fa-trash"></i></button>
+
+                                        <!-- Modal -->
+                                        <div
+                                            class="modal fade"
+                                            id="modalId"
+                                            tabindex="-1"
+                                            role="dialog"
+                                            aria-labelledby="modalTitleId"
+                                            aria-hidden="true"
+                                        >
+                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">
+                                                    Suppression
+                                                </h5>
+                                                <button
+                                                    type="button"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    aria-label="Close"
+                                                >&times;</button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                Êtes-vous sûr de vouloir supprimer?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-success"
+                                                    data-dismiss="modal"
+                                                >
+                                                    Non
+                                                </button>
+                                                <button type="button" wire:click='delete({{$c->id}})'  class="btn btn-danger">Oui</button>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -92,6 +131,14 @@
         iziToast.warning({
         title: 'Campus',
         message: 'fermé avec succes',
+        position: 'topRight'
+        });
+    });
+    window.addEventListener('deleteCampus', event =>{
+        $('#basicModal').modal('hide');
+        iziToast.warning({
+        title: 'Campus',
+        message: 'Supprimé avec succes',
         position: 'topRight'
         });
     });

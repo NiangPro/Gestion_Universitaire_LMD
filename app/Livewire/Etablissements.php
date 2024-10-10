@@ -91,6 +91,13 @@ class Etablissements extends Component
         $this->dispatch('campusAdded');
     }
 
+    public function delete($id){
+        $c = Campus::where("id", $id)->first();
+        $c->delete();
+
+        $this->dispatch("deleteCampus");
+    }
+
     #[Layout("components.layouts.app")]
     public function render()
     {

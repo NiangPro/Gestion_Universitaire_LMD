@@ -53,5 +53,6 @@ class Login extends Component
     public function mount(){
         $this->outils = new Outils();
         $this->outils->createSuperAdmin();
+        $this->outils->initActivation();
     }
 }

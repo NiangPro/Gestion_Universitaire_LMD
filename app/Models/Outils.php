@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Outils extends Model
 {
@@ -32,5 +33,24 @@ class Outils extends Model
         if (!Auth::user()) {
            redirect(route("login"));
         }
+    }
+
+    public function initActivation(){
+        
+        $tables = DB::select('SHOW TABLES');
+        $databaseName = config('database.connections.' . config('database.default') . '.database');
+        $nom = "Tables_in_".$databaseName;
+
+        foreach($tables as $t){
+            if (!in_array($t->$nom, ["activations", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
+                $act = Activation::where("nom", $t->$nom)->first();
+                if(!$act){
+                    Activation::create([
+                        "nom" => $t->$nom
+                    ]);
+                }
+            }
+        }
+        
     }
 }
