@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Pack;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -16,5 +17,11 @@ class Home extends Component
         return view('livewire.home', [
             "packs" => Pack::orderBy("annuel", "ASC")->get()
         ]);
+    }
+
+    public function mount(){
+        if (Auth::user()) {
+            redirect(route("dashboard"));
+        }
     }
 }

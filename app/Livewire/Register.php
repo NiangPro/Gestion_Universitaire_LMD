@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Campus;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -102,5 +103,9 @@ class Register extends Component
 
     function mount($id){
         $this->idpack = $id;
+
+        if (Auth::user()) {
+            redirect(route("dashboard"));
+        }
     }
 }

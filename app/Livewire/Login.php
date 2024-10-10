@@ -54,5 +54,9 @@ class Login extends Component
         $this->outils = new Outils();
         $this->outils->createSuperAdmin();
         $this->outils->initActivation();
+
+        if (Auth::user()) {
+            redirect(route("dashboard"));
+        }
     }
 }
