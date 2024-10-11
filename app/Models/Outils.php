@@ -53,4 +53,23 @@ class Outils extends Model
         }
         
     }
+
+    public function searchUser($value){
+
+        $users = [];
+        if (Auth::user()->estSuperAdmin()) {
+            $users = User::where('prenom', 'LIKE', "%$value%")
+            ->orWhere('email', 'LIKE', "%$value%")
+            ->get();
+
+            $users = $users->where("role", "admin");
+        }elseif(Auth::user()->estAdmin()){
+            $users = User::where('prenom', 'LIKE', "%$value%")
+            ->orWhere('email', 'LIKE', "%$value%")
+            ->Where('campus_id', Auth::user()->campus_id)
+            ->get();
+        }
+        
+        return $users;
+    }
 }

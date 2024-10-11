@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->text("content");
+            $table->string("titre");
             $table->string("image")->nullable();
             $table->integer("is_read")->default(0);
             $table->unsignedBigInteger('sender_id')->nullable();

@@ -2,8 +2,11 @@
     <div class="compose-content">
         <form action="#">
             <div class="form-group">
-                <input type="text" wire:model.live='receiver_id' class="form-control bg-transparent" placeholder=" à:">
+                <input type="email" wire:model.live='receiver_id' class="form-control bg-transparent" placeholder=" à:">
             </div>
+            @if(count($users) > 0)
+                @include('livewire.message.search')
+            @endif
             <div class="form-group">
                 <input type="text" class="form-control bg-transparent" placeholder=" Titre:">
             </div>

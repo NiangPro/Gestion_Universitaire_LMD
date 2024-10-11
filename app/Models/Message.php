@@ -11,7 +11,7 @@ class Message extends Model
 
     protected $table = "messages";
 
-    protected $fillable = ['sender_id', 'receiver_id', 'content', 'is_read'];
+    protected $fillable = ['sender_id', 'receiver_id', 'content', 'titre', 'image', 'is_read'];
 
     public function sender()
     {

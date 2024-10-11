@@ -56,13 +56,13 @@
                                             <button type="button" class="btn btn-sm btn-warning" title="Ouvrir" wire:click='changeStatus({{$c->id}}, "actif")'><i class="fa fa-unlock"></i></button>
                                         @endif
                                         @if($deleteItem == 1)
-                                            <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalId" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                            <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalId{{$c->id}}" title="Supprimer"><i class="fa fa-trash"></i></button>
                                         @endif
 
                                         <!-- Modal -->
                                         <div
-                                            class="modal fade"
-                                            id="modalId"
+                                            class="modal fade modalId"
+                                            id="modalId{{$c->id}}"
                                             tabindex="-1"
                                             role="dialog"
                                             aria-labelledby="modalTitleId"
@@ -138,7 +138,7 @@
         });
     });
     window.addEventListener('deleteCampus', event =>{
-        $('#basicModal').modal('hide');
+        $('.modalId').modal('hide');
         iziToast.warning({
         title: 'Campus',
         message: 'Supprimé avec succes',
