@@ -22,10 +22,6 @@
                 <i class="fa fa-key"></i><span
                 class="nav-text">Activations</span>
             </a></li>
-            <li><a href="{{route('message')}}" aria-expanded="false">
-                <i class="fa fa-envelope"></i><span
-                class="nav-text">Messages</span>
-            </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
@@ -39,6 +35,10 @@
                 </ul>
             </li>
            @endif
+           <li><a href="{{route('message')}}" aria-expanded="false">
+                <i class="fa fa-envelope"></i><span
+                class="nav-text">Messages</span>
+            </a></li>
 
             <li class="nav-label">Apps</li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i

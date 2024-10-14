@@ -66,8 +66,10 @@ class Outils extends Model
         }elseif(Auth::user()->estAdmin()){
             $users = User::where('prenom', 'LIKE', "%$value%")
             ->orWhere('email', 'LIKE', "%$value%")
-            ->Where('campus_id', Auth::user()->campus_id)
             ->get();
+
+            
+            $users = $users->Where('campus_id', Auth::user()->campus_id);
         }
         
         return $users;

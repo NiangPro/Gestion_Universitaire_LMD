@@ -44,6 +44,10 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+    public function notRead(){
+        return $this->receivedMessages()->where("is_read", 0)->get();
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

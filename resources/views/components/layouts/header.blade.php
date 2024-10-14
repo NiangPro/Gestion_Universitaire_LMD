@@ -16,6 +16,7 @@
                 </div>
 
                 <ul class="navbar-nav header-right">
+                    @if(count(Auth()->user()->notRead()) > 0)
                     <li class="nav-item dropdown notification_dropdown">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
                             <i class="mdi mdi-bell"></i>
@@ -23,59 +24,24 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <ul class="list-unstyled">
+                                @foreach(Auth()->user()->notRead() as $m)
                                 <li class="media dropdown-item">
-                                    <span class="success"><i class="ti-user"></i></span>
+                                    <span class="success"><img width="25" height="20" src="{{asset('storage/images/'.$m->sender->image)}}" alt=""></span>
                                     <div class="media-body">
-                                        <a href="#">
-                                            <p><strong>Martin</strong> has added a <strong>customer</strong> Successfully
+                                        <a href="{{route('message')}}">
+                                            <p><strong>{{$m->sender->prenom}}</strong> vous a envoyé un <strong>message</strong>
                                             </p>
                                         </a>
                                     </div>
-                                    <span class="notify-time">3:20 am</span>
+                                    <span class="notify-time">{{ date("h\h:i\m\\n", strtotime($m->created_at))}}</span>
                                 </li>
-                                <li class="media dropdown-item">
-                                    <span class="primary"><i class="ti-shopping-cart"></i></span>
-                                    <div class="media-body">
-                                        <a href="#">
-                                            <p><strong>Jennifer</strong> purchased Light Dashboard 2.0.</p>
-                                        </a>
-                                    </div>
-                                    <span class="notify-time">3:20 am</span>
-                                </li>
-                                <li class="media dropdown-item">
-                                    <span class="danger"><i class="ti-bookmark"></i></span>
-                                    <div class="media-body">
-                                        <a href="#">
-                                            <p><strong>Robin</strong> marked a <strong>ticket</strong> as unsolved.
-                                            </p>
-                                        </a>
-                                    </div>
-                                    <span class="notify-time">3:20 am</span>
-                                </li>
-                                <li class="media dropdown-item">
-                                    <span class="primary"><i class="ti-heart"></i></span>
-                                    <div class="media-body">
-                                        <a href="#">
-                                            <p><strong>David</strong> purchased Light Dashboard 1.0.</p>
-                                        </a>
-                                    </div>
-                                    <span class="notify-time">3:20 am</span>
-                                </li>
-                                <li class="media dropdown-item">
-                                    <span class="success"><i class="ti-image"></i></span>
-                                    <div class="media-body">
-                                        <a href="#">
-                                            <p><strong> James.</strong> has added a<strong>customer</strong> Successfully
-                                            </p>
-                                        </a>
-                                    </div>
-                                    <span class="notify-time">3:20 am</span>
-                                </li>
+                                @endforeach
                             </ul>
-                            <a class="all-notification" href="#">See all notifications <i
+                            <a class="all-notification" href="{{route('message')}}">Tout voir <i
                                     class="ti-arrow-right"></i></a>
                         </div>
                     </li>
+                    @endif
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
                             <img src="{{asset('images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} <i class="fa fa-chevron-down"></i>
