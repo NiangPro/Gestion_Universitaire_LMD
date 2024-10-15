@@ -44,16 +44,16 @@
                     @endif
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
-                            <img src="{{asset('images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} <i class="fa fa-chevron-down"></i>
+                            <img src="{{asset('images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} {{ucfirst(Auth()->user()->nom)}} <i class="fa fa-chevron-down"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a href="./app-profile.html" class="dropdown-item">
                                 <i class="icon-user"></i>
-                                <span class="ml-2">Profile </span>
+                                <span class="ml-2">Profil</span>
                             </a>
-                            <a href="./email-inbox.html" class="dropdown-item">
+                            <a href="{{route('message')}}" class="dropdown-item">
                                 <i class="icon-envelope-open"></i>
-                                <span class="ml-2">Inbox </span>
+                                <span class="ml-2">Messages </span>
                             </a>
                             <livewire:logout />
                         </div>

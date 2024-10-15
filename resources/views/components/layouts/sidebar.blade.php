@@ -34,6 +34,10 @@
                     
                 </ul>
             </li>
+            <li><a href="{{route('message')}}" aria-expanded="false">
+                <i class="fa fa-calendar"></i><span
+                class="nav-text">Années Académiques</span>
+            </a></li>
            @endif
            <li><a href="{{route('message')}}" aria-expanded="false">
                 <i class="fa fa-envelope"></i><span
