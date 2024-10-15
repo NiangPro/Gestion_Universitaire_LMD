@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreign('sender_id')->references("id")->on("users")->onDelete("cascade");
             $table->unsignedBigInteger('receiver_id')->nullable();
             $table->foreign('receiver_id')->references("id")->on("users")->onDelete("cascade");
+            $table->boolean('is_favorite_sender')->default(false); // Favori pour l'émetteur
+            $table->boolean('is_favorite_receiver')->default(false); // Favori pour le récepteur
             $table->timestamps();
         });
     }

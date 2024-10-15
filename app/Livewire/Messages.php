@@ -10,11 +10,16 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use phpDocumentor\Reflection\Types\This;
+use Livewire\WithPagination;
 
 #[Title("Messages")]
 class Messages extends Component
 {
+    use WithFileUploads;
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap'; // Optionnel : définit le style de pagination, par exemple pour Bootstrap
+    
     public $type = "list";
     public $back = "";
     public $receiver_id;
@@ -23,7 +28,6 @@ class Messages extends Component
     public $outils;
     public $msg;
 
-    use WithFileUploads;
 
     public $title;
     public $content;
@@ -101,7 +105,18 @@ class Messages extends Component
         
     }
 
+    public function toggleFavorite($messageId)
+    {
+        $message = Message::findOrFail($messageId);
+        $userId = Auth::id();
 
+        if ($message->isFavoriteForUser($userId)) {
+            $message->unmarkAsFavorite($userId);
+        } else {
+            $message->markAsFavorite($userId);
+        }
+
+    }
 
     #[Layout("components.layouts.app")]
     public function render()
@@ -115,8 +130,20 @@ class Messages extends Component
             $this->receiver = null;
         }
         return view('livewire.message.messages', [
-            "sentMessages" => Message::where('sender_id', Auth::user()->id)->orderBy("id", "DESC")->get(),
-            "receivedMessages" => Message::where('receiver_id', Auth::user()->id)->orderBy("id", "DESC")->get(),
+            "sentMessages" => Message::where('sender_id', Auth::user()->id)->orderBy("id", "DESC")->paginate(10),
+            "receivedMessages" => Message::where('receiver_id', Auth::user()->id)->orderBy("id", "DESC")->paginate(10),
+            "importantMessages" => Message::where(function ($query) {
+                $query->where(function ($subQuery) {
+                    $subQuery->where('sender_id', Auth::id())
+                             ->where('is_favorite_sender', true);
+                })
+                ->orWhere(function ($subQuery) {
+                    $subQuery->where('receiver_id', Auth::id())
+                             ->where('is_favorite_receiver', true);
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
         ]);
     }
 }

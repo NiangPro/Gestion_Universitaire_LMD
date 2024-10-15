@@ -55,21 +55,48 @@ class Outils extends Model
     }
 
     public function searchUser($value){
-
+        $value = '%'.$value.'%'; // Assurez-vous que le format est prêt pour la requête LIKE
         $users = [];
         if (Auth::user()->estSuperAdmin()) {
-            $users = User::where('prenom', 'LIKE', "%$value%")
-            ->orWhere('email', 'LIKE', "%$value%")
+            $users = User::where(function($query) use ($value) {
+                $query->where('prenom', 'LIKE', $value)
+                      ->orWhere('email', 'LIKE', $value);
+            })
+            ->where(function($query) {
+                $query->where('role', 'admin')
+                      ->orWhere('role', 'superadmin');
+            })
+            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
             ->get();
-
-            $users = $users->where("role", "admin");
         }elseif(Auth::user()->estAdmin()){
-            $users = User::where('prenom', 'LIKE', "%$value%")
-            ->orWhere('email', 'LIKE', "%$value%")
-            ->get();
 
-            
-            $users = $users->Where('campus_id', Auth::user()->campus_id);
+            $users = User::where(function($query) use ($value) {
+                $query->where('prenom', 'LIKE', $value)
+                      ->orWhere('email', 'LIKE', $value);
+            })
+            ->where(function($query) {
+                $query->where('campus_id', Auth::user()->campus_id)
+                      ->orWhere('role', 'superadmin');
+            })
+            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+            ->get();
+        }elseif(Auth::user()->estParent()){
+            $users = User::where(function($query) use ($value) {
+                $query->where('prenom', 'LIKE', $value)
+                      ->orWhere('email', 'LIKE', $value);
+            })
+            ->where('campus_id', Auth::user()->campus_id)
+            ->where('role', 'admin')
+            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+            ->get();
+        }else{
+            $users = User::where(function($query) use ($value) {
+                $query->where('prenom', 'LIKE', $value)
+                      ->orWhere('email', 'LIKE', $value);
+            })
+            ->where('campus_id', Auth::user()->campus_id)
+            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+            ->get();
         }
         
         return $users;

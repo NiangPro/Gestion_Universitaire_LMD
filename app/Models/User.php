@@ -80,4 +80,19 @@ class User extends Authenticatable
     {
         return $this->role == "admin";
     }
+
+    public function estParent()
+    {
+        return $this->role == "parent";
+    }
+
+    public function estEleve()
+    {
+        return $this->role == "eleve";
+    }
+
+    public function estProfesseur()
+    {
+        return $this->role == "professeur";
+    }
 }

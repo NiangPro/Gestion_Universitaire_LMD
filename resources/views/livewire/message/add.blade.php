@@ -15,7 +15,7 @@
 
             </div>
             <div class="form-group">
-                <textarea id="email-compose-editor" required wire:model="content" class="textarea_editor form-control bg-transparent" rows="10" placeholder="Entrer le texte ..."></textarea>
+                <textarea required wire:model="content" class="summernote form-control" rows="10" placeholder="Entrer le texte ..."></textarea>
                 @error('content') <div class="text-danger">{{ $message }}</div> @enderror
 
             </div>

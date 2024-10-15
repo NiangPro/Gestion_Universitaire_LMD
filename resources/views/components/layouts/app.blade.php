@@ -19,6 +19,7 @@
         
         @endif
         <link href="{{asset('iziToast.min.css')}}" rel="stylesheet">
+        <link href="{{asset('themes/vendor/summernote/summernote.css')}}" rel="stylesheet">
 
         
         
@@ -172,6 +173,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @endif
     <script src="{{ asset('iziToast.min.js')}}"></script>
+    <script src="{{ asset('themes/vendor/summernote/js/summernote.min.js')}}"></script>
+
 
     @yield('script')
         

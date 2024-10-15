@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="read-content-body">
-                        {{ $msg->content }}
+                        {!! nl2br(e($msg->content)) !!}
                         <hr>
                         @if($msg->image)
                         <a href="{{asset('storage/images/'.$msg->image)}}" target="_blank" rel="noopener noreferrer">
