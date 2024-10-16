@@ -10,7 +10,7 @@
             <h1 class="card-title col-md-10">{{$title}}</h1>
              <div class="col-md-2 text-right">
                 @if($status == "info")
-                    <button wire:click='change("list")' class="btn btn-primary"><span class="btn-icon-left text-primary"><i class="fa fa-hand-o-left"></i></span>Retour</button>
+                    <a href="{{route('etablissement')}}" class="btn btn-primary"><span class="btn-icon-left text-primary"><i class="fa fa-hand-o-left"></i></span>Retour</a>
                 @endif
               {{--  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#basicModal"><i class="fa fa-plus"></i> Ajouter</button>
                 @include('livewire.campus.modalAdd')--}}
@@ -21,7 +21,7 @@
                 @include('livewire.campus.info')
             @else
                 <div class="table-responsive">
-                    <table wire:ignore.self id="example2" class="display text-center table-bordered" style="width:100%">
+                    <table id="myTable" class="table table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Image</th>
@@ -36,7 +36,7 @@
                             @foreach ($camps as $c)
                                 <tr id="campus-{{$c->id}}">
                                     <td>
-                                        <img width="100" height="70" src="{{asset('images/'.$c->image)}}" alt="">
+                                        <img width="100%" height="70" src="{{asset('images/'.$c->image)}}" alt="">
                                     </td>
                                     <td>{{$c->nom}}</td>
                                     <td>{{$c->tel}}</td>

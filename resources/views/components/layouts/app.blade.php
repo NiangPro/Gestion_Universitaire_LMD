@@ -7,13 +7,12 @@
         <title>{{ $title ?? 'Page Title' }}</title>
         @if (!request()->is("/"))
         <link href="{{asset('themes/vendor/pg-calendar/css/pignose.calendar.min.css')}}" rel="stylesheet">
-        <link href="{{asset('themes/vendor/chartist/css/chartist.min.css')}}" rel="stylesheet">
         <link href="{{asset('themes/css/style.css')}}" rel="stylesheet">
-        <link href="{{asset('themes/vendor/sweetalert2/dist/sweetalert2.min.css')}}" rel="stylesheet">
         <link href="{{ asset('themes/vendor/jquery-steps/css/jquery.steps.css')}}" rel="stylesheet">
 
         <!-- Datatable -->
-        <link href="{{asset('themes/vendor/datatables/css/jquery.dataTables.min.css')}}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
         @elseif(request()->is("/")) 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         
@@ -143,20 +142,12 @@
     <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
     <script src="{{asset('themes/js/custom.min.js')}}"></script>
     
-    <script src="{{asset('themes/vendor/chartist/js/chartist.min.js')}}"></script>
     
     <script src="{{asset('themes/vendor/moment/moment.min.js')}}"></script>
     <script src="{{asset('themes/vendor/pg-calendar/js/pignose.calendar.min.js')}}"></script>
     
     
-    <script src="{{asset('themes/js/dashboard/dashboard-2.js')}}"></script>
-    <script src="{{asset('themes/vendor/sweetalert2/dist/sweetalert2.min.js')}}"></script>
-    <script src="{{asset('themes/js/plugins-init/sweetalert.init.js')}}"></script>
-
-    <!-- Datatable -->
-    <script src="{{asset('themes/vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('themes/js/plugins-init/datatables.init.js')}}"></script>
-    
+   
     <!-- Jquery Validation -->
     <script src="{{asset('themes/vendor/jquery-validation/jquery.validate.min.js')}}"></script>
     <!-- Form validate init -->
@@ -164,8 +155,12 @@
     <script src="{{ asset('themes/vendor/jquery-steps/build/jquery.steps.min.js')}}"></script>
     <script src="{{ asset('themes/vendor/jquery-validation/jquery.validate.min.js')}}"></script>
     <!-- Form validate init -->
-
-
+    <!-- Datatable -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
 
     <!-- Form step init -->
     <script src="{{ asset('themes/js/plugins-init/jquery-steps-init.js')}}"></script>
@@ -177,6 +172,31 @@
 
 
     @yield('script')
+
+    <script>
+        
+        let table = $('#myTable').DataTable({
+            language: {
+                info: 'Affichage de _PAGE_ sur _PAGES_',
+                infoEmpty: 'Aucun enregistrement disponible',
+                infoFiltered: '(filtré de _MAX_ enregistrements totaux)',
+                lengthMenu: 'Affichage de _MENU_  &nbsp;',
+                zeroRecords: 'Aucun résultat trouvé',
+                search: "Recherche :",
+                paginate: {
+                    next: "<h3>&raquo;</h3>",
+                    previous: "<h3>&laquo;</h3>",
+                },
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf', {
+            extend: 'print',
+            text: 'Imprimer' // Renommer le bouton "Print" en "Imprimer"
+        }],
+            lengthMenu: [10, 20, 50, 100],// Options de sélection pour les éléments par page
+        });
+
+    </script>
         
         @livewireScripts
     </body>
