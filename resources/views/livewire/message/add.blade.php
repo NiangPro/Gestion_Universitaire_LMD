@@ -1,4 +1,6 @@
-<div class="email-right-box ml-0 ml-sm-4 ml-sm-0">
+<div class="col-md-8">
+    <h4><i class="fa fa-file-text-o"></i> {{ $titre }}</h4>
+
     <form wire:submit.prevent="sendMessage">
         <div class="compose-content">
             <div class="form-group">

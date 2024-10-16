@@ -1,4 +1,6 @@
-<div class="email-right-box ml-0 ml-sm-4 ml-sm-0">
+<div class="col-md-8">
+    <h4><i class="fa fa-file-text-o"></i> {{ $titre }}</h4>
+
     <div class="row">
         <div class="col-12">
             <div class="right-box-padding">

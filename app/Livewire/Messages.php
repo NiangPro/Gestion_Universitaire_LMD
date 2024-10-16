@@ -27,6 +27,7 @@ class Messages extends Component
     public $users = [];
     public $outils;
     public $msg;
+    public $titre = "Liste des messages reçus";
 
 
     public $title;
@@ -81,6 +82,16 @@ class Messages extends Component
     public function changeType($type){
         $this->back = $this->type;
         $this->type = $type;
+
+        if ($type == "sent") {
+            $this->titre = "Liste des messages envoyés";
+        }elseif($type == "add"){
+            $this->titre = "Formulaire d'envoi message";
+        }elseif($type == "important"){
+            $this->titre = "Liste des messages importants";
+        }else{
+            $this->titre = "Liste des messages reçus";
+        }
     }
 
     public function readMessage($id){

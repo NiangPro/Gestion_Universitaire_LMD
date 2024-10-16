@@ -1,4 +1,6 @@
-<div class="email-right-box ml-0 ml-sm-4 ml-sm-0">
+<div class="col-md-8">
+    <h4><i class="fa fa-file-text-o"></i> {{ $titre }}</h4>
+
     <div class="email-list">
         @foreach($receivedMessages as $m)
         <div class="message"  @if($m->is_read == 0) style="background: lightgrey" @endif>
@@ -14,8 +16,8 @@
                 </div>
                 <a href="javascript:void()" wire:click='readMessage({{$m->id}})' class="col-mail unread col-mail-2 d-flex justify-content-between">
                     <div class=" ml-2"> de {{ $m->sender->prenom}} {{ $m->sender->nom}}</div>
-                    <div class="">{{ ucfirst(substr($m->content, 0, 30))}}...</div>
-                    <div class="">{{ date("d/m/Y à h:i", strtotime($m->created_at))}}</div>
+                    <div class="d-none d-md-block">{{ ucfirst(substr($m->content, 0, 30))}}...</div>
+                    <div class="d-none d-md-block">{{ date("d/m/Y à h:i", strtotime($m->created_at))}}</div>
                 </a>
             </div>
         </div>

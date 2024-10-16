@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
+use App\Livewire\AcademicYears;
 use App\Livewire\Activations;
 use App\Livewire\Dashboard;
 use App\Livewire\Etablissements;
@@ -29,3 +31,4 @@ Route::get("/parents", Parents::class)->name("parent");
 Route::get("/activations", Activations::class)->middleware(SuperAdminMiddleware::class)->name("activation");
 Route::get("/non_acces", Nonacces::class)->name("nonacces");
 Route::get("/message", Messages::class)->name("message");
+Route::get("/annees_academiques", AcademicYears::class)->middleware(AdminMiddleware::class)->name("academicyear");

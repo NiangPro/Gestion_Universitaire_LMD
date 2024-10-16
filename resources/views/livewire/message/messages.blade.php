@@ -2,8 +2,8 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-body">
-                    <div class="email-left-box px-0 mb-5">
+                <div class="card-body row">
+                    <div class="col-md-3 px-0 mb-5">
                         <div class="p-0">
                             <a href="javascript:void()" wire:click='changeType("list")' class="list-group-item @if($type == "list") active @endif"><i
                                 class="fa fa-inbox font-18 align-middle mr-2"></i> Boîte de reception @if(count(Auth()->user()->notRead()) > 0) <span

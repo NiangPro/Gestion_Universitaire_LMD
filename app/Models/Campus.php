@@ -45,4 +45,8 @@ class Campus extends Model
     public function pack(){
         return $this->belongsTo(Pack::class, "pack_id");
     }
+
+    public function academicYears(){
+        return $this->hasMany(AcademicYear::class);
+    }
 }
