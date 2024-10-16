@@ -161,7 +161,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
-
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
     <!-- Form step init -->
     <script src="{{ asset('themes/js/plugins-init/jquery-steps-init.js')}}"></script>
     @elseif(request()->is("/"))  
@@ -192,8 +192,8 @@
             buttons: ['excel', 'pdf', {
             extend: 'print',
             text: 'Imprimer' // Renommer le bouton "Print" en "Imprimer"
-        }],
-            lengthMenu: [10, 20, 50, 100],// Options de sélection pour les éléments par page
+        },{extend:'colvis', text:"Visibilité"}],
+            lengthMenu: [10, 20, 50,75, 100],// Options de sélection pour les éléments par page
         });
 
     </script>
