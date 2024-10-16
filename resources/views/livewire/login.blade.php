@@ -26,7 +26,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <a href="page-forgot-password.html">Mot de passe oublié ?</a>
+                                            <a href="{{route('forget')}}">Mot de passe oublié ?</a>
                                         </div>
                                     </div>
                                     <div class="text-center">
