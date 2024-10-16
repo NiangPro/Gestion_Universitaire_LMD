@@ -39,6 +39,7 @@ class Etablissements extends Component
         $c = Campus::where("id", $id)->first();
         $this->camp = $c;
 
+
         $this->nom = $c->nom;
         $this->image = $c->image;
         $this->telephone = $c->tel;
@@ -87,8 +88,7 @@ class Etablissements extends Component
         // Réinitialiser les champs du formulaire après l'ajout
         $this->reset(["nom", "telephone", "adresse", "email"]);
 
-        // Afficher un message de succès
-        session()->flash('message', 'Campus ajouté avec succès!');
+        
         // Émettre un événement pour fermer le modal
         $this->dispatch('campusAdded');
     }
