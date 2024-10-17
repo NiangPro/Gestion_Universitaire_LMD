@@ -125,6 +125,6 @@ class Packs extends Component
     }
 
     public function mount(){
-        $this->deleteItem = Activation::where("nom", "packs")->first()->status;
+        $this->deleteItem = Activation::where("nom", "packs")->where("is_deleting", false)->first()->status;
     }
 }

@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('packs', function (Blueprint $table) {
+        Schema::create('departements', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->unsignedBigInteger("mensuel");
-            $table->unsignedBigInteger("annuel");
-            $table->unsignedInteger("limite");
-            $table->string("couleur");
-            $table->string("text");
-            $table->string("nom");
+            $table->string('nom')->unique();
+            $table->string('description')->nullable(); 
             $table->boolean("is_deleting")->default(false);
+            $table->unsignedBigInteger('campus_id')->nullable();
+            $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('packs');
+        Schema::dropIfExists('departements');
     }
 };

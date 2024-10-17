@@ -119,7 +119,7 @@ class AcademicYears extends Component
     public function render()
     {
         return view('livewire.anneeacademique.academic-years', [
-            "acs" => AcademicYear::where("campus_id", Auth::user()->campus_id)->orderBy("fin", "DESC")->get()
+            "acs" => AcademicYear::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->orderBy("fin", "DESC")->get()
         ]);
     }
 }

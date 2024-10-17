@@ -6,7 +6,7 @@
         <div class="card-body">
             <div id="accordion-ten" class="accordion accordion-header-shadow accordion-rounded">
                 @foreach($tables as $t)
-                    
+                    @if($t->nom != 'academic_years' && Auth()->user()->estSuperAdmin())
                     <div class="accordion__item" id="item_{{$t->id}}">
                         <div class="accordion__header accordion__header--success row">
                             <span class="col-md-9">{{ucfirst($t->nom)}}</span>
@@ -19,6 +19,7 @@
                             </span>
                         </div>
                     </div>
+                    @endif
                 @endforeach
             </div>
         </div>

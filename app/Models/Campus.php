@@ -17,6 +17,7 @@ class Campus extends Model
         "adresse",
         "email",
         "image",
+        "is_deleting",
         "statut",
         "date_fermeture",
         "pack_id"
@@ -48,5 +49,9 @@ class Campus extends Model
 
     public function academicYears(){
         return $this->hasMany(AcademicYear::class);
+    }
+
+    public function departements(){
+        return $this->hasMany(Departement::class);
     }
 }

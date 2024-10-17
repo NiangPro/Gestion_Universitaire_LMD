@@ -12,6 +12,7 @@ class Activation extends Model
     protected $table = "activations";
 
     protected $fillable = [
+        "is_deleting",
         "nom",
         "status"
     ];

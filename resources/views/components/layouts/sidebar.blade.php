@@ -22,6 +22,10 @@
                 <i class="fa fa-key"></i><span
                 class="nav-text">Activations</span>
             </a></li>
+            <li><a href="{{route('departement')}}" aria-expanded="false">
+                <i class="fa fa-recycle"></i><span
+                class="nav-text">Corbeille</span>
+            </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
@@ -34,6 +38,10 @@
                     
                 </ul>
             </li>
+            <li><a href="{{route('departement')}}" aria-expanded="false">
+                <i class="fa fa-university"></i><span
+                class="nav-text">Départements</span>
+            </a></li>
             <li><a href="{{route('academicyear')}}" aria-expanded="false">
                 <i class="fa fa-calendar"></i><span
                 class="nav-text">Années Académiques</span>
