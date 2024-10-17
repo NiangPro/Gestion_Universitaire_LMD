@@ -14,7 +14,7 @@ class AcademicYears extends Component
     public $title = "Liste des années académiques";
     public $status = "list";
 
-    public $debut, $fin;
+    public $debut, $fin,$id;
 
     protected $rules =[
         "debut" => "required|date",
@@ -28,6 +28,24 @@ class AcademicYears extends Component
         "fin.date" => "Veuillez entrer une date valide",
     ];
 
+    public function getInfo($id){
+        $ac = AcademicYear::where("id", $id)->first();
+
+        $this->changeStatus("edit");
+
+        $this->debut = $ac->debut;
+        $this->fin = $ac->fin;
+        $this->id = $ac->id;
+
+    }
+
+    public function supprimer($id){
+        $ac = AcademicYear::where("id", $id)->first();
+
+        $ac->delete();
+
+        $this->dispatch("delete");
+    }
 
     public function changeStatus($status){
         $this->status = $status;
@@ -39,6 +57,9 @@ class AcademicYears extends Component
         }else{
             $this->title = "Liste des années académiques";
         }
+
+        $this->reset(["debut", "fin", "id"]);
+
     }
 
     public function activer($id){
@@ -70,16 +91,26 @@ class AcademicYears extends Component
     public function store(){
         $this->validate();
 
-        AcademicYear::create([
-            "debut" => $this->debut,
-            "fin" => $this->fin,
-            "campus_id" => Auth::user()->campus_id,
-            "encours" => false
-        ]);
+        if ($this->id) {
+            $a = AcademicYear::where("id", $this->id)->first();
 
-        $this->dispatch("added");
+            $a->debut = $this->debut;
+            $a->fin = $this->fin;
 
-        $this->reset(["debut", "fin"]);
+            $a->save();
+
+            $this->dispatch("update");
+        }else{
+            AcademicYear::create([
+                "debut" => $this->debut,
+                "fin" => $this->fin,
+                "campus_id" => Auth::user()->campus_id,
+                "encours" => false
+            ]);
+    
+            $this->dispatch("added");
+        }
+
 
         $this->changeStatus("list");
     }

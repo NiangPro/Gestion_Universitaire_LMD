@@ -21,7 +21,7 @@
                     <div class="text-primary"> à {{ $m->receiver->prenom}} {{ $m->receiver->nom}}</div>
                     @endif
                     <div class="d-none d-md-block">{{ ucfirst(substr($m->content, 0, 30))}}...</div>
-                    <div class="d-none d-md-block">{{ date("d/m/Y à h:i", strtotime($m->created_at))}}</div>
+                    <div class="d-none d-md-block">{{ date("d/m/Y à H:i", strtotime($m->created_at))}}</div>
                 </a>
             </div>
         </div>

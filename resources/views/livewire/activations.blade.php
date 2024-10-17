@@ -6,6 +6,7 @@
         <div class="card-body">
             <div id="accordion-ten" class="accordion accordion-header-shadow accordion-rounded">
                 @foreach($tables as $t)
+                    
                     <div class="accordion__item" id="item_{{$t->id}}">
                         <div class="accordion__header accordion__header--success row">
                             <span class="col-md-9">{{ucfirst($t->nom)}}</span>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\SuperAdminEtAdminMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
 use App\Livewire\AcademicYears;
 use App\Livewire\Activations;

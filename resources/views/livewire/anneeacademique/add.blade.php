@@ -11,7 +11,10 @@
             <input type="date" wire:model='fin' class="form-control @error('fin') error @enderror" placeholder="Veuillez entrer la date de fermeture">
             @error('fin') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
-
+        @if($id)
+        <button type="submit" class="btn btn-warning">Modifier</button>
+        @else 
         <button type="submit" class="btn btn-success">Ajouter</button>
+        @endif 
     </form>
 </div>

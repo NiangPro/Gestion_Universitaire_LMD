@@ -33,7 +33,7 @@
                                             </p>
                                         </a>
                                     </div>
-                                    <span class="notify-time">{{ date("h\h:i\m\\n", strtotime($m->created_at))}}</span>
+                                    <span class="notify-time">{{ date("H\h:i\m\\n", strtotime($m->created_at))}}</span>
                                 </li>
                                 @endforeach
                             </ul>
