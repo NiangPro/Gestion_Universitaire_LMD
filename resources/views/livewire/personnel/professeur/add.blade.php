@@ -18,7 +18,12 @@
                 <input type="text" wire:model='nom' class="form-control @error('nom') error @enderror" placeholder="Veuillez entrer le prenom">
                 @error('nom') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-6">
+                <label><strong>Nom d'utilisateur</strong></label>
+                <input type="text" wire:model='username' class="form-control @error('username') error @enderror" placeholder="Veuillez entrer votre username">
+                @error('username') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+            <div class="form-group col-md-6">
                 <label><strong>Adresse</strong></label>
                 <input type="text" wire:model='adresse' class="form-control @error('adresse') error @enderror" placeholder="Veuillez entrer votre adresse">
                 @error('adresse') <span class="text-danger">{{ $message }}</span> @enderror

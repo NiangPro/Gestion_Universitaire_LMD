@@ -9,51 +9,82 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="example2" class="display" style="width:100%">
+                        <table id="myTable" class="display table-bordered" style="width:100%" wire:ignore.self>
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
+                                    <th>Prenom</th>
+                                    <th>Nom</th>
+                                    <th>Sexe</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Rôle</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Tiger Nixon</td>
-                                    <td>System Architect</td>
-                                    <td>Edinburgh</td>
-                                    <td>61</td>
-                                    <td>2011/04/25</td>
-                                    <td>$320,800</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                    <td>$170,750</td>
-                                </tr>
-                                <tr>
-                                    <td>Ashton Cox</td>
-                                    <td>Junior Technical Author</td>
-                                    <td>San Francisco</td>
-                                    <td>66</td>
-                                    <td>2009/01/12</td>
-                                    <td>$86,000</td>
-                                </tr>
+                                @foreach ($users as $p)
+                                    <tr>
+                                        <td>{{$p->prenom}}</td>
+                                        <td>{{$p->nom}}</td>
+                                        <td>{{$p->sexe}}</td>
+                                        <td>{{$p->tel}}</td>
+                                        <td>{{$p->adresse}}</td>
+                                        <td>{{$p->role}}</td>
+                                        <td>
+                                            <button type="button" wire:click='getProf({{$p->id}})' class="btn btn-sm btn-primary" title="Information"><i class="fa fa-eye"></i></button>
+                                            {{-- <button type="button" wire:click='delete({{$p->id}})' class="btn btn-sm btn-danger" title="Suppression"><i class="fa fa-trash"></i></button> --}}
+                                            <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalProf" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                            <div
+                                                class="modal fade"
+                                                id="modalProf"
+                                                tabindex="-1"
+                                                role="dialog"
+                                                aria-labelledby="modalTitleId"
+                                                aria-hidden="true"
+                                                >
+                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">
+                                                    Suppression
+                                                </h5>
+                                                <button
+                                                    type="button"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    aria-label="Close"
+                                                >&times;</button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                Êtes-vous sûr de vouloir supprimer?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-success"
+                                                    data-dismiss="modal"
+                                                >
+                                                    Non
+                                                </button>
+    
+                                                    <button type="button" wire:click='delete({{$p->id}})'  class="btn btn-danger">Oui</button>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
+                                    <th>Prenom</th>
+                                    <th>Nom</th>
+                                    <th>Sexe</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Rôle</th>
+                                    <th>Actions</th>
                                 </tr>
                             </tfoot>
                         </table>
