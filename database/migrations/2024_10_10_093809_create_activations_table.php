@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('activations', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string("nom");
+            $table->string("model");
             $table->integer("status")->default(0);
             $table->timestamps();
         });

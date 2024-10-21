@@ -95,7 +95,8 @@ class Etablissements extends Component
 
     public function delete($id){
         $c = Campus::where("id", $id)->first();
-        $c->delete();
+        $c->is_deleting = true;
+        $c->save();
 
         $this->dispatch("deleteCampus");
     }

@@ -22,7 +22,7 @@
                 <i class="fa fa-key"></i><span
                 class="nav-text">Activations</span>
             </a></li>
-            <li><a href="{{route('departement')}}" aria-expanded="false">
+            <li><a href="{{route('corbeille')}}" aria-expanded="false">
                 <i class="fa fa-recycle"></i><span
                 class="nav-text">Corbeille</span>
             </a></li>

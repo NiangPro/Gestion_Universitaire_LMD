@@ -44,9 +44,21 @@ class Outils extends Model
         foreach($tables as $t){
             if (!in_array($t->$nom, ["activations", "messages", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
                 $act = Activation::where("nom", $t->$nom)->first();
+
+                $trouve = strpos($t->$nom, "_");
+
+                if($trouve){
+                    $left = ucfirst(substr($t->$nom, 0, $trouve));
+                    $right = ucfirst(substr($t->$nom, $trouve+1, strlen($t->$nom)- ($trouve+2)));
+                    $model = $left.$right;
+                }else{
+                    $model = ucfirst(substr($t->$nom, 0, strlen($t->$nom) - 1));
+                }
+
                 if(!$act){
                     Activation::create([
-                        "nom" => $t->$nom
+                        "nom" => $t->$nom,
+                        "model"=> $model == "Campuse" ? "Campus" : $model
                     ]);
                 }
             }

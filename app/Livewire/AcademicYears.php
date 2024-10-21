@@ -42,7 +42,9 @@ class AcademicYears extends Component
     public function supprimer($id){
         $ac = AcademicYear::where("id", $id)->first();
 
-        $ac->delete();
+        $ac->is_deleting = true;
+
+        $ac->save();
 
         $this->dispatch("delete");
     }
