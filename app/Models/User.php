@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,6 +32,20 @@ class User extends Authenticatable
 
     public function campus(){
         return $this->belongsTo(Campus::class, "campus_id");
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    public function notRead(){
+        return $this->receivedMessages()->where("is_read", 0)->get();
     }
 
     /**
@@ -66,5 +79,20 @@ class User extends Authenticatable
     public function estAdmin()
     {
         return $this->role == "admin";
+    }
+
+    public function estParent()
+    {
+        return $this->role == "parent";
+    }
+
+    public function estEleve()
+    {
+        return $this->role == "eleve";
+    }
+
+    public function estProfesseur()
+    {
+        return $this->role == "professeur";
     }
 }

@@ -20,7 +20,7 @@
             </a></li>
             <li><a href="{{route('activation')}}" aria-expanded="false">
                 <i class="fa fa-key"></i><span
-                class="nav-text">Activation</span>
+                class="nav-text">Activations</span>
             </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
@@ -34,7 +34,15 @@
                     
                 </ul>
             </li>
+            <li><a href="{{route('academicyear')}}" aria-expanded="false">
+                <i class="fa fa-calendar"></i><span
+                class="nav-text">Années Académiques</span>
+            </a></li>
            @endif
+           <li><a href="{{route('message')}}" aria-expanded="false">
+                <i class="fa fa-envelope"></i><span
+                class="nav-text">Messages</span>
+            </a></li>
 
             <li class="nav-label">Apps</li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i

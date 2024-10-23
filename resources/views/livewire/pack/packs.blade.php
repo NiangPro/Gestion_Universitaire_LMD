@@ -94,7 +94,7 @@
     /* Custom styles for the pricing section */
     .pricing-section {
         background-color: #f5f5f5;
-        padding: 5px 0;
+        padding: 0px 0;
       }
       .card-pricing {
         border: none;

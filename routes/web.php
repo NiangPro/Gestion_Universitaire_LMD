@@ -1,15 +1,19 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
+use App\Livewire\AcademicYears;
 use App\Livewire\Activations;
 use App\Livewire\Dashboard;
 use App\Livewire\Etablissements;
 use App\Livewire\Etudiant;
 use App\Livewire\Home;
 use App\Livewire\Login;
+use App\Livewire\Messages;
 use App\Livewire\Nonacces;
 use App\Livewire\Packs;
 use App\Livewire\Parents;
+use App\Livewire\PasswordForget;
 use App\Livewire\Professeur;
 use App\Livewire\Register;
 use App\Livewire\Surveillant;
@@ -27,3 +31,6 @@ Route::get("/etudiants", Etudiant::class)->name("etudiant");
 Route::get("/parents", Parents::class)->name("parent");
 Route::get("/activations", Activations::class)->middleware(SuperAdminMiddleware::class)->name("activation");
 Route::get("/non_acces", Nonacces::class)->name("nonacces");
+Route::get("/message", Messages::class)->name("message");
+Route::get("/mot_de_passe_oublie", PasswordForget::class)->name("forget");
+Route::get("/annees_academiques", AcademicYears::class)->middleware(AdminMiddleware::class)->name("academicyear");

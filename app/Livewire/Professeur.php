@@ -21,7 +21,7 @@ class Professeur extends Component
         'nom' => 'required|string|max:255',
         'username' => 'required|string|max:255|unique:users,username',
         'adresse' => 'required|string|max:255',
-        'tel' => 'required',
+        'tel' => ['required', 'unique:users,tel', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
         'sexe' => 'required|in:Homme,Femme',
         'email' => 'required|email|unique:users,email',
         'campus_id' => 'required',
