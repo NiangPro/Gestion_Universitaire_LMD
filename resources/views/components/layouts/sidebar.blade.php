@@ -56,15 +56,9 @@
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                         class="fa fa-cog"></i><span class="nav-text">Parametres</span></a>
                 <ul aria-expanded="false">
-                    <li><a href="./app-profile.html">Profile</a></li>
-                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
-                        <ul aria-expanded="false">
-                            <li><a href="./email-compose.html">Compose</a></li>
-                            <li><a href="./email-inbox.html">Inbox</a></li>
-                            <li><a href="./email-read.html">Read</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="./app-calender.html">Calendar</a></li>
+                    <li><a href="{{route('profil')}}">Profil</a></li>
+                    
+                    <li><a href="./app-calender.html">Général</a></li>
                 </ul>
             </li>
         </ul>

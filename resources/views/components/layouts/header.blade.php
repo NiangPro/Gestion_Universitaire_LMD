@@ -43,7 +43,7 @@
                             <img src="{{asset('images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} {{ucfirst(Auth()->user()->nom)}} <i class="fa fa-chevron-down"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a href="./app-profile.html" class="dropdown-item">
+                            <a href="{{route('profil')}}" class="dropdown-item">
                                 <i class="icon-user"></i>
                                 <span class="ml-2">Profil</span>
                             </a>

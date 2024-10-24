@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\LoginMiddleware;
 use App\Http\Middleware\SuperAdminEtAdminMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
 use App\Livewire\AcademicYears;
@@ -18,24 +19,26 @@ use App\Livewire\Packs;
 use App\Livewire\Parents;
 use App\Livewire\PasswordForget;
 use App\Livewire\Professeur;
+use App\Livewire\Profil;
 use App\Livewire\Register;
 use App\Livewire\Surveillant;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", Home::class)->name("home");
 Route::get("/connexion", Login::class)->name("login");
-Route::get("/tableau_de_bord", Dashboard::class)->name("dashboard");
+Route::get("/tableau_de_bord", Dashboard::class)->middleware(LoginMiddleware::class)->name("dashboard");
 Route::get("/etablissements", Etablissements::class)->middleware(SuperAdminMiddleware::class)->name("etablissement");
-Route::get("/professeurs", Professeur::class)->name("professeur");
+Route::get("/professeurs", Professeur::class)->middleware(LoginMiddleware::class)->name("professeur");
 Route::get("/packs", Packs::class)->middleware(SuperAdminMiddleware::class)->name("pack");
 Route::get("/inscription/{id}", Register::class)->name("register");
-Route::get("/surveillants", Surveillant::class)->name("surveillant");
-Route::get("/etudiants", Etudiant::class)->name("etudiant");
-Route::get("/parents", Parents::class)->name("parent");
+Route::get("/surveillants", Surveillant::class)->middleware(LoginMiddleware::class)->name("surveillant");
+Route::get("/etudiants", Etudiant::class)->middleware(LoginMiddleware::class)->name("etudiant");
+Route::get("/parents", Parents::class)->middleware(LoginMiddleware::class)->name("parent");
 Route::get("/activations", Activations::class)->middleware(SuperAdminMiddleware::class)->name("activation");
 Route::get("/corbeille", Corbeille::class)->middleware(SuperAdminMiddleware::class)->name("corbeille");
 Route::get("/non_acces", Nonacces::class)->name("nonacces");
-Route::get("/message", Messages::class)->name("message");
+Route::get("/message", Messages::class)->middleware(LoginMiddleware::class)->name("message");
 Route::get("/mot_de_passe_oublie", PasswordForget::class)->name("forget");
 Route::get("/annees_academiques", AcademicYears::class)->middleware(AdminMiddleware::class)->name("academicyear");
 Route::get("/departements", Departements::class)->middleware(AdminMiddleware::class)->name("departement");
+Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");

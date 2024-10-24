@@ -46,7 +46,7 @@ class Professeur extends Component
 
     public function delete($id){
         $p = User::where("id", $id)->first();
-        $c->delete();
+        $p->delete();
 
         $this->dispatch("deleteCampus");
     }
