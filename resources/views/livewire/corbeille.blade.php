@@ -10,7 +10,7 @@
                     <div class="accordion__item">
                         <div class="accordion__header collapsed accordion__header--primary" data-toggle="collapse" data-target="#header-shadow_collapse{{$t->id}}" aria-expanded="false">
                             <span class="accordion__header--icon"></span>
-                            <span class="accordion__header--text">@if($t->nom == "academic_years") Année académique @else {{ucfirst($t->model)}} @endif</span>
+                            <span class="accordion__header--text">@if($t->nom == "academic_years") Année académique @else {{ucfirst($t->model)}} @endif @if(count($this->getDeletedItems($t->model)) > 0) <span class="badge text-white bg-danger">{{count($this->getDeletedItems($t->model))}}</span> @endif</span>
                             <span class="accordion__header--indicator"></span>
                         </div>
                         <div id="header-shadow_collapse{{$t->id}}" class="accordion__body collapse" data-parent="#accordion-ten" style="">
@@ -39,14 +39,52 @@
                                                 </td>
                                                 <td>
                                                     <button wire:click='restaurer("{{$t->model}}", {{$e->id}})' class="btn btn-rounded btn-outline-success">Restaurer</button>
-                                                    <button class="btn btn-rounded btn-outline-danger">Supprimer définitivement</button>
+                                                    <button class="btn btn-rounded btn-outline-danger"  data-toggle="modal" data-target="#modalId{{$e->id}}">Supprimer définitivement</button>
+                                                     <!-- Modal -->
+                                                    <div
+                                                        class="modal fade modalId"
+                                                        id="modalId{{$e->id}}"
+                                                        tabindex="-1"
+                                                        role="dialog"
+                                                        aria-labelledby="modalTitleId"
+                                                        aria-hidden="true"
+                                                    >
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalTitleId" >
+                                                                Suppression
+                                                                </h5>
+                                                                <button
+                                                                type="button"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                aria-label="Close"
+                                                                >&times;</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Voulez-vous vraiment supprimer cet élément de façon permanente?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                type="button"
+                                                                class="btn btn-success"
+                                                                data-dismiss="modal"
+                                                                >
+                                                                Non
+                                                                </button>
+                                                                <button type="button" wire:click='supprimer({{$e->id}})'  class="btn btn-danger">Oui</button>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                     @else 
-                                    Aucun élément a supprimé
+                                    Aucun élément supprimé
                                 @endif
                             </div>
                         </div>

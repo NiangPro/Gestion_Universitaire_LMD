@@ -32,8 +32,7 @@
                                     <td>{{ $a->description}}</td>
                                     <td>
                                         <button type="button" wire:click='getInfo({{$a->id}})' class="btn btn-sm btn-primary" title="Information"><i class="fa fa-eye"></i></button>
-                                        <button type="button" data-toggle="modal"
-                                        data-target="#modalId{{$a->id}}" class="btn  btn-danger "><i class="fa fa-trash"></i></button>
+                                        <button type="button" data-toggle="modal" data-target="#modalId{{$a->id}}" class="btn  btn-danger "><i class="fa fa-trash"></i></button>
                                         <!-- Button trigger modal -->
                                         
                                         <!-- Modal -->
