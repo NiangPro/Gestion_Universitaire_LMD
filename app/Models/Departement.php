@@ -5,23 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pack extends Model
+class Departement extends Model
 {
     use HasFactory;
 
-    protected $table = "packs";
+    protected $table = "departements";
 
     protected $fillable = [
         "nom",
-        "mensuel",
-        "annuel",
-        "limite",
-        "text",
         "is_deleting",
-        "couleur"
+        "description",
+        "campus_id",
     ];
 
-    public function campuses(){
-        return $this->hasMany(Campus::class);
+    public function campus(){
+        return $this->belongsTo(Campus::class, "campus_id");
     }
 }

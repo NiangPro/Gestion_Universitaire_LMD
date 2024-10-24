@@ -95,7 +95,8 @@ class Etablissements extends Component
 
     public function delete($id){
         $c = Campus::where("id", $id)->first();
-        $c->delete();
+        $c->is_deleting = true;
+        $c->save();
 
         $this->dispatch("deleteCampus");
     }
@@ -104,7 +105,7 @@ class Etablissements extends Component
     public function render()
     {
         return view('livewire.campus.etablissements', [
-            "camps" => Campus::orderBy("id", "DESC")->get()
+            "camps" => Campus::where("is_deleting", false)->orderBy("id", "DESC")->get()
         ]);
     }
 

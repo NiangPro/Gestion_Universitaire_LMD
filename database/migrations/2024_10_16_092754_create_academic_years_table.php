@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date("debut");
             $table->date("fin");
             $table->boolean("encours")->default(false);
+            $table->boolean("is_deleting")->default(false);
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();

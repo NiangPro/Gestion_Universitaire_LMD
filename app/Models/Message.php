@@ -12,7 +12,7 @@ class Message extends Model
     protected $table = "messages";
 
     protected $fillable = ['sender_id', 'receiver_id', 'content', 'titre', 'image', 'is_read', 
-    'is_favorite_sender', 'is_favorite_receiver'];
+    'is_favorite_sender','is_deleting', 'is_favorite_receiver'];
 
     public function sender()
     {

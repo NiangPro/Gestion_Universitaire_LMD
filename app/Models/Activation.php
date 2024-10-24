@@ -13,6 +13,7 @@ class Activation extends Model
 
     protected $fillable = [
         "nom",
-        "status"
+        "status",
+        "model",
     ];
 }

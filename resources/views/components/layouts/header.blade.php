@@ -5,13 +5,9 @@
                 <div class="header-left">
                     <div class="search_bar dropdown">
                         <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
-                            <i class="mdi mdi-magnify"></i>
+                            <i class="fa fa-lightbulb-o"></i>
                         </span>
-                        <div class="dropdown-menu p-0 m-0">
-                            <form>
-                                <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-                            </form>
-                        </div>
+                        
                     </div>
                 </div>
 
@@ -33,7 +29,7 @@
                                             </p>
                                         </a>
                                     </div>
-                                    <span class="notify-time">{{ date("h\h:i\m\\n", strtotime($m->created_at))}}</span>
+                                    <span class="notify-time">{{ date("H\h:i\m\\n", strtotime($m->created_at))}}</span>
                                 </li>
                                 @endforeach
                             </ul>

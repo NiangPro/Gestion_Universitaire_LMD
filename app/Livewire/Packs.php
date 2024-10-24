@@ -49,7 +49,9 @@ class Packs extends Component
 
     public function delete($id){
         $pack = Pack::where("id", $id)->first();
-        $pack->delete();
+        $pack->is_deleting = true;
+
+        $pack->save();
 
         $this->dispatch("deletePack");
     }
@@ -116,7 +118,7 @@ class Packs extends Component
     public function render()
     {
         return view('livewire.pack.packs', [
-            "pks" => Pack::orderBy("annuel", "asc")->get()
+            "pks" => Pack::where("is_deleting", false)->orderBy("annuel", "asc")->get()
         ]);
     }
 

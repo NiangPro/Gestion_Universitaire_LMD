@@ -1,10 +1,4 @@
 <div>
-    <!-- Afficher le message de succès -->
-    @if (session()->has('message'))
-    <div class="alert alert-success">
-        {{ session('message') }}
-    </div>
-    @endif
     <div class="card">
         <div class="card-header row">
             <h1 class="card-title col-md-10">{{$title}}</h1>

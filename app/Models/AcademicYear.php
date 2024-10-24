@@ -15,6 +15,7 @@ class AcademicYear extends Model
         "debut",
         "fin",
         "encours",
+        "is_deleting",
         "campus_id"
     ];
 

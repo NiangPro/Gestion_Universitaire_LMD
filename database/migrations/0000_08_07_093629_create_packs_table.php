@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("couleur");
             $table->string("text");
             $table->string("nom");
+            $table->boolean("is_deleting")->default(false);
             $table->timestamps();
         });
     }
