@@ -34,6 +34,12 @@ class Corbeille extends Component
             $c->is_deleting = false;
 
             $c->save();
+        }elseif($model == "Departement"){
+            $c = Departement::where("id", $id)->first();
+            
+            $c->is_deleting = false;
+
+            $c->save();
         }
         $this->dispatch("restore");
     }
@@ -51,6 +57,23 @@ class Corbeille extends Component
             return User::where("is_deleting", true)->orderBy("id", "DESC")->get();
         }
         return $table::where("is_deleting", true)->orderBy("id", "DESC")->get();
+    }
+
+    public function supprimer($model, $id){
+        if ($model == "AcademicYear") {
+            $ac = AcademicYear::where("id", $id)->first();
+            $ac->delete();
+        }elseif($model == "Campus"){
+            $c = Campus::where("id", $id)->first();
+            $c->delete();
+        }elseif($model == "Pack"){
+            $c = Pack::where("id", $id)->first();
+            $c->delete();
+        }elseif($model == "Departement"){
+            $c = Departement::where("id", $id)->first();
+            $c->delete();
+        }
+        $this->dispatch("delete");
     }
 
     #[Layout("components.layouts.app")]

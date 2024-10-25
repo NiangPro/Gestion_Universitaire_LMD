@@ -15,7 +15,7 @@ class Home extends Component
     public function render()
     {
         return view('livewire.home', [
-            "packs" => Pack::orderBy("annuel", "ASC")->get()
+            "packs" => Pack::where("is_deleting", false)->orderBy("annuel", "ASC")->get()
         ]);
     }
 

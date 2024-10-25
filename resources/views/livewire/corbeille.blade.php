@@ -7,6 +7,7 @@
             <div id="accordion-ten" class="accordion accordion-header-shadow accordion-rounded">
                
                     @foreach($tables as $t)
+                    {{-- @if($t->model != "Departement") --}}
                     <div class="accordion__item">
                         <div class="accordion__header collapsed accordion__header--primary" data-toggle="collapse" data-target="#header-shadow_collapse{{$t->id}}" aria-expanded="false">
                             <span class="accordion__header--icon"></span>
@@ -73,7 +74,7 @@
                                                                 >
                                                                 Non
                                                                 </button>
-                                                                <button type="button" wire:click='supprimer({{$e->id}})'  class="btn btn-danger">Oui</button>
+                                                                <button type="button" wire:click='supprimer("{{$t->model}}",{{$e->id}})'  class="btn btn-danger">Oui</button>
                                                             </div>
                                                             </div>
                                                         </div>
@@ -89,6 +90,7 @@
                             </div>
                         </div>
                     </div>
+                    {{-- @endif --}}
                     @endforeach
                
             </div>
@@ -109,6 +111,15 @@
         iziToast.success({
         title: 'Restauration',
         message: 'avec succes',
+        position: 'topRight'
+        });
+    });
+
+    window.addEventListener('delete', event =>{
+        $('.modalId').modal('hide');
+        iziToast.warning({
+        title: 'Elément',
+        message: 'Supprimé avec succes',
         position: 'topRight'
         });
     });
