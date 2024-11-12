@@ -74,7 +74,6 @@ class Packs extends Component
     {
         // Valider les données
         $this->validate();
-        dd($this->id);
         if ($this->id) {
             $p = Pack::where("id", $this->id)->first();
             
