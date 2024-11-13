@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departements', function (Blueprint $table) {
+        Schema::create('niveau_etudes', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string('nom')->unique();
-            $table->string('description')->nullable(); 
+            $table->string("nom");
             $table->boolean("is_deleting")->default(false);
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references("id")->on("users")->onDelete("cascade");
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('departements');
+        Schema::dropIfExists('niveau_etudes');
     }
 };

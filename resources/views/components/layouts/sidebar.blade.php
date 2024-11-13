@@ -46,6 +46,21 @@
                 <i class="fa fa-calendar"></i><span
                 class="nav-text">Années Académiques</span>
             </a></li>
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                class="fa fa-graduation-cap"></i><span class="nav-text">Gestion Notes</span></a>
+                <ul aria-expanded="false">
+                    <li><a href="{{route('niveauetude')}}">Niveaux d'étude</a></li>
+                    <li><a href="{{route('filiere')}}">Filières</a></li>
+                    <li><a href="{{route('etudiant')}}">U.E</a></li>
+                    <li><a href="{{route('parent')}}">Matières</a></li>
+                    <li><a href="{{route('parent')}}">Bulletins</a></li>
+                    
+                </ul>
+            </li>
+            <li><a href="{{route('academicyear')}}" aria-expanded="false">
+                <i class="fa fa-users"></i><span
+                class="nav-text">Etudiants</span>
+            </a></li>
            @endif
            <li><a href="{{route('message')}}" aria-expanded="false">
                 <i class="fa fa-envelope"></i><span

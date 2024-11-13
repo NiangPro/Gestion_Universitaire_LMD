@@ -54,4 +54,20 @@ class Campus extends Model
     public function departements(){
         return $this->hasMany(Departement::class);
     }
+
+    public function filieres(){
+        return $this->hasMany(Filiere::class);
+    }
+
+    public function niveauxEtudes(){
+        return $this->hasMany(NiveauEtude::class);
+    }
+
+    public function uniteEnseignements(){
+        return $this->hasMany(UniteEnseignement::class);
+    }
+
+    public function matieres(){
+        return $this->hasMany(Matiere::class);
+    }
 }
