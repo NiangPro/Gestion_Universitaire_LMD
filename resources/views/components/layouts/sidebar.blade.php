@@ -51,8 +51,8 @@
                 <ul aria-expanded="false">
                     <li><a href="{{route('niveauetude')}}">Niveaux d'étude</a></li>
                     <li><a href="{{route('filiere')}}">Filières</a></li>
-                    <li><a href="{{route('etudiant')}}">U.E</a></li>
-                    <li><a href="{{route('parent')}}">Matières</a></li>
+                    <li><a href="{{route('uniteenseignement')}}">U.E</a></li>
+                    <li><a href="{{route('matiere')}}">Matières</a></li>
                     <li><a href="{{route('parent')}}">Bulletins</a></li>
                     
                 </ul>

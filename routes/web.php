@@ -14,6 +14,7 @@ use App\Livewire\Etudiant;
 use App\Livewire\Filieres;
 use App\Livewire\Home;
 use App\Livewire\Login;
+use App\Livewire\Matieres;
 use App\Livewire\Messages;
 use App\Livewire\NiveauEtudes;
 use App\Livewire\Nonacces;
@@ -24,6 +25,7 @@ use App\Livewire\Professeur;
 use App\Livewire\Profil;
 use App\Livewire\Register;
 use App\Livewire\Surveillant;
+use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", Home::class)->name("home");
@@ -45,4 +47,6 @@ Route::get("/annees_academiques", AcademicYears::class)->middleware(AdminMiddlew
 Route::get("/departements", Departements::class)->middleware(AdminMiddleware::class)->name("departement");
 Route::get("/filieres", Filieres::class)->middleware(AdminMiddleware::class)->name("filiere");
 Route::get("/niveaux_etudes", NiveauEtudes::class)->middleware(AdminMiddleware::class)->name("niveauetude");
+Route::get("/niveaux_etudes", UniteEnseignements::class)->middleware(AdminMiddleware::class)->name("uniteenseignement");
+Route::get("/niveaux_etudes", Matieres::class)->middleware(AdminMiddleware::class)->name("matiere");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");
