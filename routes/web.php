@@ -11,9 +11,11 @@ use App\Livewire\Dashboard;
 use App\Livewire\Departements;
 use App\Livewire\Etablissements;
 use App\Livewire\Etudiant;
+use App\Livewire\Filieres;
 use App\Livewire\Home;
 use App\Livewire\Login;
 use App\Livewire\Messages;
+use App\Livewire\NiveauEtudes;
 use App\Livewire\Nonacces;
 use App\Livewire\Packs;
 use App\Livewire\Parents;
@@ -41,4 +43,6 @@ Route::get("/message", Messages::class)->middleware(LoginMiddleware::class)->nam
 Route::get("/mot_de_passe_oublie", PasswordForget::class)->name("forget");
 Route::get("/annees_academiques", AcademicYears::class)->middleware(AdminMiddleware::class)->name("academicyear");
 Route::get("/departements", Departements::class)->middleware(AdminMiddleware::class)->name("departement");
+Route::get("/filieres", Filieres::class)->middleware(AdminMiddleware::class)->name("filiere");
+Route::get("/niveaux_etudes", NiveauEtudes::class)->middleware(AdminMiddleware::class)->name("niveauetude");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");

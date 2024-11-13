@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('role');
             $table->string('sexe')->nullable();
             $table->string('adresse')->nullable();
+            $table->string('matricule')->nullable();
             $table->string('image')->nullable();
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
