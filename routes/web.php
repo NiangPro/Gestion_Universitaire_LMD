@@ -47,6 +47,6 @@ Route::get("/annees_academiques", AcademicYears::class)->middleware(AdminMiddlew
 Route::get("/departements", Departements::class)->middleware(AdminMiddleware::class)->name("departement");
 Route::get("/filieres", Filieres::class)->middleware(AdminMiddleware::class)->name("filiere");
 Route::get("/niveaux_etudes", NiveauEtudes::class)->middleware(AdminMiddleware::class)->name("niveauetude");
-Route::get("/niveaux_etudes", UniteEnseignements::class)->middleware(AdminMiddleware::class)->name("uniteenseignement");
-Route::get("/niveaux_etudes", Matieres::class)->middleware(AdminMiddleware::class)->name("matiere");
+Route::get("/unite_enseignement", UniteEnseignements::class)->middleware(AdminMiddleware::class)->name("uniteenseignement");
+Route::get("/matieres", Matieres::class)->middleware(AdminMiddleware::class)->name("matiere");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");
