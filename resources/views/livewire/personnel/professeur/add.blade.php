@@ -47,17 +47,7 @@
                 <input type="email" wire:model='email' class="form-control @error('email') error @enderror" placeholder="Veuillez entrer votre email">
                 @error('email') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
-            <div class="form-group col-md-6">
-                <label><strong>Campus</strong></label>
-                <select class="form-control @error('campus_id') error @enderror" wire:model='campus_id'>
-                    <option>Veuillez selectionner votre campus</option>
-                    @foreach ($campus as $c)
-                        <option value="{{$c->id}}">{{$c->nom}}</option>
-                    @endforeach
-                    
-                </select>
-                @error('campus_id') <span class="text-danger">{{ $message }}</span> @enderror
-            </div>
+            
         </div>
         @if($status == 'edit')
         <button type="submit" class="btn btn-warning">Modifier</button>

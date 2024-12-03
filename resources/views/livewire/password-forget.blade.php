@@ -24,6 +24,9 @@
                                             <button type="submit" class="btn btn-primary btn-block">Recevoir code</button>
                                         </div>
                                     </form>
+                                    <div class="new-account mt-3">
+                                        <p>Retour à la page de <a class="text-primary" href="{{ route('login') }}">Connexion</a></p>
+                                    </div>
                                 @else
                                     <h4 class="text-center mb-4">Entrer le code envoyer par email</h4>
                                     <form wire:submit.prevent="isExact">
@@ -35,6 +38,9 @@
                                             <button type="submit" class="btn btn-primary btn-block">Vérifier</button>
                                         </div>
                                     </form>
+                                    <div class="new-account mt-3">
+                                        <p>Retour à la page de <a class="text-primary" href="{{ route('login') }}">Connexion</a></p>
+                                    </div>
                                 @endif
                             @else
                                 <h4 class="text-center mb-4">Changement mot de passe</h4>
@@ -53,6 +59,9 @@
                                         <button type="submit" class="btn btn-primary btn-block">Changer</button>
                                     </div>
                                 </form>
+                                <div class="new-account mt-3">
+                                    <p>Retour à la page de <a class="text-primary" href="{{ route('login') }}">Connexion</a></p>
+                                </div>
                             @endif
                             </div>
                         </div>

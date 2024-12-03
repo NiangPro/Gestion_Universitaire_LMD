@@ -14,7 +14,7 @@
                                 <tr>
                                     <th>Prenom</th>
                                     <th>Nom</th>
-                                    <th>Sexe</th>
+                                    <th>Email</th>
                                     <th>Téléphone</th>
                                     <th>Adresse</th>
                                     <th>Rôle</th>
@@ -26,7 +26,7 @@
                                     <tr>
                                         <td>{{$p->prenom}}</td>
                                         <td>{{$p->nom}}</td>
-                                        <td>{{$p->sexe}}</td>
+                                        <td>{{$p->email}}</td>
                                         <td>{{$p->tel}}</td>
                                         <td>{{$p->adresse}}</td>
                                         <td>{{$p->role}}</td>

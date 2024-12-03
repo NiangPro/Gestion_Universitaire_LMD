@@ -57,11 +57,11 @@
                     
                 </ul>
             </li>
-            <li><a href="{{route('academicyear')}}" aria-expanded="false">
+            <li><a href="" aria-expanded="false">
                 <i class="fa fa-users"></i><span
                 class="nav-text">Etudiants</span>
             </a></li>
-            <li><a href="{{route('academicyear')}}" aria-expanded="false">
+            <li><a href="" aria-expanded="false">
                 <i class="fa fa-times-circle text-danger"></i><span
                 class="nav-text">Accès</span>
             </a></li>
