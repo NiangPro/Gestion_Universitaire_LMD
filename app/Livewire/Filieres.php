@@ -14,6 +14,7 @@ class Filieres extends Component
 {
     public $status = "list";
     public $title= "Liste des filières";
+    public $outil;
     public $id, $nom, $departement_id;
 
     protected $rules =[
@@ -57,6 +58,9 @@ class Filieres extends Component
 
         $ac->save();
 
+        $this->outil->addHistorique("Suppression d'un filière", "edit");
+
+
         $this->dispatch("delete");
     }
 
@@ -70,6 +74,7 @@ class Filieres extends Component
             $a->departement_id = $this->departement_id;
 
             $a->save();
+            $this->outil->addHistorique("Mis à jour des données d'un filière", "edit");
 
             $this->dispatch("update");
         }else{
@@ -79,6 +84,8 @@ class Filieres extends Component
                 "campus_id" => Auth::user()->campus_id
             ]);
     
+            $this->outil->addHistorique("Ajout d'un filière", "add");
+
             $this->dispatch("added");
         }
 

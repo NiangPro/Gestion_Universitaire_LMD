@@ -70,4 +70,8 @@ class Campus extends Model
     public function matieres(){
         return $this->hasMany(Matiere::class);
     }
+
+    public function historiques(){
+        return $this->hasMany(Historique::class);
+    }
 }

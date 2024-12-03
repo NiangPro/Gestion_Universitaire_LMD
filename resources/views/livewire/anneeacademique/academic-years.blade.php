@@ -140,4 +140,13 @@
             position: 'topRight'
         });
     });
+
+    window.addEventListener('lessdate', event =>{
+        $('.modalId').modal('hide');
+        iziToast.warning({
+            title: 'Année académique',
+            message: 'La date de fin doit être supérieure d\'au moins 6 mois à la date de début.',
+            position: 'topRight'
+        });
+    });
 </script>
