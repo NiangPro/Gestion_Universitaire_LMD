@@ -17,7 +17,7 @@ class PasswordForget extends Component
     public $trouve=false;
     public $idUser;
     public $code;
-    public $trouveCode=false;
+    public $trouveCode=false, $trouveMail =true, $trouveTest =true;
     public $form = [
         'email' => "",
         'tel' => "",
@@ -83,13 +83,17 @@ class PasswordForget extends Component
 
     public function isExiste(){
         $this->validate([
-            'form.email' => 'required|email'
+            'form.email' => 'required|email',
         ]);
         $istrue  = false;
         $user = User::orderBy("id", "ASC")->get();
         foreach ($user as $key => $value) { 
             if(strtolower($value->email) == strtolower($this->form['email']) && strtolower($value->tel) == strtolower($this->form['tel'])) {
                 $istrue = true;
+            }else if(strtolower($value->email) != strtolower($this->form['email'])) {
+                $this->trouveMail  = false;
+            } else if(strtolower($value->tel) != strtolower($this->form['tel'])) {
+                $this->trouveTel  = false;
             }
         }
         return $istrue;
@@ -109,7 +113,11 @@ class PasswordForget extends Component
 
             $this->dispatch('sendCode');
         }else{
-            $this->dispatch('errorLogin');
+            if(!$this->trouveMail){
+                $this->dispatch('errorMail');
+            }if(!$this->trouveTel){
+                $this->dispatch('errorTel');
+            }
         }
         // return "Email envoyé avec succés!";
     }

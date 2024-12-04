@@ -76,17 +76,6 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Prenom</th>
-                                    <th>Nom</th>
-                                    <th>Sexe</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Rôle</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>

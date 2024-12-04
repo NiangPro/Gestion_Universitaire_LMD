@@ -66,10 +66,18 @@
 
 @section('script')
     <script>
-       window.addEventListener('errorLogin', event =>{
+       window.addEventListener('errorMail', event =>{
           iziToast.error({
           title: 'Verification',
           message: 'Email incorrecte',
+          position: 'topRight'
+          });
+      });
+
+       window.addEventListener('errorTel', event =>{
+          iziToast.error({
+          title: 'Verification',
+          message: 'Téléphone incorrecte',
           position: 'topRight'
           });
       });

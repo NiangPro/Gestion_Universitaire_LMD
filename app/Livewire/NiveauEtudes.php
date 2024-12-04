@@ -8,6 +8,6 @@ class NiveauEtudes extends Component
 {
     public function render()
     {
-        return view('livewire.niveau-etudes');
+        return view('livewire.niveau.niveau-etudes');
     }
 }
