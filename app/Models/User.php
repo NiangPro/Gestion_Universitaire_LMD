@@ -29,7 +29,8 @@ class User extends Authenticatable
         'email',
         'password',
         "is_deleting",
-        'acces'
+        'acces',
+        'statut',
     ];
 
     public function campus(){

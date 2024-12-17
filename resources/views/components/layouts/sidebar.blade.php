@@ -57,7 +57,11 @@
                     
                 </ul>
             </li>
-            <li><a href="" aria-expanded="false">
+            <li><a href="{{route('cours')}}" aria-expanded="false">
+                <i class="fa fa-laptop"></i><span
+                class="nav-text">Cours</span>
+            </a></li>
+            <li><a href="{{route('etudiant')}}" aria-expanded="false">
                 <i class="fa fa-users"></i><span
                 class="nav-text">Etudiants</span>
             </a></li>
