@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements("id");
             $table->string("nom");
             $table->unsignedInteger("coef");
+            $table->unsignedInteger("credit")->default(0);
             $table->boolean("is_deleting")->default(false);
             $table->unsignedBigInteger('filiere_id')->nullable();
             $table->foreign('filiere_id')->references("id")->on("filieres")->onDelete("cascade");

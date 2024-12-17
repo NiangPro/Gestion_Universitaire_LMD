@@ -15,6 +15,7 @@ class Matiere extends Model
         "nom",
         "is_deleting",
         "coef",
+        "credit",
         "filiere_id",
         "campus_id",
     ];
