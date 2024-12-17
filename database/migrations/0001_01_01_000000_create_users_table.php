@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('tel')->unique();
             $table->string('email')->unique();
             $table->integer('acces')->default(1);
+            $table->integer('statut')->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->boolean("is_deleting")->default(false);

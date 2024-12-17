@@ -12,6 +12,9 @@ class Outils extends Model
 {
     use HasFactory;
 
+    public function anneeAcademique(){
+        return AcademicYear::where("campus_id", Auth::user()->campus_id)->where("encours", true)->first()?:null;
+    }
     public function addHistorique($description, $type){
         $agent = new Agent();
 
@@ -44,6 +47,15 @@ class Outils extends Model
                 "adresse" => "PA U17",
                 "password" => '$2y$12$t89ESRTMVlScrILmxeD0NuAZcGYMRdIZ2.xCFXe60fw4vBwhshjT6',
             ]);
+        }
+
+        $se = Semaine::get();
+
+        if (!$se) {
+            $tab = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+            foreach ($tab as $val) {
+                Semaine::create(["nom" => $val]);
+            }
         }
     }
 
