@@ -6,10 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Jenssegers\Agent\Agent;
 
 class Outils extends Model
 {
     use HasFactory;
+
+    public function addHistorique($description, $type){
+        $agent = new Agent();
+
+        $navigateur = $agent->browser();
+        $version = $agent->version($navigateur);
+        $os = $agent->platform();
+
+        Historique::create([
+            'user_id' => Auth::user()->id,
+            'type' => $type,
+            'description' => $description,
+            'ip' => request()->ip(),
+            'navigateur' => "$navigateur $version ($os)",
+            'campus_id' => Auth::user()->campus_id
+        ]);
+    }
 
     public function createSuperAdmin(){
         $user = User::where("role", "superadmin")->first();
@@ -42,7 +60,7 @@ class Outils extends Model
         $nom = "Tables_in_".$databaseName;
 
         foreach($tables as $t){
-            if (!in_array($t->$nom, ["activations", "messages", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
+            if (!in_array($t->$nom, ["historiques","activations", "messages", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
                 $act = Activation::where("nom", $t->$nom)->first();
 
                 $trouve = strpos($t->$nom, "_");

@@ -97,4 +97,8 @@ class User extends Authenticatable
     {
         return $this->role == "professeur";
     }
+
+    public function historiques(){
+        return $this->hasMany(Historique::class);
+    }
 }

@@ -14,7 +14,7 @@
                                 <tr>
                                     <th>Prenom</th>
                                     <th>Nom</th>
-                                    <th>Sexe</th>
+                                    <th>Email</th>
                                     <th>Téléphone</th>
                                     <th>Adresse</th>
                                     <th>Rôle</th>
@@ -26,7 +26,7 @@
                                     <tr>
                                         <td>{{$p->prenom}}</td>
                                         <td>{{$p->nom}}</td>
-                                        <td>{{$p->sexe}}</td>
+                                        <td>{{$p->email}}</td>
                                         <td>{{$p->tel}}</td>
                                         <td>{{$p->adresse}}</td>
                                         <td>{{$p->role}}</td>
@@ -42,34 +42,33 @@
                                                 aria-labelledby="modalTitleId"
                                                 aria-hidden="true"
                                                 >
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                <h5 class="modal-title" id="modalTitleId">
-                                                    Suppression
-                                                </h5>
-                                                <button
-                                                    type="button"
-                                                    class="close"
-                                                    data-dismiss="modal"
-                                                    aria-label="Close"
-                                                >&times;</button>
-                                                </div>
-                                                <div class="modal-body text-center">
-                                                Êtes-vous sûr de vouloir supprimer?
-                                                </div>
-                                                <div class="modal-footer">
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-success"
-                                                    data-dismiss="modal"
-                                                >
-                                                    Non
-                                                </button>
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalTitleId">
+                                                        Suppression
+                                                    </h5>
+                                                    <button
+                                                        type="button"
+                                                        class="close"
+                                                        data-dismiss="modal"
+                                                        aria-label="Close"
+                                                    >&times;</button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                    Êtes-vous sûr de vouloir supprimer?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-success"
+                                                        data-dismiss="modal">
+                                                        Non
+                                                    </button>
     
                                                     <button type="button" wire:click='delete({{$p->id}})'  class="btn btn-danger">Oui</button>
                                                 </div>
-                                            </div>
+                                                </div>
                                             </div>
                                         </div>
                                         </td>
@@ -104,5 +103,6 @@
         position: 'topRight'
         });
     });
+
     </script>
 @endsection

@@ -57,11 +57,22 @@
                     
                 </ul>
             </li>
-            <li><a href="{{route('academicyear')}}" aria-expanded="false">
+            <li><a href="" aria-expanded="false">
                 <i class="fa fa-users"></i><span
                 class="nav-text">Etudiants</span>
             </a></li>
+            <li><a href="" aria-expanded="false">
+                <i class="fa fa-times-circle text-danger"></i><span
+                class="nav-text">Accès</span>
+            </a></li>
+            
            @endif
+           @if(Auth()->user()->estSuperAdmin() || Auth()->user()->estAdmin())
+           <li><a href="{{route('historique')}}" aria-expanded="false">
+                <i class="fa fa-history"></i><span
+                class="nav-text">Historiques</span>
+            </a></li>
+            @endif
            <li><a href="{{route('message')}}" aria-expanded="false">
                 <i class="fa fa-envelope"></i><span
                 class="nav-text">Messages</span>

@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Matiere extends Model
+class Historique extends Model
 {
     use HasFactory;
 
-    protected $table = "matieres";
+    protected $table = "historiques";
 
     protected $fillable = [
-        "nom",
-        "is_deleting",
-        "coef",
-        "filiere_id",
+        "type",
+        "description",
+        "ip",
+        "navigateur",
+        "user_id",
         "campus_id",
     ];
 
-
-    public function filiere(){
-        return $this->belongsTo(Filiere::class, "filiere_id");
+    public function user(){
+        return $this->belongsTo(User::class, "user_id");
     }
 
     public function campus(){

@@ -17,7 +17,7 @@ class PasswordForget extends Component
     public $trouve=false;
     public $idUser;
     public $code;
-    public $trouveCode=false, $trouveMail =true, $trouveTest =true;
+    public $trouveCode=false, $trouveMail =true, $trouveTel =true;
     public $form = [
         'email' => "",
         'tel' => "",
@@ -84,19 +84,20 @@ class PasswordForget extends Component
     public function isExiste(){
         $this->validate([
             'form.email' => 'required|email',
+            'form.tel' => 'required',
         ]);
-        $istrue  = false;
-        $user = User::orderBy("id", "ASC")->get();
-        foreach ($user as $key => $value) { 
-            if(strtolower($value->email) == strtolower($this->form['email']) && strtolower($value->tel) == strtolower($this->form['tel'])) {
-                $istrue = true;
-            }else if(strtolower($value->email) != strtolower($this->form['email'])) {
-                $this->trouveMail  = false;
-            } else if(strtolower($value->tel) != strtolower($this->form['tel'])) {
-                $this->trouveTel  = false;
-            }
+
+        $user = User::where('email', strtolower($this->form['email']))
+            ->where('tel', strtolower($this->form['tel'])) ->first();
+
+        if ($user) {
+        return true;
         }
-        return $istrue;
+
+        $this->trouveMail = User::where('email', strtolower($this->form['email']))->exists();
+        $this->trouveTel = User::where('tel', strtolower($this->form['tel']))->exists();
+
+        return false;
     }
 
     public function sendWelcomeEmail()
@@ -113,9 +114,11 @@ class PasswordForget extends Component
 
             $this->dispatch('sendCode');
         }else{
-            if(!$this->trouveMail){
+           
+            if (!$this->trouveMail) {
                 $this->dispatch('errorMail');
-            }if(!$this->trouveTel){
+            }
+            if (!$this->trouveTel) {
                 $this->dispatch('errorTel');
             }
         }

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Departement;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -11,6 +12,7 @@ use Livewire\Component;
 #[Title("Departement")]
 class Departements extends Component
 {
+    public $outil;
     public $status = "list";
     public $title= "Liste des départements";
 
@@ -57,6 +59,9 @@ class Departements extends Component
 
         $ac->save();
 
+        $this->outil->addHistorique("Suppression d'un département", "delete");
+
+
         $this->dispatch("delete");
     }
 
@@ -71,6 +76,7 @@ class Departements extends Component
 
             $a->save();
 
+            $this->outil->addHistorique("Mis à jour des données d'un département", "edit");
             $this->dispatch("update");
         }else{
             Departement::create([
@@ -78,6 +84,8 @@ class Departements extends Component
                 "description" => $this->description,
                 "campus_id" => Auth::user()->campus_id
             ]);
+
+            $this->outil->addHistorique("Ajout d'un département", "add");
     
             $this->dispatch("added");
         }
@@ -89,6 +97,8 @@ class Departements extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
+        $this->outil = new Outils();
+
         return view('livewire.departement.departements', [
             "depts" => Departement::where("is_deleting", false)->orderBy("nom", "ASC")->get()
         ]);

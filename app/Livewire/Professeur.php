@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Campus;
+use App\Models\Outils;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -13,7 +14,8 @@ use Livewire\Component;
 class Professeur extends Component
 {
     public $status = "list";
-    public $prenom, $nom, $username, $adresse, $tel, $sexe, $email, $password,$campus_id, $password_confirmation;
+    public $outil;
+    public $prenom, $nom, $username, $adresse, $tel, $sexe, $email, $password, $password_confirmation;
     public $id;
 
     protected $rules = [
@@ -24,7 +26,6 @@ class Professeur extends Component
         'tel' => ['required', 'unique:users,tel', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
         'sexe' => 'required|in:Homme,Femme',
         'email' => 'required|email|unique:users,email',
-        'campus_id' => 'required',
         'password' => 'nullable',
     ];
 
@@ -40,13 +41,16 @@ class Professeur extends Component
             'sexe.required' => 'Le sexe est obligatoire.',
             'email.required' => "L'adresse e-mail est obligatoire.",
             'email.unique' => "Cette adresse e-mail existe déjà.",
-            'campus_id.required' => "Le campus est obligatoire.",
         ];
     }
 
     public function delete($id){
         $p = User::where("id", $id)->first();
-        $p->delete();
+        $p->is_deleting = true;
+
+        $p->save();
+
+        $this->outil->addHistorique("Suppression d'un professeur", "delete");
 
         $this->dispatch("deleteCampus");
     }
@@ -62,7 +66,6 @@ class Professeur extends Component
         $this->tel = $p->tel;
         $this->sexe = $p->sexe;
         $this->email = $p->email;
-        $this->campus_id = $p->campus_id;
 
         $this->status="edit";
     }
@@ -79,7 +82,6 @@ class Professeur extends Component
                 'tel' => 'required',
                 'sexe' => 'required|in:Homme,Femme',
                 'email' => 'required|email|unique:users,email,'.$this->id,
-                'campus_id' => 'required',
                 'password' => 'nullable',
             ]);
             
@@ -94,9 +96,11 @@ class Professeur extends Component
                 $p->sexe = $this->sexe;
                 // $p->role = "professeur";
                 $p->email = $this->email;
-                $p->campus_id = $this->campus_id;
+                $p->campus_id = Auth::user()->campus_id;
 
                 $p->save();
+                $this->outil->addHistorique("Mis à jour des données d'un professeur", "edit");
+
                 $this->dispatch("updateSuccessful");
                 $this->init();
             }
@@ -113,8 +117,11 @@ class Professeur extends Component
                 "image" => "profil.jpg",
                 'email' => $this->email,
                 'password' => null,
-                'campus_id' => $this->campus_id, // Lier l'administrateur au campus
+                'campus_id' => Auth::user()->campus_id, // Lier l'administrateur au campus
             ]);
+
+            $this->outil->addHistorique("Ajout d'un professeur", "add");
+
             $this->dispatch("addSuccessful");
         }
 
@@ -131,14 +138,15 @@ class Professeur extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
+        $this->outil = new Outils();
         return view('livewire.personnel.professeur.professeur', [
             "campus" => Campus::orderBy("id", "desc")->get(),
-            "users" => User::where("campus_id", Auth::user()->campus_id)->where("role","professeur")->get(),
+            "users" => User::where("campus_id", Auth::user()->campus_id)->where("role","professeur")->where("is_deleting", false)->get(),
         ]);
     }
 
     public function init(){
         $this->id=null;
-        $this->reset(['prenom', 'nom', 'username', 'adresse', 'tel', 'sexe', 'campus_id','email']);
+        $this->reset(['prenom', 'nom', 'username', 'adresse', 'tel', 'sexe','email']);
     }
 }
