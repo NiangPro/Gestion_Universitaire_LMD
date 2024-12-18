@@ -16,13 +16,14 @@ class Matieres extends Component
 {
     public $status = "list";
     public $title= "Liste des matières";
-    public $nom, $coef, $filiere_id;
+    public $nom, $coef,$credit, $filiere_id;
     public $id;
     public $outil;
 
     protected $rules = [
         "nom" => "required|string|max: 255",
         "coef" => "required",
+        "credit" => "required",
         "filiere_id" => "required",
     ];
 
@@ -30,6 +31,7 @@ class Matieres extends Component
         return [
             'nom.required' => 'Le nom est obligatoire.',
             'coef.required' => 'Le coefficient est obligatoire.',
+            'crédit.required' => 'Le crédit est obligatoire.',
             'filiere_id.required' => 'La filière est obligatoire.',
         ];
     }
@@ -41,6 +43,7 @@ class Matieres extends Component
 
         $this->nom = $m->nom;
         $this->coef = $m->coef;
+        $this->credit = $m->credit;
         $this->filiere_id = $m->filiere_id;
 
         $this->id = $m->id;
@@ -81,6 +84,7 @@ class Matieres extends Component
 
             $m->nom = $this->nom;
             $m->coef = $this->coef;
+            $m->credit = $this->credit;
             $m->filiere_id = $this->filiere_id;
 
             $m->save();
@@ -91,6 +95,7 @@ class Matieres extends Component
             Matiere::create([
                 "nom" => $this->nom,
                 "coef" => $this->coef,
+                "credit" => $this->credit,
                 "filiere_id" => $this->filiere_id,
                 'campus_id' => Auth::user()->campus_id,
             ]);

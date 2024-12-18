@@ -1,5 +1,5 @@
-<div>
-    <form wire:submit='store' class="col-md-6 container">
+<div class="row">
+    <form wire:submit='store' class="col-md-7">
         <div class="form-group">
             <label><strong>Nom</strong></label>
             <input type="text" wire:model='nom' class="form-control @error('nom') error @enderror" placeholder="Veuillez entrer le nom">
@@ -37,4 +37,31 @@
             <button type="submit" class="btn btn-success">Ajouter</button>
         @endif 
     </form>
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Matières disponibles</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Matière</th>
+                                <th>Crédit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($matieres as $m)
+                            <tr>
+                                <td>{{$m->nom}}</td>
+                                <td><span class="badge badge-success">{{$m->credit}}</span></td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

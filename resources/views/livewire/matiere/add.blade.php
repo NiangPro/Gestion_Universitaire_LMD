@@ -11,6 +11,11 @@
             @error('coef') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
         <div class="form-group">
+            <label><strong>Crédit</strong></label>
+            <input type="number" min="0" wire:model='credit' class="form-control @error('credit') error @enderror" placeholder="Veuillez entrer le nombre de crédit">
+            @error('credit') <span class="text-danger">{{ $message }}</span> @enderror
+        </div>
+        <div class="form-group">
             <label><strong>Filière</strong></label>
             <select wire:model='filiere_id' class="form-control @error('filiere_id') error @enderror">
                 <option value="">Veuillez selectionner un filière</option>

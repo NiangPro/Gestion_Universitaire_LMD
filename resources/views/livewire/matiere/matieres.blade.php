@@ -20,6 +20,7 @@
                             <tr>
                                 <th>Nom</th>
                                 <th>Coefficient</th>
+                                <th>Crédit</th>
                                 <th>Filiere</th>
                                 <th>Actions</th>
                             </tr>
@@ -29,6 +30,7 @@
                                 <tr id="mat-{{$m->id}}">
                                     <td>{{ $m->nom }}</td>
                                     <td>{{ $m->coef }}</td>
+                                    <td>{{ $m->credit }}</td>
                                     <td>{{ $m->filiere->nom}}</td>
                                     <td>
                                         <button type="button" wire:click='getInfo({{$m->id}})' class="btn btn-sm btn-primary" title="Information"><i class="fa fa-eye"></i></button>

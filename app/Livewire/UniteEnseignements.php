@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\NiveauEtude;
 use App\Models\Filiere;
 use App\Models\UniteEnseignement;
+use App\Models\Matiere;
 use App\Models\Outils;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -116,6 +117,7 @@ class UniteEnseignements extends Component
             "uniteEnseignement" => UniteEnseignement::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->get(),
             "filieres" => Filiere::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->get(),
             "niveauEtude" => NiveauEtude::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->get(),
+            "matieres" => Matiere::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->get(),
         ]);
     }
 
