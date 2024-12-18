@@ -15,6 +15,6 @@ class Semaine extends Model
 
     public function cours()
     {
-        return $this->belongsToMany(Cour::class, 'cours_semaine', 'semaine_id', 'cours_id');
+        return $this->hasMany(Cour::class);
     }
 }

@@ -1,9 +1,9 @@
-<div class="container h-100 mt-3 authincation-content">
-    <div class="row pt-3">
-        <h3 class="col-md-10">Enregistrement d'un nouveau campus</h3>
-        <div class="col-md-2 text-md-right">
+<div class="container h-100 mt-5 pt-5 mb-5 authincation-content">
+    <div class="row pt-3 pb-3">
+        <h3 class="col-md-12">Enregistrement d'un nouveau campus</h3>
+        {{-- <div class="col-md-2 text-md-right">
             <a href="{{ route('home')}}" class="btn btn-primary"><i class="fa fa-home"></i> Accueil</a>
-        </div>
+        </div> --}}
     </div>
     <form wire:submit='submit'>
         <div class="row justify-content-center h-100 align-items-center">

@@ -1,4 +1,4 @@
-<div class="authincation h-100">
+<div class="authincation mt-5 mb-5 pt-5">
     <div class="container-fluid h-100 mt-4">
         <div class="row justify-content-center h-100 align-items-center">
             <div class="col-md-6">
@@ -29,13 +29,13 @@
                                             <a href="{{route('forget')}}">Mot de passe oublié ?</a>
                                         </div>
                                     </div>
-                                    <div class="text-center">
+                                    <div class="">
                                         <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
                                     </div>
                                 </form>
-                                <div class="new-account mt-3">
+                                {{-- <div class="new-account mt-3">
                                     <p>Retour à la page <a class="text-primary" href="{{ route('home') }}"><i class="fa fa-home"></i> Accueil</a></p>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>

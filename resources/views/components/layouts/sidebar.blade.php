@@ -46,6 +46,10 @@
                 <i class="fa fa-calendar"></i><span
                 class="nav-text">Années Académiques</span>
             </a></li>
+            <li><a href="{{route('classe')}}" aria-expanded="false">
+                <i class="fa fa-list-alt"></i><span
+                class="nav-text">Classes</span>
+            </a></li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                 class="fa fa-graduation-cap"></i><span class="nav-text">Gestion Notes</span></a>
                 <ul aria-expanded="false">

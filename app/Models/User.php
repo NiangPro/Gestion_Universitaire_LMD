@@ -37,6 +37,17 @@ class User extends Authenticatable
         return $this->belongsTo(Campus::class, "campus_id");
     }
 
+    public function classes()
+    {
+        return $this->belongsToMany(Classe::class, 'classe_eleve')
+            ->withPivot('academic_year_id')
+            ->withTimestamps();
+    }
+
+    public function coursProf(){
+        return $this->hasMany(Cour::class);
+    }
+
     public function sentMessages()
     {
         return $this->hasMany(Message::class, 'sender_id');

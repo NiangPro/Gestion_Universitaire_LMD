@@ -125,7 +125,7 @@ class PasswordForget extends Component
         // return "Email envoyé avec succés!";
     }
 
-    #[Layout("components.layouts.app")]
+    #[Layout("components.layouts.home")]
     public function render()
     {
         return view('livewire.password-forget');

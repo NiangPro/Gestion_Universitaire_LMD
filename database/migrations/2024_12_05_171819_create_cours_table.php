@@ -22,9 +22,13 @@ return new class extends Migration
             $table->unsignedBigInteger('matiere_id')->nullable();
             $table->foreign('matiere_id')->references("id")->on("matieres")->onDelete("cascade");
             $table->boolean("is_deleting")->default(false);
+            $table->unsignedBigInteger('semaine_id')->nullable();
+            $table->foreign('semaine_id')->references("id")->on("semaines")->onDelete("cascade");
             $table->date('heure_debut');
             $table->date('heure_fin')->nullable();
             $table->enum('statut', ['actif', 'inactif'])->default('actif');
+            $table->unsignedBigInteger('campus_id')->nullable();
+            $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();
         });
     }
