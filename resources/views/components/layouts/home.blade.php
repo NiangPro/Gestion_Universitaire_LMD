@@ -53,7 +53,7 @@
             <ul class="navbar-nav mx-auto pt-2 pt-lg-0 font-base">
               <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link fw-medium active" href="{{route('home')}}">Accueil</a></li>
               <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#events">Events</a></li>
-              <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#services">Our Services </a></li>
+              <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#services">Services </a></li>
               <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#testimonial">Testimonial </a></li>
               <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#country">Country </a></li>
             </ul>
