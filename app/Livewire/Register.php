@@ -96,7 +96,7 @@ class Register extends Component
         redirect(route("login"));
     }
 
-    #[Layout("components.layouts.app")]
+    #[Layout("components.layouts.home")]
     public function render()
     {
         return view('livewire.register');

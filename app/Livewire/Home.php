@@ -11,10 +11,10 @@ use Livewire\Component;
 #[Title("Accueil")]
 class Home extends Component
 {
-    #[Layout("components.layouts.app")]
+    #[Layout("components.layouts.home")]
     public function render()
     {
-        return view('livewire.home', [
+        return view('livewire.accueil', [
             "packs" => Pack::where("is_deleting", false)->orderBy("annuel", "ASC")->get()
         ]);
     }

@@ -1,4 +1,4 @@
-<div class="authincation h-100 mt-5">
+<div class="authincation h-100 mt-5 pt-5 mb-5">
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100 align-items-center">
             <div class="col-md-6">
@@ -20,7 +20,7 @@
                                             <input wire:model="form.tel" type="tel" class="form-control" placeholder="Téléphone">
                                             @error('tel') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
-                                        <div class="text-center">
+                                        <div class="mt-3">
                                             <button type="submit" class="btn btn-primary btn-block">Recevoir code</button>
                                         </div>
                                     </form>
@@ -34,7 +34,7 @@
                                             <input wire:model="form.code" type="text" class="form-control @error('code') error @enderror" placeholder="Le code">
                                             @error('code') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
-                                        <div class="text-center">
+                                        <div class="mt-3">
                                             <button type="submit" class="btn btn-primary btn-block">Vérifier</button>
                                         </div>
                                     </form>
@@ -55,7 +55,7 @@
                                         <input type="password" wire:model="form2.password_confirmation" class="form-control" placeholder="Confirmer mot de passe">
                                         @error('password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
-                                    <div class="text-center">
+                                    <div class="mt-3">
                                         <button type="submit" class="btn btn-primary btn-block">Changer</button>
                                     </div>
                                 </form>
