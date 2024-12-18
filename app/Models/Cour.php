@@ -11,12 +11,32 @@ class Cour extends Model
 
     protected $fillable = [
         'titre', 'description', 'professeur_id', 
-        'academic_year_id', 'matiere_id', 
-        'heure_debut', 'heure_fin', 'statut','is_deleting'
+        'academic_year_id', 'matiere_id','semaine_id', 
+        'heure_debut', 'heure_fin', 'statut','is_deleting','campus_id'
     ];
 
-    public function jours()
-    {
-        return $this->belongsToMany(Semaine::class, 'cours_semaine', 'cours_id', 'semaine_id');
+    // public function jours()
+    // {
+    //     return $this->belongsToMany(Semaine::class, 'cours_semaine', 'cours_id', 'semaine_id');
+    // }
+
+    public function semaine(){
+        return $this->belongsTo(Semaine::class, "semaine_id");
+    }
+
+    public function professeur(){
+        return $this->belongsTo(User::class, "professeur_id");
+    }
+
+    public function matiere(){
+        return $this->belongsTo(Matiere::class, "matiere_id");
+    }
+
+    public function anneeAcademic(){
+        return $this->belongsTo(AcademicYear::class, "academic_year_id");
+    }
+
+    public function campus(){
+        return $this->belongsTo(Campus::class, "campus_id");
     }
 }

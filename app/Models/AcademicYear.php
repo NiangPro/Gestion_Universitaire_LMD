@@ -23,6 +23,11 @@ class AcademicYear extends Model
         return $this->belongsTo(Campus::class, "campus_id");
     }
 
+    public function eleves()
+    {
+        return $this->hasManyThrough(User::class, 'classe_eleve', 'academic_year_id', 'id');
+    }
+
     /**
      * Méthode pour récupérer l'année académique en cours unique pour un campus donné.
      *

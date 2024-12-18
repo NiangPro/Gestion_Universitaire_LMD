@@ -192,7 +192,9 @@
             buttons: ['excel', 'pdf', {
             extend: 'print',
             text: 'Imprimer' // Renommer le bouton "Print" en "Imprimer"
-        },{extend:'colvis', text:"Visibilité"}],
+        },
+        //{extend:'colvis', text:"Visibilité"}
+    ],
             lengthMenu: [10, 20, 50,75, 100],// Options de sélection pour les éléments par page
         });
 
