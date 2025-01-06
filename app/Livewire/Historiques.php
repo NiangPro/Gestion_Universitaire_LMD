@@ -16,7 +16,7 @@ class Historiques extends Component
     public function render()
     {
         return view('livewire.historiques', [
-            "histos" => Auth::user()->estSuperAdmin() ? Historique::orderBy("id", "DESC")->get() : Historique::where("campus_id", Auth::user()->campus_id)->orderBy("created_at", "DESC")->get()
+            "histos" => Auth::user()->estSuperAdmin() ? Historique::orderBy("id", "DESC")->get() : Historique::where("campus_id", Auth::user()->campus_id)->orderBy("id", "DESC")->get()
         ]);
     }
 }
