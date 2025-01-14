@@ -1,11 +1,11 @@
 <p>
-    Temps restant de votre abonnement <span class="badge badge-pill badge-light"  id="countdown"></span>
+    Temps restant de votre abonnement <span class="badge badge-pill badge-danger"  id="countdown"></span>
 </p>
-@section('js')
+@section('script')
     <script>
-    document.addEventListener('livewire:load', function () {
-        // Récupérer la date de fermeture depuis Livewire
-        const dateFermeture = @json($dateFermeture);
+   const dateFermeture = "<?= $dateFermeture ?>";
+
+        console.log("date de fermeture: " +dateFermeture);
 
         // Convertir en millisecondes
         const fermetureDate = new Date(dateFermeture).getTime();
@@ -31,7 +31,6 @@
                 document.getElementById('countdown').innerHTML = "Campus fermé.";
             }
         }, 1000);
-    });
 </script>
 @endsection
 
