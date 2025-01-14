@@ -7,6 +7,7 @@ use App\Http\Middleware\SuperAdminMiddleware;
 use App\Livewire\AcademicYears;
 use App\Livewire\Activations;
 use App\Livewire\Classes;
+use App\Livewire\Configurations;
 use App\Livewire\Corbeille;
 use App\Livewire\Cours;
 use App\Livewire\Dashboard;
@@ -54,5 +55,6 @@ Route::get("/unite_enseignement", UniteEnseignements::class)->middleware(AdminMi
 Route::get("/matieres", Matieres::class)->middleware(AdminMiddleware::class)->name("matiere");
 Route::get("/classes", Classes::class)->middleware(AdminMiddleware::class)->name("classe");
 Route::get("/cours", Cours::class)->middleware(AdminMiddleware::class)->name("cours");
+Route::get("/configurations", Configurations::class)->middleware(AdminMiddleware::class)->name("configuration");
 Route::get("/historiques", Historiques::class)->middleware(SuperAdminEtAdminMiddleware::class)->name("historique");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");

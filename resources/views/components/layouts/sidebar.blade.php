@@ -28,6 +28,10 @@
             </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
+            <li><a href="{{route('configuration')}}" aria-expanded="false">
+                <i class="fa fa-cogs"></i><span
+                class="nav-text">Configurations</span>
+            </a></li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                 class="fa fa-male"></i><span class="nav-text">Personnel</span></a>
                 <ul aria-expanded="false">
