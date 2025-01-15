@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Classe;
 use App\Models\Departement;
 use App\Models\Filiere;
+use App\Models\UniteEnseignement;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -14,12 +16,22 @@ class Configurations extends Component
 {
     public $classe = [
         "nom" => "",
-        "idclasse" => null
+        "idclasse" => null,
+        "filiere_id" => null
+    ];
+
+    public $ue = [
+        "nom" => "",
+        "coef" => 0,
+        "valeur" => "",
+        "disciplines" => [],
+        "idue" => null
     ];
 
     public $filiere = [
         "nom" => "",
-        "idfiliere" => null
+        "idfiliere" => null,
+        "departement_id" => null,
     ];
 
     public $departement = [
@@ -32,6 +44,23 @@ class Configurations extends Component
         "filiere.nom.required" => "Le nom est requis",
         "departement.nom.required" => "Le nom est requis",
     ];
+
+    public function updatedUeValeur($value)
+    {
+        // Vérifie si une virgule est présente
+        if (str_contains($value, ',')) {
+            // Découpe les éléments et ajoute au tableau des tags
+            $newTags = array_map('trim', explode(',', ucfirst($value)));
+            $this->ue["disciplines"] = array_unique(array_merge($this->ue["disciplines"], array_filter($newTags))); // Ajoute sans doublons
+            $this->ue['valeur'] = ''; // Réinitialise l'entrée
+        }
+    }
+
+    public function removeTag($index)
+    {
+        unset($this->ue["disciplines"][$index]); // Supprime le tag sélectionné
+        $this->ue["disciplines"] = array_values($this->ue["disciplines"]); // Réindexe l'array
+    }
 
     public function initialiser($champ){
         $this->reset([$champ]);
@@ -66,7 +95,7 @@ class Configurations extends Component
 
             $this->dispatch("updated");
         }else{
-            Departement::create(["nom" => strtoupper($this->departement["nom"])]);
+            Departement::create(["nom" => strtoupper($this->departement["nom"]), "campus_id" => Auth::user()->campus_id]);
             $this->dispatch("added");
         }
         
@@ -87,6 +116,7 @@ class Configurations extends Component
         $filiere = Filiere::where("id", $id)->first();
 
         $this->filiere["idfiliere"] = $filiere->id;
+        $this->filiere["departement_id"] = $filiere->departement_id;
         $this->filiere["nom"] = $filiere->nom;
     }
 
@@ -97,12 +127,13 @@ class Configurations extends Component
             $filiere = Filiere::where("id", $this->filiere["idfiliere"])->first();
 
             $filiere->nom = strtoupper($this->filiere["nom"]);
+            $filiere->departement_id = $this->filiere["departement_id"];
 
             $filiere->save();
 
             $this->dispatch("updated");
         }else{
-            Filiere::create(["nom" => strtoupper($this->filiere["nom"])]);
+            Filiere::create(["nom" => strtoupper($this->filiere["nom"]), "departement_id" => $this->filiere["departement_id"], "campus_id" => Auth::user()->campus_id]);
             $this->dispatch("added");
         }
         
@@ -124,6 +155,7 @@ class Configurations extends Component
 
         $this->classe["idclasse"] = $classe->id;
         $this->classe["nom"] = $classe->nom;
+        $this->classe["filiere_id"] = $classe->filiere_id;
     }
 
     public function storeClasse(){
@@ -133,12 +165,13 @@ class Configurations extends Component
             $classe = Classe::where("id", $this->classe["idclasse"])->first();
 
             $classe->nom = strtoupper($this->classe["nom"]);
+            $classe->filiere_id = $this->classe["filiere_id"];
 
             $classe->save();
 
             $this->dispatch("updated");
         }else{
-            Classe::create(["nom" => strtoupper($this->classe["nom"])]);
+            Classe::create(["nom" => strtoupper($this->classe["nom"]), "campus_id" => Auth::user()->campus_id, "filiere_id" => $this->classe["filiere_id"]]);
             $this->dispatch("added");
         }
         
@@ -152,6 +185,7 @@ class Configurations extends Component
             "classes" => Classe::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "filieres" => Filiere::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "departements" => Departement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
+            "ues" => UniteEnseignement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
         ]);
     }
 }

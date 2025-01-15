@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('niveau_etudes', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string("nom");
+            $table->unsignedInteger("credit")->nullable();
             $table->boolean("is_deleting")->default(false);
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
