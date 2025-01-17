@@ -14,15 +14,14 @@ class Matiere extends Model
     protected $fillable = [
         "nom",
         "is_deleting",
-        "coef",
         "credit",
-        "filiere_id",
+        "unite_enseignement_id",
         "campus_id",
     ];
 
 
-    public function filiere(){
-        return $this->belongsTo(Filiere::class, "filiere_id");
+    public function uniteEnseignement(){
+        return $this->belongsTo(UniteEnseignement::class, "unite_enseignement_id");
     }
 
     public function campus(){

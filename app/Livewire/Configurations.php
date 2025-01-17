@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Classe;
 use App\Models\Departement;
 use App\Models\Filiere;
+use App\Models\Matiere;
 use App\Models\UniteEnseignement;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -23,6 +24,7 @@ class Configurations extends Component
     public $ue = [
         "nom" => "",
         "coef" => 0,
+        "filiere_id" => null,
         "valeur" => "",
         "disciplines" => [],
         "idue" => null
@@ -41,8 +43,14 @@ class Configurations extends Component
 
     protected $messages = [
         "classe.nom.required" => "Le nom est requis",
+        "classe.filiere_id.required" => "Le filière est requis",
+        "ue.filiere_id.required" => "Le filière est requis",
         "filiere.nom.required" => "Le nom est requis",
+        "filiere.departement_id.required" => "Le département est requis",
         "departement.nom.required" => "Le nom est requis",
+        "ue.nom.required" => "Le nom est requis",
+        "ue.credit.required" => "Le crédit est requis",
+        "ue.disciplines.required" => "Les disciplines sont requises",
     ];
 
     public function updatedUeValeur($value)
@@ -65,6 +73,54 @@ class Configurations extends Component
     public function initialiser($champ){
         $this->reset([$champ]);
     }
+
+    public function supprimerUe($id){
+        $ue = UniteEnseignement::where("id", $id)->first();
+
+        $ue->is_deleting = true;
+
+        $ue->save();
+
+        $this->dispatch("deleted");
+    }
+
+    public function getUe($id){
+        $ue = Departement::where("id", $id)->first();
+
+        $this->ue["idue"] = $ue->id;
+        $this->ue["nom"] = $ue->nom;
+        $this->ue["credit"] = $ue->credit;
+        $this->ue["filiere_id"] = $ue->filiere_id;
+
+        foreach ($ue->matieres as $m) {
+            $this->ue["disciplines"][]= $m->nom;
+        }
+    }
+
+    public function storeUe(){
+        $this->validate(["ue.nom" => "required","ue.credit" => "required","ue.filiere_id" => "required","ue.disciplines" => "required"]);
+
+        if ($this->ue["idue"]) {
+            $ue = Departement::where("id", $this->ue["idue"])->first();
+
+            $ue->nom = strtoupper($this->ue["nom"]);
+
+            $ue->save();
+
+            $this->dispatch("updated");
+        }else{
+            $ue = UniteEnseignement::create(["filiere_id" => $this->ue["filiere_id"],"nom" => strtoupper($this->ue["nom"]), "credit" =>$this->ue["credit"], "campus_id" => Auth::user()->campus_id]);
+
+            foreach ($this->ue["disciplines"] as $d) {
+                Matiere::create(["nom"=> $d, "unite_enseignement_id" => $ue->id, "campus_id" => Auth::user()->campus_id]);
+            }
+            $this->dispatch("added");
+        }
+        
+        $this->reset(["ue"]);
+    }
+
+
 
     public function supprimerDepartement($id){
         $departement = Departement::where("id", $id)->first();
@@ -121,7 +177,7 @@ class Configurations extends Component
     }
 
     public function storeFiliere(){
-        $this->validate(["filiere.nom" => "required"]);
+        $this->validate(["filiere.nom" => "required","filiere.departement_id" => "required"]);
 
         if ($this->filiere["idfiliere"]) {
             $filiere = Filiere::where("id", $this->filiere["idfiliere"])->first();
@@ -159,7 +215,7 @@ class Configurations extends Component
     }
 
     public function storeClasse(){
-        $this->validate(["classe.nom" => "required"]);
+        $this->validate(["classe.nom" => "required", "classe.filiere_id" => "required"]);
 
         if ($this->classe["idclasse"]) {
             $classe = Classe::where("id", $this->classe["idclasse"])->first();

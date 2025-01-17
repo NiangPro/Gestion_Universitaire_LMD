@@ -15,7 +15,9 @@ class Dashboard extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        return view('livewire.dashboard');
+        return view('livewire.dashboard',[
+            "anac" => $this->outils->anneeAcademique()
+        ]);
     }
 
     public function mount(){

@@ -5,12 +5,15 @@ namespace App\Livewire;
 use App\Models\Activation;
 use App\Models\AcademicYear;
 use App\Models\Campus;
+use App\Models\Classe;
+use App\Models\Cour;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Historique;
 use App\Models\Matiere;
 use App\Models\NiveauEtude;
 use App\Models\Pack;
+use App\Models\Semaine;
 use App\Models\UniteEnseignement;
 use App\Models\User;
 use Livewire\Attributes\Layout;
@@ -68,6 +71,12 @@ class Corbeille extends Component
             return NiveauEtude::where("is_deleting", true)->orderBy("id", "DESC")->get();
         }elseif ($table == "UniteEnseignement") {
             return UniteEnseignement::where("is_deleting", true)->orderBy("id", "DESC")->get();
+        }elseif ($table == "Classe") {
+            return Classe::where("is_deleting", true)->orderBy("id", "DESC")->get();
+        }elseif ($table == "Cour") {
+            return Cour::where("is_deleting", true)->orderBy("id", "DESC")->get();
+        }elseif ($table == "Semaine") {
+            return [];
         }elseif ($table == "Historique") {
             return [];
         }
@@ -98,6 +107,15 @@ class Corbeille extends Component
             $c->delete();
         }elseif($model == "UniteEnseignement"){
             $c = UniteEnseignement::where("id", $id)->first();
+            $c->delete();
+        }elseif($model == "Classe"){
+            $c = Classe::where("id", $id)->first();
+            $c->delete();
+        }elseif($model == "Cour"){
+            $c = Cour::where("id", $id)->first();
+            $c->delete();
+        }elseif($model == "Semaine"){
+            $c = Semaine::where("id", $id)->first();
             $c->delete();
         }
         $this->dispatch("delete");

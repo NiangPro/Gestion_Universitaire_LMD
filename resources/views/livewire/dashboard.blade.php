@@ -1,4 +1,5 @@
 <div>
+    @if($anac)
     <div class="row">
         <div class="col-lg-3 col-sm-6">
             <div class="card">
@@ -443,5 +444,13 @@
             </div>
         </div>
     </div>
+    @else 
+        <div class="alert alert-warning solid alert-right-icon alert-dismissible fade show">
+            <span><i class="mdi mdi-alert"></i></span>
+            <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close"><span><i class="mdi mdi-close"></i></span>
+            </button>
+            <strong>Veuillez ajouter une année académique et l'activer!</strong> Pour voir les autres fonctionnalités.
+        </div>
+    @endif
     
 </div>

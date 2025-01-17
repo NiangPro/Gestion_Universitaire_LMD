@@ -9,7 +9,7 @@
                             <div id="accordion-one" class="accordion accordion-with-icon">
                                 <div class="accordion__item">
                                     <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseOne" aria-expanded="false">
-                                        <span class="fa fa-list-alt"></span>
+                                        <span class="fa fa-cog"></span>
                                         <span class="accordion__header--text  list-title">Départements</span>
                                         <span class="accordion__header--indicator indicator_bordered"></span>
                                     </div>
@@ -18,7 +18,8 @@
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($departements as $d)
                                                 <li class="row" id="classe-{{$d->id}}">
-                                                    <span class="col-md-8">{{ $d->nom }}</span>
+                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                        {{ $d->nom }}</span>
                                                     <div  class="col-md-4 text-right item-actions">
                                                         <a  wire:click='getDepartement({{$d->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
                                                         <a  data-toggle="modal" data-target="#modalId{{$d->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
@@ -67,7 +68,8 @@
                                             </ul>
                                             <hr>
                                             <form wire:submit='storeDepartement' action="" method="post" class="row">
-                                                <input type="text" wire:model='departement.nom' required placeholder="Veuillez saisir le nom du département" class="form-control col-md-8">
+                                                @error('departement.nom') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
+                                                <input type="text" wire:model='departement.nom'  placeholder="Veuillez saisir le nom du département" class="form-control col-md-8">
                                                 @if($departement["iddepartement"])
                                                     <div class="col-md-4">
         
@@ -92,7 +94,7 @@
                             <div id="accordion-three" class="accordion accordion-with-icon">
                                 <div class="accordion__item">
                                     <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseThree" aria-expanded="false">
-                                        <span class="fa fa-list-alt"></span>
+                                        <span class="fa fa-cog"></span>
                                         <span class="accordion__header--text  list-title">Classes</span>
                                         <span class="accordion__header--indicator indicator_bordered"></span>
                                     </div>
@@ -101,11 +103,13 @@
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($classes as $c)
                                                 <li class="row" id="classe-{{$c->id}}">
-                                                    <span class="col-md-8">{{ $c->nom }}</span>
+                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                        {{ $c->nom }}</span>
                                                     <div  class="col-md-4 text-right item-actions">
                                                         <a  wire:click='getClasse({{$c->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
                                                         <a  data-toggle="modal" data-target="#modalId{{$c->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
                                                     </div>
+                                                    <span class="col-md-12 subtitle">Filière<i class="fa fa-long-arrow-right" aria-hidden="true"></i> {{ $c->filiere->nom }}</span>
                                                 </li>
                         
                                                 <!-- Modal -->
@@ -150,13 +154,15 @@
                                             </ul>
                                             <hr>
                                             <form wire:submit='storeClasse' action="" method="post" class="row">
+                                                @error('classe.filiere_id') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
                                                 <select name="" wire:model='classe.filiere_id' class="col-md-12 form-control mb-2" id="">
                                                     <option value="">Selectionner un filière </option>
                                                     @foreach($filieres as $f)
                                                         <option value="{{ $f->id }}">{{ $f->nom }}</option>
                                                     @endforeach
                                                 </select>
-                                                <input type="text" wire:model='classe.nom' required placeholder="Veuillez saisir le nom du filière" class="form-control col-md-8">
+                                                @error('classe.nom') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
+                                                <input type="text" wire:model='classe.nom' required placeholder="Veuillez saisir le nom de la classe" class="form-control col-md-8">
                                                 @if($classe["idclasse"])
                                                     <div class="col-md-4">
         
@@ -185,7 +191,7 @@
                             <div id="accordion-two" class="accordion accordion-with-icon">
                                 <div class="accordion__item">
                                     <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseTwo" aria-expanded="false">
-                                        <span class="fa fa-list-alt"></span>
+                                        <span class="fa fa-cog"></span>
                                         <span class="accordion__header--text  list-title">Filières</span>
                                         <span class="accordion__header--indicator indicator_bordered"></span>
                                     </div>
@@ -194,11 +200,13 @@
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($filieres as $f)
                                                 <li class="row" id="classe-{{$f->id}}">
-                                                    <span class="col-md-8">{{ $f->nom }}</span>
+                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                        {{ $f->nom }}</span>
                                                     <div  class="col-md-4 text-right item-actions">
                                                         <a  wire:click='getFiliere({{$f->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
                                                         <a  data-toggle="modal" data-target="#modalId{{$f->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
                                                     </div>
+                                                    <span class="col-md-12 subtitle">Département<i class="fa fa-long-arrow-right" aria-hidden="true"></i> {{ $f->departement->nom }}</span>
                                                 </li>
                         
                                                 <!-- Modal -->
@@ -243,12 +251,14 @@
                                             </ul>
                                             <hr>
                                             <form wire:submit='storeFiliere' action="" method="post" class="row">
+                                                @error('filiere.departement_id') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
                                                 <select name="" wire:model='filiere.departement_id' class="col-md-12 form-control mb-2" id="">
                                                     <option value="">Selectionner un département </option>
                                                     @foreach($departements as $d)
                                                         <option value="{{ $d->id }}">{{ $d->nom }}</option>
                                                     @endforeach
                                                 </select>
+                                                @error('filiere.nom') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
                                                 <input type="text" wire:model='filiere.nom' required placeholder="Veuillez saisir le nom du filière" class="form-control col-md-8">
                                                 @if($filiere["idfiliere"])
                                                     <div class="col-md-4">
@@ -273,7 +283,7 @@
                             <div id="accordion-four" class="accordion accordion-with-icon">
                                 <div class="accordion__item">
                                     <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseFour" aria-expanded="false">
-                                        <span class="fa fa-list-alt"></span>
+                                        <span class="fa fa-cog"></span>
                                         <span class="accordion__header--text  list-title">Unités d'enseignements (u.e)</span>
                                         <span class="accordion__header--indicator indicator_bordered"></span>
                                     </div>
@@ -282,11 +292,20 @@
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($ues as $u)
                                                 <li class="row" id="ue-{{$u->id}}">
-                                                    <span class="col-md-8">{{ $u->nom }}</span>
+                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                        {{ $u->nom }}</span>
                                                     <div  class="col-md-4 text-right item-actions">
-                                                        <a  wire:click='getClasse({{$u->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
-                                                        <a data-toggle="modal" data-target="#modalId{{$u->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
+                                                        <a  wire:click='getUe({{$u->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
+                                                        <a  data-toggle="modal" data-target="#modalId{{$u->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
                                                     </div>
+                                                    <span class="col-md-12 subtitle">Crédit<i class="fa fa-long-arrow-right" aria-hidden="true"></i> {{ $u->credit }}</span>
+                                                    <span class="col-md-12 subtitle">Filière<i class="fa fa-long-arrow-right" aria-hidden="true"></i> {{ $u->filiere->nom }}</span>
+                                                    <span class="col-md-12 subtitle">Disciplines<i class="fa fa-long-arrow-right" aria-hidden="true"></i> 
+                                                        @dump($u->matieres)
+                                                        @foreach($u->matieres() as $m)
+                                                            {{ $m->nom }}
+                                                        @endforeach
+                                                    </span>
                                                 </li>
                         
                                                 <!-- Modal -->
@@ -330,9 +349,19 @@
                                                 @endforeach
                                             </ul>
                                             <hr>
-                                            <form wire:submit='storeClasse' action="" method="post" class="row">
+                                            <form wire:submit='storeUe' action="" method="post" class="row">
+                                                @error('ue.nom') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
+                                                @error('ue.credit') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
                                                 <input type="text" wire:model='ue.nom' required placeholder="Veuillez saisir le nom" class="form-control col-md-8">
                                                 <input type="number" wire:model='ue.credit' required placeholder="Crédit" class="form-control col-md-4">
+                                                @error('ue.filiere_id') <span class="col-md-12 mt-2 text-danger">{{ $message }}</span> @enderror
+                                                <select name="" wire:model='ue.filiere_id' class="col-md-12 mt-2 form-control mb-2" id="">
+                                                    <option value="">Selectionner un filière </option>
+                                                    @foreach($filieres as $f)
+                                                        <option value="{{ $f->id }}">{{ $f->nom }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('ue.disciplines') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
                                                 <div class="form-group col-md-12">
                                                     <label for="">Disciplines</label>
                                                     <input type="text" wire:model.live="ue.valeur" placeholder="Saisissez des disciplines et séparez-les par des virgules" class="form-control"/>
@@ -380,13 +409,21 @@
         .list-config li{
             cursor: pointer;
             color:#343957;
-            line-height: 40px;
+            line-height: 30px;
             font-size: 14px;
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
         }
 
+        .list-config li .subtitle{
+            color: #9a9eb4;
+            font-size: 12px;
+            text-indent: 20px;
+
+        }
+
         .list-config li:hover{
             background: #d8d8d8;
+            border-left: 5px solid #343957;
         }
         .list-config li:hover > span + .item-actions{
             visibility: visible;

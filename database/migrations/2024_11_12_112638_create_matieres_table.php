@@ -14,11 +14,9 @@ return new class extends Migration
         Schema::create('matieres', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string("nom");
-            $table->unsignedInteger("coef");
-            $table->unsignedInteger("credit")->default(0);
             $table->boolean("is_deleting")->default(false);
-            $table->unsignedBigInteger('filiere_id')->nullable();
-            $table->foreign('filiere_id')->references("id")->on("filieres")->onDelete("cascade");
+            $table->unsignedBigInteger('unite_enseignement_id')->nullable();
+            $table->foreign('unite_enseignement_id')->references("id")->on("unite_enseignements")->onDelete("cascade");
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();

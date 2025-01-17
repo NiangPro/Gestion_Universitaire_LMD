@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Livewire\Matieres;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,5 +31,9 @@ class UniteEnseignement extends Model
 
     public function campus(){
         return $this->belongsTo(Campus::class, "campus_id");
+    }
+
+    public function matieres(){
+        return $this->hasMany(Matieres::class, "unite_enseignement_id");
     }
 }

@@ -28,6 +28,11 @@
             </a></li>
             @endif
             @if(Auth()->user()->estAdmin())
+            <li><a href="{{route('academicyear')}}" aria-expanded="false">
+                <i class="fa fa-calendar"></i><span
+                class="nav-text">Années Académiques</span>
+            </a></li>
+            @if(Auth()->user()->campus->currentAcademicYear())
             <li><a href="{{route('configuration')}}" aria-expanded="false">
                 <i class="fa fa-cogs"></i><span
                 class="nav-text">Configurations</span>
@@ -46,10 +51,7 @@
                 <i class="fa fa-university"></i><span
                 class="nav-text">Départements</span>
             </a></li>
-            <li><a href="{{route('academicyear')}}" aria-expanded="false">
-                <i class="fa fa-calendar"></i><span
-                class="nav-text">Années Académiques</span>
-            </a></li>
+            
             <li><a href="{{route('classe')}}" aria-expanded="false">
                 <i class="fa fa-list-alt"></i><span
                 class="nav-text">Classes</span>
@@ -73,7 +75,8 @@
                 <i class="fa fa-users"></i><span
                 class="nav-text">Etudiants</span>
             </a></li>
-            <li><a href="" aria-expanded="false">
+            @endif
+            <li><a href="{{route('message')}}" aria-expanded="false">
                 <i class="fa fa-times-circle text-danger"></i><span
                 class="nav-text">Accès</span>
             </a></li>

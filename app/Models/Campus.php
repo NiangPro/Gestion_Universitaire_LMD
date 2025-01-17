@@ -51,6 +51,11 @@ class Campus extends Model
         return $this->hasMany(AcademicYear::class);
     }
 
+    public function currentAcademicYear()
+    {
+        return $this->academicYears()->where('encours', true)->first();
+    }
+
     public function departements(){
         return $this->hasMany(Departement::class);
     }
