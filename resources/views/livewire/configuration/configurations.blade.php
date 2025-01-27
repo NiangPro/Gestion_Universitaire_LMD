@@ -1,9 +1,9 @@
 <div>
     <div class="row">
         {{-- partie gauche  --}}
-        <div class="col-xl-4 col-xxl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
             <div class="row">
-                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
                             <div id="accordion-one" class="accordion accordion-with-icon">
@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
                             <div id="accordion-three" class="accordion accordion-with-icon">
@@ -181,7 +181,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
                             <div id="accordion-one" class="accordion accordion-with-icon">
@@ -266,7 +266,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
                             <div id="accordion-one" class="accordion accordion-with-icon">
@@ -353,9 +353,9 @@
             </div>
         </div>
         {{-- partie droite  --}}
-        <div class="col-xl-4 col-xxl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
             <div class="row">
-                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
                             <div id="accordion-two" class="accordion accordion-with-icon">
@@ -447,7 +447,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
                             <div id="accordion-four" class="accordion accordion-with-icon">
