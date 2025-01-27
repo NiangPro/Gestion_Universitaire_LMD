@@ -3,9 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\Classe;
+use App\Models\Coefficient;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Matiere;
+use App\Models\Salle;
 use App\Models\UniteEnseignement;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -15,6 +17,7 @@ use Livewire\Component;
 #[Title("Configurations")]
 class Configurations extends Component
 {
+    public $matieres = [];
     public $classe = [
         "nom" => "",
         "idclasse" => null,
@@ -41,6 +44,16 @@ class Configurations extends Component
         "iddepartement" => null
     ];
 
+    public $salle = [
+        "nom" => "",
+        "idsalle" => null
+    ];
+
+    public $coef = [
+        "valeur" => "",
+        "idcoef" => null
+    ];
+
     protected $messages = [
         "classe.nom.required" => "Le nom est requis",
         "classe.filiere_id.required" => "Le filière est requis",
@@ -48,8 +61,10 @@ class Configurations extends Component
         "filiere.nom.required" => "Le nom est requis",
         "filiere.departement_id.required" => "Le département est requis",
         "departement.nom.required" => "Le nom est requis",
+        "salle.nom.required" => "Le nom est requis",
         "ue.nom.required" => "Le nom est requis",
         "ue.credit.required" => "Le crédit est requis",
+        "coef.valeur.required" => "La valeur est requise",
         "ue.disciplines.required" => "Les disciplines sont requises",
     ];
 
@@ -71,7 +86,7 @@ class Configurations extends Component
     }
 
     public function initialiser($champ){
-        $this->reset([$champ]);
+        $this->reset([$champ, "matieres"]);
     }
 
     public function supprimerUe($id){
@@ -85,7 +100,7 @@ class Configurations extends Component
     }
 
     public function getUe($id){
-        $ue = Departement::where("id", $id)->first();
+        $ue = UniteEnseignement::where("id", $id)->first();
 
         $this->ue["idue"] = $ue->id;
         $this->ue["nom"] = $ue->nom;
@@ -93,22 +108,40 @@ class Configurations extends Component
         $this->ue["filiere_id"] = $ue->filiere_id;
 
         foreach ($ue->matieres as $m) {
-            $this->ue["disciplines"][]= $m->nom;
+            $this->matieres[$m->id]= ["nom" =>$m->nom, "delete" =>false];
         }
     }
 
-    public function storeUe(){
-        $this->validate(["ue.nom" => "required","ue.credit" => "required","ue.filiere_id" => "required","ue.disciplines" => "required"]);
+    public function supprimerMatiere($id){
+        $this->matieres[$id]["delete"] = true;
+    }
 
+    public function storeUe(){
+        
         if ($this->ue["idue"]) {
-            $ue = Departement::where("id", $this->ue["idue"])->first();
+            $this->validate(["ue.nom" => "required","ue.credit" => "required","ue.filiere_id" => "required"]);
+            $ue = UniteEnseignement::where("id", $this->ue["idue"])->first();
 
             $ue->nom = strtoupper($this->ue["nom"]);
+            $ue->credit = $this->ue["credit"];
 
             $ue->save();
 
+            foreach ($this->ue["disciplines"] as $d) {
+                Matiere::create(["nom"=> $d, "unite_enseignement_id" => $ue->id, "campus_id" => Auth::user()->campus_id]);
+            }
+
+            foreach ($this->matieres as $key => $m) {
+                if ($m["delete"] == true) {
+                    $mat = Matiere::where("id", $key)->first();
+                    $mat->delete();
+                }
+            }
+
             $this->dispatch("updated");
         }else{
+            $this->validate(["ue.nom" => "required","ue.credit" => "required","ue.filiere_id" => "required","ue.disciplines" => "required"]);
+
             $ue = UniteEnseignement::create(["filiere_id" => $this->ue["filiere_id"],"nom" => strtoupper($this->ue["nom"]), "credit" =>$this->ue["credit"], "campus_id" => Auth::user()->campus_id]);
 
             foreach ($this->ue["disciplines"] as $d) {
@@ -117,7 +150,7 @@ class Configurations extends Component
             $this->dispatch("added");
         }
         
-        $this->reset(["ue"]);
+        $this->reset(["ue", "matieres"]);
     }
 
 
@@ -156,6 +189,78 @@ class Configurations extends Component
         }
         
         $this->reset(["departement"]);
+    }
+
+    public function supprimerSalle($id){
+        $salle = Salle::where("id", $id)->first();
+
+        $salle->is_deleting = true;
+
+        $salle->save();
+
+        $this->dispatch("deleted");
+    }
+
+    public function getSalle($id){
+        $salle = Salle::where("id", $id)->first();
+
+        $this->salle["idsalle"] = $salle->id;
+        $this->salle["nom"] = $salle->nom;
+    }
+
+    public function storeSalle(){
+        $this->validate(["salle.nom" => "required"]);
+
+        if ($this->salle["idsalle"]) {
+            $salle = Salle::where("id", $this->salle["idsalle"])->first();
+
+            $salle->nom = strtoupper($this->salle["nom"]);
+
+            $salle->save();
+
+            $this->dispatch("updated");
+        }else{
+            Salle::create(["nom" => strtoupper($this->salle["nom"]), "campus_id" => Auth::user()->campus_id]);
+            $this->dispatch("added");
+        }
+        
+        $this->reset(["salle"]);
+    }
+
+    public function supprimerCoefficient($id){
+        $coef = Coefficient::where("id", $id)->first();
+
+        $coef->is_deleting = true;
+
+        $coef->save();
+
+        $this->dispatch("deleted");
+    }
+
+    public function getCoefficient($id){
+        $coef = Coefficient::where("id", $id)->first();
+
+        $this->coef["idcoef"] = $coef->id;
+        $this->coef["valeur"] = $coef->valeur;
+    }
+
+    public function storeCoefficient(){
+        $this->validate(["coef.valeur" => "required"]);
+
+        if ($this->coef["idcoef"]) {
+            $coef = Coefficient::where("id", $this->coef["idcoef"])->first();
+
+            $coef->valeur = strtoupper($this->coef["valeur"]);
+
+            $coef->save();
+
+            $this->dispatch("updated");
+        }else{
+            Coefficient::create(["valeur" => strtoupper($this->coef["valeur"]), "campus_id" => Auth::user()->campus_id]);
+            $this->dispatch("added");
+        }
+        
+        $this->reset(["coef"]);
     }
 
     public function supprimerFiliere($id){
@@ -242,6 +347,8 @@ class Configurations extends Component
             "filieres" => Filiere::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "departements" => Departement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "ues" => UniteEnseignement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
+            "coefs" => Coefficient::where("is_deleting", false)->orderBy("valeur", "ASC")->get(),
+            "salles" => Salle::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
         ]);
     }
 }

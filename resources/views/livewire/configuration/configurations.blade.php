@@ -180,6 +180,176 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="accordion-one" class="accordion accordion-with-icon">
+                                <div class="accordion__item">
+                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseOne" aria-expanded="false">
+                                        <span class="fa fa-cog"></span>
+                                        <span class="accordion__header--text  list-title">Coefficients</span>
+                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                    </div>
+                                    <div id="with-icon_collapseOne" class="accordion__body collapse show" data-parent="#accordion-one" style="">
+                                        <div class="accordion__body--text">
+                                            <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
+                                                @foreach($coefs as $c)
+                                                <li class="row" id="classe-{{$c->id}}">
+                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                        {{ $c->valeur }}</span>
+                                                    <div  class="col-md-4 text-right item-actions">
+                                                        <a  wire:click='getCoefficient({{$c->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
+                                                        <a  data-toggle="modal" data-target="#coefId{{$c->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
+                                                    </div>
+                                                </li>
+                        
+                                                <!-- Modal -->
+                                                <div
+                                                    class="modal fade modalId"
+                                                    id="coefId{{$d->id}}"
+                                                    tabindex="-1"
+                                                    role="dialog"
+                                                    aria-labelledby="modalTitleId"
+                                                    aria-hidden="true"
+                                                >
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalTitleId">
+                                                                Suppression
+                                                                </h5>
+                                                                <button
+                                                                type="button"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                aria-label="Close"
+                                                                >&times;</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Êtes-vous sûr de vouloir supprimer?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                type="button"
+                                                                class="btn btn-success"
+                                                                data-dismiss="modal"
+                                                                >
+                                                                Non
+                                                                </button>
+                                                                <button type="button" wire:click='supprimerDepartement({{$d->id}})'  class="btn btn-danger">Oui</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </ul>
+                                            <hr>
+                                            <form wire:submit='storeCoefficient' action="" method="post" class="row">
+                                                @error('coef.valeur') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
+                                                <input type="number" min="1" wire:model='coef.valeur'  placeholder="Veuillez saisir la valeur" class="form-control col-md-8">
+                                                @if($coef["idcoef"])
+                                                    <div class="col-md-4">
+        
+                                                        <i title="Actualiser" wire:click='initialiser("coef")' style="cursor: pointer;" class="fa fa-refresh text-primary fa-x"></i>
+                                                        <button type="submit" class="btn btn-warning">Modifier</button>
+                                                    </div>
+                                                @else 
+                                                    <button type="submit" class="btn btn-primary col-md-3"><i class="fa fa-plus"></i> Ajouter</button>
+                                                @endif
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="accordion-one" class="accordion accordion-with-icon">
+                                <div class="accordion__item">
+                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseOne" aria-expanded="false">
+                                        <span class="fa fa-cog"></span>
+                                        <span class="accordion__header--text  list-title">Salles</span>
+                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                    </div>
+                                    <div id="with-icon_collapseOne" class="accordion__body collapse show" data-parent="#accordion-one" style="">
+                                        <div class="accordion__body--text">
+                                            <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
+                                                @foreach($salles as $s)
+                                                <li class="row" id="salle-{{$s->id}}">
+                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                        {{ $s->nom }}</span>
+                                                    <div  class="col-md-4 text-right item-actions">
+                                                        <a  wire:click='getSalle({{$s->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
+                                                        <a  data-toggle="modal" data-target="#salleId{{$s->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
+                                                    </div>
+                                                </li>
+                        
+                                                <!-- Modal -->
+                                                <div
+                                                    class="modal fade modalId"
+                                                    id="salleId{{$d->id}}"
+                                                    tabindex="-1"
+                                                    role="dialog"
+                                                    aria-labelledby="modalTitleId"
+                                                    aria-hidden="true"
+                                                >
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalTitleId">
+                                                                Suppression
+                                                                </h5>
+                                                                <button
+                                                                type="button"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                aria-label="Close"
+                                                                >&times;</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Êtes-vous sûr de vouloir supprimer?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button
+                                                                type="button"
+                                                                class="btn btn-success"
+                                                                data-dismiss="modal"
+                                                                >
+                                                                Non
+                                                                </button>
+                                                                <button type="button" wire:click='supprimerSalle({{$s->id}})'  class="btn btn-danger">Oui</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </ul>
+                                            <hr>
+                                            <form wire:submit='storeSalle' action="" method="post" class="row">
+                                                @error('salle.nom') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
+                                                <input type="text"  wire:model='salle.nom'  placeholder="Veuillez saisir le nom" class="form-control col-md-8">
+                                                @if($salle["idsalle"])
+                                                    <div class="col-md-4">
+        
+                                                        <i title="Actualiser" wire:click='initialiser("salle")' style="cursor: pointer;" class="fa fa-refresh text-primary fa-x"></i>
+                                                        <button type="submit" class="btn btn-warning">Modifier</button>
+                                                    </div>
+                                                @else 
+                                                    <button type="submit" class="btn btn-primary col-md-3"><i class="fa fa-plus"></i> Ajouter</button>
+                                                @endif
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {{-- partie droite  --}}
@@ -296,14 +466,13 @@
                                                         {{ $u->nom }}</span>
                                                     <div  class="col-md-4 text-right item-actions">
                                                         <a  wire:click='getUe({{$u->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
-                                                        <a  data-toggle="modal" data-target="#modalId{{$u->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
+                                                        <a  data-toggle="modal" data-target="#ueId{{$u->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
                                                     </div>
                                                     <span class="col-md-12 subtitle">Crédit<i class="fa fa-long-arrow-right" aria-hidden="true"></i> {{ $u->credit }}</span>
                                                     <span class="col-md-12 subtitle">Filière<i class="fa fa-long-arrow-right" aria-hidden="true"></i> {{ $u->filiere->nom }}</span>
                                                     <span class="col-md-12 subtitle">Disciplines<i class="fa fa-long-arrow-right" aria-hidden="true"></i> 
-                                                        @dump($u->matieres)
-                                                        @foreach($u->matieres() as $m)
-                                                            {{ $m->nom }}
+                                                        @foreach($u->matieres as $m)
+                                                            {{ $m->nom }},
                                                         @endforeach
                                                     </span>
                                                 </li>
@@ -311,7 +480,7 @@
                                                 <!-- Modal -->
                                                 <div
                                                     class="modal fade modalId"
-                                                    id="modalId{{$u->id}}"
+                                                    id="ueId{{$u->id}}"
                                                     tabindex="-1"
                                                     role="dialog"
                                                     aria-labelledby="modalTitleId"
@@ -341,7 +510,7 @@
                                                                 >
                                                                 Non
                                                                 </button>
-                                                                <button type="button" wire:click='supprimerClasse({{$u->id}})'  class="btn btn-danger">Oui</button>
+                                                                <button type="button" wire:click='supprimerUe({{$u->id}})'  class="btn btn-danger">Oui</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -367,6 +536,13 @@
                                                     <input type="text" wire:model.live="ue.valeur" placeholder="Saisissez des disciplines et séparez-les par des virgules" class="form-control"/>
                                                 </div>
                                                 <div class="col-md-12 m-1 flex flex-wrap space-x-2">
+                                                    @foreach ($matieres as $index => $tag)
+                                                        @if($tag["delete"] == false)
+                                                            <button type="button" class="btn btn-outline-secondary btn-rounded mb-2 btn-sm">{{ $tag["nom"] }} <span class="btn-icon-right"  wire:click="supprimerMatiere({{ $index }})"
+                                                                class="text-danger"><i class="fa fa-close"></i></span>
+                                                            </button>
+                                                        @endif
+                                                    @endforeach
                                                     @foreach ($ue["disciplines"] as $index => $tag)
                                                         <button type="button" class="btn btn-outline-secondary btn-rounded mb-2 btn-sm">{{ $tag }} <span class="btn-icon-right"  wire:click="removeTag({{ $index }})"
                                                             class="text-danger"><i class="fa fa-close"></i></span>

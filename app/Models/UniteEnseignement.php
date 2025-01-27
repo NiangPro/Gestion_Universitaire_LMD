@@ -20,7 +20,11 @@ class UniteEnseignement extends Model
         "filiere_id",
         "campus_id",
     ];
-
+    
+    public function matieres(){
+        return $this->hasMany(Matiere::class);
+    }
+    
     public function niveauEtude(){
         return $this->belongsTo(NiveauEtude::class, "niveau_etude_id");
     }
@@ -33,7 +37,4 @@ class UniteEnseignement extends Model
         return $this->belongsTo(Campus::class, "campus_id");
     }
 
-    public function matieres(){
-        return $this->hasMany(Matieres::class, "unite_enseignement_id");
-    }
 }

@@ -42,9 +42,7 @@
                 <ul aria-expanded="false">
                     <li><a href="{{route('professeur')}}">Professeurs</a></li>
                     <li><a href="{{route('surveillant')}}">Surveillants</a></li>
-                    <li><a href="{{route('etudiant')}}">Etudiants</a></li>
                     <li><a href="{{route('parent')}}">Parents</a></li>
-                    
                 </ul>
             </li>
             <li><a href="{{route('departement')}}" aria-expanded="false">
@@ -62,7 +60,7 @@
                     <li><a href="{{route('niveauetude')}}">Niveaux d'étude</a></li>
                     <li><a href="{{route('filiere')}}">Filières</a></li>
                     <li><a href="{{route('uniteenseignement')}}">U.E</a></li>
-                    <li><a href="{{route('matiere')}}">Matières</a></li>
+                    {{-- <li><a href="{{route('matiere')}}">Matières</a></li> --}}
                     <li><a href="{{route('parent')}}">Bulletins</a></li>
                     
                 </ul>

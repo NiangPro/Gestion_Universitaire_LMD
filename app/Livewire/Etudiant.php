@@ -12,6 +12,6 @@ class Etudiant extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        return view('livewire.etudiant');
+        return view('livewire.etudiant.etudiant');
     }
 }
