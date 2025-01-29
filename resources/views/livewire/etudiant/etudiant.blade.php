@@ -32,11 +32,7 @@
             <div class="tab-content tabcontent-border">
                 <div class="tab-pane fade active show" id="home8" role="tabpanel">
                     <div class="pt-4">
-                        <h4>This is icon title</h4>
-                        <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.
-                        </p>
-                        <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.
-                        </p>
+                         @include("livewire.etudiant.list")
                     </div>
                 </div>
                 <div class="tab-pane fade" id="profile8" role="tabpanel">
