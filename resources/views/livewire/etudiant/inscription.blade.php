@@ -197,7 +197,7 @@
                         </div>
                     </div>
                     <div style="border-top: 2px solid #343957; border-radius: 5px 5px 0px 0px;">
-                        <h4><i class="fa fa-check pt-3"></i> Détails étudiant</h4>
+                        <h4><i class="fa fa-check pt-3"></i> Détails inscription</h4>
                     </div>
                     <div class="form-group">
                         <label class="text-label">Date d'inscription</label>
@@ -214,7 +214,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"> <i class="fa fa-wallet" style="font-size:15px;"></i> </span>
                             </div>
-                            <select class="form-control" wire:change="updateStatus($event.target.value)">
+                            <select class="form-control" wire:model.live="etat">
                                 <option value="">Selectionné</option>
                                 <option value="paye">Payé</option>
                                 <option value="avance">Avance</option>

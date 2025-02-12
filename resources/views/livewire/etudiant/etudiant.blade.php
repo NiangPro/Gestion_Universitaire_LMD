@@ -20,7 +20,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#messages8">
+                    <a class="nav-link" data-toggle="tab" href="#reinscrire">
                         <span>
                             <i class="fa fa-file"></i>
                         </span>
@@ -40,13 +40,21 @@
                         @include("livewire.etudiant.inscription")
                     </div>
                 </div>
-                <div class="tab-pane fade" id="messages8" role="tabpanel">
+                <div class="tab-pane fade" id="reinscrire" role="tabpanel">
                     <div class="pt-4">
-                        <h4>This is icon title</h4>
-                        <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.
-                        </p>
-                        <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.
-                        </p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <select class="form-control" wire:model.live="matricule" name="matricule" id="matricule">
+                                    <option value="">Selectionner un étudiant</option>
+                                    <option value="1">NGLP123456</option>
+                                    <option value="2">NGLP123457</option>
+                                    <option value="3">NGLP123458</option>
+                                </select>
+                            </div>
+                        </div>
+                        @if ($matricule)
+                            @include("livewire.etudiant.inscription")
+                        @endif
                     </div>
                 </div>
             </div>

@@ -11,11 +11,23 @@ class Etudiant extends Component
 {
     public $status = "";
     public $etat= "";
-
-    public function updateStatus($value){
-        $this->etat=$value;
-        \Log::info('Valeur sélectionnée : ' . $this->etat); 
+    public $classe= "";
+    public $matricule= "";
+    public function updatedClasse($value)
+    {
+        $this->classe = $value;
     }
+
+    public function updatedPaiement($value)
+    {
+        $this->etat = $value;
+    }
+
+    public function updatedMatricule($value)
+    {
+        $this->matricule = $value;
+    }
+
     #[Layout("components.layouts.app")]
     public function render()
     {
