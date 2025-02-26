@@ -10,8 +10,6 @@ class Cour extends Model
     use HasFactory;
 
     protected $fillable = [
-        'titre',
-        'description',
         'professeur_id',
         'academic_year_id',
         'matiere_id',

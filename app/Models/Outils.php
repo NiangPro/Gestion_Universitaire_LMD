@@ -12,10 +12,12 @@ class Outils extends Model
 {
     use HasFactory;
 
-    public function anneeAcademique(){
-        return AcademicYear::where("campus_id", Auth::user()->campus_id)->where("encours", true)->first()?:null;
+    public function anneeAcademique()
+    {
+        return AcademicYear::where("campus_id", Auth::user()->campus_id)->where("encours", true)->first() ?: null;
     }
-    public function addHistorique($description, $type){
+    public function addHistorique($description, $type)
+    {
         $agent = new Agent();
 
         $navigateur = $agent->browser();
@@ -32,7 +34,8 @@ class Outils extends Model
         ]);
     }
 
-    public function createSuperAdmin(){
+    public function createSuperAdmin()
+    {
         $user = User::where("role", "superadmin")->first();
         if (!$user) {
             User::create([
@@ -51,96 +54,98 @@ class Outils extends Model
 
         $se = Semaine::get();
 
-        if (!$se) {
+        if (count($se) == 0) {
             $tab = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
             foreach ($tab as $val) {
-                Semaine::create(["nom" => $val]);
+                Semaine::create(["jour" => $val]);
             }
         }
     }
 
-    public function isLogged(){
+    public function isLogged()
+    {
         if (!Auth::user()) {
-           redirect(route("login"));
+            redirect(route("login"));
         }
     }
 
-    public function initActivation(){
-        
+    public function initActivation()
+    {
+
         $tables = DB::select('SHOW TABLES');
         $databaseName = config('database.connections.' . config('database.default') . '.database');
-        $nom = "Tables_in_".$databaseName;
+        $nom = "Tables_in_" . $databaseName;
 
-        foreach($tables as $t){
-            if (!in_array($t->$nom, ["historiques","activations", "messages", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
+        foreach ($tables as $t) {
+            if (!in_array($t->$nom, ["historiques", "activations", "messages", "cache", "cache_locks", "failed_jobs", "job_batches", "jobs", "migrations", "password_reset_tokens", "sessions"])) {
                 $act = Activation::where("nom", $t->$nom)->first();
 
                 $trouve = strpos($t->$nom, "_");
 
-                if($trouve){
+                if ($trouve) {
                     $left = ucfirst(substr($t->$nom, 0, $trouve));
-                    $right = ucfirst(substr($t->$nom, $trouve+1, strlen($t->$nom)- ($trouve+2)));
-                    $model = $left.$right;
-                }else{
+                    $right = ucfirst(substr($t->$nom, $trouve + 1, strlen($t->$nom) - ($trouve + 2)));
+                    $model = $left . $right;
+                } else {
                     $model = ucfirst(substr($t->$nom, 0, strlen($t->$nom) - 1));
                 }
 
-                if(!$act){
+                if (!$act) {
                     Activation::create([
                         "nom" => $t->$nom,
-                        "model"=> $model == "Campuse" ? "Campus" : $model
+                        "model" => $model == "Campuse" ? "Campus" : $model
                     ]);
                 }
             }
         }
-        
     }
 
-    public function searchUser($value){
-        $value = '%'.$value.'%'; // Assurez-vous que le format est prêt pour la requête LIKE
+    public function searchUser($value)
+    {
+        $value = '%' . $value . '%'; // Assurez-vous que le format est prêt pour la requête LIKE
         $users = [];
         if (Auth::user()->estSuperAdmin()) {
-            $users = User::where(function($query) use ($value) {
+            $users = User::where(function ($query) use ($value) {
                 $query->where('prenom', 'LIKE', $value)
-                      ->orWhere('email', 'LIKE', $value);
+                    ->orWhere('email', 'LIKE', $value);
             })
-            ->where(function($query) {
-                $query->where('role', 'admin')
-                      ->orWhere('role', 'superadmin');
-            })
-            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
-            ->get();
-        }elseif(Auth::user()->estAdmin()){
+                ->where(function ($query) {
+                    $query->where('role', 'admin')
+                        ->orWhere('role', 'superadmin');
+                })
+                ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+                ->get();
+        } elseif (Auth::user()->estAdmin()) {
 
-            $users = User::where(function($query) use ($value) {
+            $users = User::where(function ($query) use ($value) {
                 $query->where('prenom', 'LIKE', $value)
-                      ->orWhere('email', 'LIKE', $value);
+                    ->orWhere('email', 'LIKE', $value);
             })
-            ->where(function($query) {
-                $query->where('campus_id', Auth::user()->campus_id)
-                      ->orWhere('role', 'superadmin');
-            })
-            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
-            ->get();
-        }elseif(Auth::user()->estParent()){
-            $users = User::where(function($query) use ($value) {
+                ->where(function ($query) {
+                    $query->where('campus_id', Auth::user()->campus_id)
+                        ->orWhere('role', 'superadmin');
+                })
+                ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+                ->get();
+        } elseif (Auth::user()->estParent()) {
+            $users = User::where(function ($query) use ($value) {
                 $query->where('prenom', 'LIKE', $value)
-                      ->orWhere('email', 'LIKE', $value);
+                    ->orWhere('email', 'LIKE', $value);
             })
-            ->where('campus_id', Auth::user()->campus_id)
-            ->where('role', 'admin')
-            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
-            ->get();
-        }else{
-            $users = User::where(function($query) use ($value) {
+                ->where('campus_id', Auth::user()->campus_id)
+                ->where('role', 'admin')
+                ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+                ->get();
+        } else {
+            $users = User::where(function ($query) use ($value) {
                 $query->where('prenom', 'LIKE', $value)
-                      ->orWhere('email', 'LIKE', $value);
+                    ->orWhere('email', 'LIKE', $value);
             })
-            ->where('campus_id', Auth::user()->campus_id)
-            ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
-            ->get();
+                ->where('campus_id', Auth::user()->campus_id)
+                ->where('id', '!=', Auth::id()) // Exclure l'utilisateur connecté
+                ->get();
         }
-        
+
         return $users;
     }
 }

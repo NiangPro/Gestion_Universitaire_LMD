@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('cours', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string('titre');
-            $table->text('description')->nullable();
             $table->unsignedBigInteger('professeur_id')->nullable();
             $table->foreign('professeur_id')->references("id")->on("users")->onDelete("cascade");
             $table->unsignedBigInteger('academic_year_id')->nullable();
