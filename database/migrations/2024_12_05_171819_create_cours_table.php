@@ -24,9 +24,11 @@ return new class extends Migration
             $table->boolean("is_deleting")->default(false);
             $table->unsignedBigInteger('semaine_id')->nullable();
             $table->foreign('semaine_id')->references("id")->on("semaines")->onDelete("cascade");
+            $table->unsignedBigInteger('classe_id')->nullable();
+            $table->foreign('classe_id')->references("id")->on("classes")->onDelete("cascade");
             $table->date('heure_debut');
             $table->date('heure_fin')->nullable();
-            $table->enum('statut', ['actif', 'inactif'])->default('actif');
+            $table->enum('statut', ['en attente', 'encours', 'terminé'])->default('en attente');
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();
