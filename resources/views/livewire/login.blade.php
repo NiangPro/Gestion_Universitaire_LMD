@@ -33,6 +33,13 @@
                                         <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
                                     </div>
                                 </form>
+                                @auth
+                                    <div class="mt-3 text-center">
+                                        <a href="{{ route('two-factor.settings') }}" class="text-primary">
+                                            <i class="fa fa-lock"></i> Configurer la double authentification
+                                        </a>
+                                    </div>
+                                @endauth
                                 {{-- <div class="new-account mt-3">
                                     <p>Retour à la page <a class="text-primary" href="{{ route('home') }}"><i class="fa fa-home"></i> Accueil</a></p>
                                 </div> --}}

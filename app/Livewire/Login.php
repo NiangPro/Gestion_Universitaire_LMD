@@ -43,30 +43,42 @@ class Login extends Component
     
             // Tenter la connexion avec les informations fournies
             if (Auth::attempt([$field => $this->login, 'password' => $this->password])) {
-                // Rediriger vers la page d'accueil ou la page souhaitée après la connexion
-                $this->redirect("/tableau_de_bord", navigate: false);
+                $user = Auth::user();
+                
+                // Vérifier si l'utilisateur a activé la 2FA
+                if ($user->two_factor_secret && 
+                    $user->two_factor_confirmed_at && 
+                    !session()->get('auth.two_factor.authenticated')) {
+                    
+                    // Stocker l'intention de connexion
+                    session()->put('auth.two_factor.intended_route', '/tableau_de_bord');
+                    
+                    // Rediriger vers la page de challenge 2FA
+                    return redirect()->route('two-factor.challenge');
+                }
+                
+                // Si pas de 2FA ou déjà authentifié, rediriger vers le tableau de bord
+                return redirect("/tableau_de_bord");
             } else {
                 // Afficher un message d'erreur si les informations sont incorrectes
                 $this->addError('login', 'Ces identifiants ne correspondent pas à nos enregistrements.');
             }
         }
-        
     }
 
-    
+    public function mount()
+    {
+        if (Auth::check()) {
+            redirect("/tableau_de_bord");
+        }
+        $this->outils = new Outils;
+        $this->outils->createSuperAdmin();
+        $this->outils->initActivation();
+    }
+
     #[Layout("components.layouts.home")]
     public function render()
     {
         return view('livewire.login');
-    }
-
-    public function mount(){
-        $this->outils = new Outils();
-        $this->outils->createSuperAdmin();
-        $this->outils->initActivation();
-
-        if (Auth::user()) {
-            redirect(route("dashboard"));
-        }
     }
 }

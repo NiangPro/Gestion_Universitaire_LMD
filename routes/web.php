@@ -57,3 +57,9 @@ Route::get("/cours", Cours::class)->middleware(AdminMiddleware::class)->name("co
 Route::get("/configurations", Configurations::class)->middleware(AdminMiddleware::class)->name("configuration");
 Route::get("/historiques", Historiques::class)->middleware(SuperAdminEtAdminMiddleware::class)->name("historique");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");
+
+// Routes 2FA
+Route::middleware(['auth'])->group(function () {
+    Route::get('/two-factor-auth', \App\Http\Livewire\Auth\TwoFactorAuth::class)->name('two-factor.auth');
+    Route::get('/two-factor-challenge', \App\Http\Livewire\Auth\TwoFactorChallenge::class)->name('two-factor.challenge');
+});
