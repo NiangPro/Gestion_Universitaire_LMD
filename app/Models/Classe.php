@@ -19,6 +19,9 @@ class Classe extends Model
         "is_deleting",
     ];
 
+    public function cours(){
+        return $this->hasMany(Cour::class);
+    }
     public function filiere(){
         return $this->belongsTo(Filiere::class, "filiere_id");
     }

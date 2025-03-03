@@ -19,7 +19,8 @@ class Cour extends Model
         'statut',
         'is_deleting',
         'campus_id',
-        'classe_id'
+        'classe_id',
+        'salle_id',
     ];
 
     // public function jours()
@@ -55,5 +56,10 @@ class Cour extends Model
     public function classe()
     {
         return $this->belongsTo(Classe::class, "classe_id");
+    }
+
+    public function salle()
+    {
+        return $this->belongsTo(Salle::class, "salle_id");
     }
 }

@@ -23,7 +23,7 @@
                             id="classe_id" wire:model.live="classe_id">
                             <option value="">Sélectionner une classe</option>
                             @foreach($classes as $classe)
-                            <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
+                            <option value="{{ $classe->id }}">{{ $classe->nom }} - {{ $classe->filiere->nom }}</option>
                             @endforeach
                         </select>
                         @error('classe_id')

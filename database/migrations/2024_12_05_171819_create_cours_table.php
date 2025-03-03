@@ -20,12 +20,14 @@ return new class extends Migration
             $table->unsignedBigInteger('matiere_id')->nullable();
             $table->foreign('matiere_id')->references("id")->on("matieres")->onDelete("cascade");
             $table->boolean("is_deleting")->default(false);
+            $table->unsignedBigInteger('salle_id')->nullable();
+            $table->foreign('salle_id')->references("id")->on("salles")->onDelete("cascade");
             $table->unsignedBigInteger('semaine_id')->nullable();
             $table->foreign('semaine_id')->references("id")->on("semaines")->onDelete("cascade");
             $table->unsignedBigInteger('classe_id')->nullable();
             $table->foreign('classe_id')->references("id")->on("classes")->onDelete("cascade");
-            $table->date('heure_debut');
-            $table->date('heure_fin')->nullable();
+            $table->time('heure_debut');
+            $table->time('heure_fin')->nullable();
             $table->enum('statut', ['en attente', 'encours', 'terminé'])->default('en attente');
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");

@@ -58,6 +58,11 @@ Route::get("/configurations", Configurations::class)->middleware(AdminMiddleware
 Route::get("/historiques", Historiques::class)->middleware(SuperAdminEtAdminMiddleware::class)->name("historique");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");
 
+// Route de test de sécurité (à utiliser uniquement en développement)
+if (app()->environment('local')) {
+    Route::get('/security-test', [App\Http\Controllers\SecurityTestController::class, 'testSecurity']);
+}
+
 // Routes 2FA
 Route::middleware(['auth'])->group(function () {
     Route::get('/two-factor-auth', \App\Http\Livewire\Auth\TwoFactorAuth::class)->name('two-factor.auth');

@@ -35,15 +35,29 @@
                 @endif
                 @if ($type)
                 <div class="col-md-4">
-                    <select class="form-control" wire:model.live="cours">
-                        <option value="">Selectionner une classe ou professeur</option>
-                        <option value="1">NGLP123456</option>
-                        <option value="2">NGLP123457</option>
-                        <option value="3">NGLP123458</option>
-                    </select>
+                    @if($classrooms)
+                        <select class="form-control" wire:model.live="cours">
+                            <option value="">Selectionner une classe</option>
+                            @foreach ($classrooms as $cl)
+                                <option value="{{ $cl->id }}">{{ $cl->nom }} - {{ $cl->filiere->nom }}</option>
+                            @endforeach
+                        </select>
+                    @endif
+                    @if($teachers)
+                        <select class="form-control" wire:model.live="cours">
+                            <option value="">Selectionner un professeur</option>
+                            @foreach ($teachers as $cl)
+                                <option value="{{ $cl->id }}">{{ $cl->prenom }} {{ $cl->nom }}</option>
+                            @endforeach
+                        </select>
+                    @endif
+                    
                 </div>
                 @endif
             </div>
+            @if(count($courses) > 0)
+            @include('livewire.cours.list')
+            @endif
             <!-- Modal -->
             @if($isOpen)
             <div class="modal show d-block" tabindex="-1">

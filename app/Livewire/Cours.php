@@ -15,7 +15,7 @@ use App\Models\Classe;
 use App\Models\Salle;
 use App\Models\Semaine;
 
-#[Title("Tableau de bord")]
+#[Title("Cours")]
 class Cours extends Component
 {
     public $status = "list";
@@ -23,7 +23,10 @@ class Cours extends Component
     public $academicYear = null;
     public $type = "";
     public $cours = null;
+    public $classrooms = [];
+    public $teachers = [];
     public $matieres = null;
+    public $courses = [];
     public $title = "Liste des cours";
 
     // Propriétés pour le formulaire
@@ -32,6 +35,8 @@ class Cours extends Component
     public $professeur_id;
     public $matiere_id;
     public $classe_id;
+    public $salle_id;
+    public $semaine_id;
     public $heure_debut;
     public $heure_fin;
     public $statut = 'en attente';
@@ -44,17 +49,22 @@ class Cours extends Component
         'professeur_id' => 'required|exists:users,id',
         'matiere_id' => 'required|exists:matieres,id',
         'classe_id' => 'required|exists:classes,id',
+        'salle_id' => 'required|exists:salles,id',
+        'semaine_id' => 'required|exists:semaines,id',
         'heure_debut' => 'required',
         'heure_fin' => 'required',
-        'statut' => 'required|in:en attente,encours,terminé'
+        'statut' => 'required'
     ];
 
     protected $messages = [
         'professeur_id.required' => 'Veuillez sélectionner un professeur',
         'matiere_id.required' => 'Veuillez sélectionner une matière',
         'classe_id.required' => 'Veuillez sélectionner une classe',
+        'semaine_id.required' => 'Veuillez sélectionner le jour',
+        'salle_id.required' => 'Veuillez sélectionner une salle',
         'heure_debut.required' => 'L\'heure de début est requise',
-        'heure_fin.after' => 'L\'heure de fin doit être après l\'heure de début'
+        'heure_fin.after' => 'L\'heure de fin doit être après l\'heure de début',
+        'statut.required' => 'Le statut est obligatoire'
     ];
 
     public function changeStatus($status)
@@ -66,20 +76,37 @@ class Cours extends Component
     public function updatedAcademicYear($value)
     {
         $this->academicYear = $value;
-        $this->reset(["type", "cours"]);
+        $this->reset(["type", "cours", "classrooms", "teachers", "courses"]);
     }
 
     public function updatedType($value)
     {
         $this->type = $value;
-        $this->reset(["cours"]);
+        $this->reset(["cours", "classrooms", "teachers", "courses"]);
 
 
         if ($this->type == "classe") {
-            $this->cours = Cour::where("campus_id", Auth::user()->campus_id)->where("academic_year_id", $this->academicYear)->where("classe_id", $this->type)->get();
+            $this->classrooms = Classe::where("campus_id", Auth::user()->campus_id)->whereHas("cours", function($query) {
+                $query->where("academic_year_id", $this->academicYear);
+            })->get();
+
         } else {
-            $this->cours = Cour::where("campus_id", Auth::user()->campus_id)->where("academic_year_id", $this->academicYear)->where("professeur_id", $this->type)->get();
+            $this->teachers = User::whereHas("cours", function($query) {
+                $query->where("campus_id", Auth::user()->campus_id)->where("academic_year_id", $this->academicYear);
+            })->get();
         }
+    }
+
+    public function updatedCours($value)
+    {
+        if ($value) {
+            if (count($this->classrooms) > 0) {
+                $this->courses = Cour::where("classe_id", $value)->get();
+            } elseif (count($this->teachers) > 0) {
+                $this->courses = Cour::where("professeur_id", $value)->get();
+            }
+        }
+        
     }
 
     public function updatedClasseId($value)
@@ -129,13 +156,16 @@ class Cours extends Component
         $this->validate();
 
         try {
+
             Cour::create([
                 'professeur_id' => $this->professeur_id,
                 'matiere_id' => $this->matiere_id,
                 'classe_id' => $this->classe_id,
+                'salle_id' => $this->salle_id,
+                'semaine_id' => $this->semaine_id,
                 'heure_debut' => $this->heure_debut,
                 'campus_id' => Auth::user()->campus_id,
-                'academic_year_id' => Auth::user()->campus->academic_year_id,
+                'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
                 'heure_fin' => $this->heure_fin,
                 'statut' => $this->statut,
             ]);
@@ -144,6 +174,8 @@ class Cours extends Component
             $this->dispatch('added');
             $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut"]);
         } catch (\Exception $e) {
+            // Ajout du message d'erreur
+            dd($e->getMessage());
             $this->dispatch('alert');
         }
     }

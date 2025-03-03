@@ -47,8 +47,8 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function coursProf(){
-        return $this->hasMany(Cour::class);
+    public function cours(){
+        return $this->hasMany(Cour::class, "professeur_id");
     }
 
     public function sentMessages()
