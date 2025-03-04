@@ -167,14 +167,15 @@ class Cours extends Component
 
     public function openModal()
     {
-        $this->resetValidation();
-        $this->reset();
+        // $this->resetValidation();
+        // $this->reset();
         $this->isOpen = true;
     }
 
     public function closeModal()
     {
         $this->isOpen = false;
+        $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut"]);
     }
 
     public function save()
@@ -213,7 +214,6 @@ class Cours extends Component
             
 
             $this->closeModal();
-            $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut"]);
         } catch (\Exception $e) {
             $this->dispatch('alert');
         }
