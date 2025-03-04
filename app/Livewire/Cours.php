@@ -175,7 +175,7 @@ class Cours extends Component
     public function closeModal()
     {
         $this->isOpen = false;
-        $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut"]);
+        $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut", "id", "semaine_id"]);
     }
 
     public function save()
@@ -183,37 +183,73 @@ class Cours extends Component
         $this->validate();
 
         try {
-            if($this->id){
-                $cour = Cour::find($this->id);
-                $cour->update([
-                    'professeur_id' => $this->professeur_id,
-                    'matiere_id' => $this->matiere_id,
-                    'classe_id' => $this->classe_id,
-                    'salle_id' => $this->salle_id,
-                    'semaine_id' => $this->semaine_id,
-                    'heure_debut' => $this->heure_debut,
-                    'heure_fin' => $this->heure_fin,
-                    'statut' => $this->statut,
-                ]);
-                $this->dispatch('updated');
-            } else {
-                Cour::create([
-                    'professeur_id' => $this->professeur_id,
-                    'matiere_id' => $this->matiere_id,
-                    'classe_id' => $this->classe_id,
-                    'salle_id' => $this->salle_id,
-                    'semaine_id' => $this->semaine_id,
-                    'heure_debut' => $this->heure_debut,
-                    'campus_id' => Auth::user()->campus_id,
-                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
-                    'heure_fin' => $this->heure_fin,
-                    'statut' => $this->statut,
-                ]);
-                $this->dispatch('added');
+            $isSalleOccupee = Cour::where('salle_id', $this->salle_id)
+                ->where('semaine_id', $this->semaine_id)
+                ->where(function($query) {
+                    $query->whereBetween('heure_debut', [$this->heure_debut, $this->heure_fin])
+                        ->orWhereBetween('heure_fin', [$this->heure_debut, $this->heure_fin]);
+                })
+                ->where('id', '!=', $this->id ?? 0)
+                ->exists();
+
+            $isClasseOccupee = Cour::where('classe_id', $this->classe_id)
+                ->where('semaine_id', $this->semaine_id)
+                ->where(function($query) {
+                    $query->whereBetween('heure_debut', [$this->heure_debut, $this->heure_fin])
+                        ->orWhereBetween('heure_fin', [$this->heure_debut, $this->heure_fin]);
+                })
+                ->where('id', '!=', $this->id ?? 0)
+                ->exists();
+
+            $isProfesseurOccupe = Cour::where('professeur_id', $this->professeur_id)
+                ->where('semaine_id', $this->semaine_id)
+                ->where(function($query) {
+                    $query->whereBetween('heure_debut', [$this->heure_debut, $this->heure_fin])
+                        ->orWhereBetween('heure_fin', [$this->heure_debut, $this->heure_fin]);
+                })
+                ->where('id', '!=', $this->id ?? 0)
+                ->exists();
+
+            if ($isSalleOccupee || $isClasseOccupee || $isProfesseurOccupe) {
+                if($isSalleOccupee){
+                    $this->dispatch('alertSalle');
+                }elseif($isClasseOccupee){
+                    $this->dispatch('alertClasse');
+                }elseif($isProfesseurOccupe){
+                    $this->dispatch('alertProfesseur');
+                }
+            }else {
+                if($this->id){
+                    $cour = Cour::find($this->id);
+                    $cour->update([
+                        'professeur_id' => $this->professeur_id,
+                        'matiere_id' => $this->matiere_id,
+                        'classe_id' => $this->classe_id,
+                        'salle_id' => $this->salle_id,
+                        'semaine_id' => $this->semaine_id,
+                        'heure_debut' => $this->heure_debut,
+                        'heure_fin' => $this->heure_fin,
+                        'statut' => $this->statut,
+                    ]);
+                    $this->dispatch('updated');
+                } else {
+                    Cour::create([
+                        'professeur_id' => $this->professeur_id,
+                        'matiere_id' => $this->matiere_id,
+                        'classe_id' => $this->classe_id,
+                        'salle_id' => $this->salle_id,
+                        'semaine_id' => $this->semaine_id,
+                        'heure_debut' => $this->heure_debut,
+                        'campus_id' => Auth::user()->campus_id,
+                        'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                        'heure_fin' => $this->heure_fin,
+                        'statut' => $this->statut,
+                    ]);
+                    $this->dispatch('added');
+                }
+                $this->closeModal();
             }
             
-
-            $this->closeModal();
         } catch (\Exception $e) {
             $this->dispatch('alert');
         }

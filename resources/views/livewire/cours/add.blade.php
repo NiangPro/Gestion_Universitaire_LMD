@@ -2,7 +2,6 @@
     <div class="card">
         <div class="card-body">
             <form wire:submit.prevent="save">
-
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="professeur_id">Professeur</label>

@@ -99,12 +99,28 @@
             position: 'topRight'
         });
     });
-    window.addEventListener('updateSuccessful', event => {
-        iziToast.success({
-            title: 'Professeur',
-            message: 'Mis à jour avec succes',
-            position: 'topRight'
+    window.addEventListener('alertSalle', event => {
+        iziToast.warning({
+            title: 'Cours',
+            message: 'La salle est déjà occupée pendant ce créneau horaire',
+            position: 'topCenter'
         });
-    });
+    })
+
+    window.addEventListener('alertClasse', event => {
+        iziToast.warning({
+            title: 'Cours',
+            message: 'La classe est déjà occupée pendant ce créneau horaire',
+            position: 'topCenter'
+        });
+    })
+
+    window.addEventListener('alertProfesseur', event => {
+        iziToast.warning({
+            title: 'Cours',
+            message: 'Le professeur est déjà occupé pendant ce créneau horaire',
+            position: 'topCenter'
+        });
+    })
 </script>
 @endsection
