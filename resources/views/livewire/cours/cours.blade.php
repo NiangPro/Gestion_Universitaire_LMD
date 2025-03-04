@@ -122,5 +122,14 @@
             position: 'topCenter'
         });
     })
+
+    window.addEventListener('coursDeleted', event => {
+        iziToast.success({
+            title: 'Cours',
+            message: 'Suppression avec succes',
+            position: 'topRight'
+        });
+        $('.modalId').modal('hide');
+    })
 </script>
 @endsection

@@ -101,9 +101,9 @@ class Cours extends Component
     {
         if ($value) {
             if (count($this->classrooms) > 0) {
-                $this->courses = Cour::where("classe_id", $value)->get();
+                $this->courses = Cour::where("classe_id", $value)->where("academic_year_id", $this->academicYear)->where("is_deleting", false)->get();
             } elseif (count($this->teachers) > 0) {
-                $this->courses = Cour::where("professeur_id", $value)->get();
+                $this->courses = Cour::where("professeur_id", $value)->where("academic_year_id", $this->academicYear)->where("is_deleting", false)->get();
             }
         }
         
@@ -155,11 +155,9 @@ class Cours extends Component
     {
         $this->outil = new Outils();
         return view('livewire.cours.cours', [
-            "cours" => Cour::get(),
             "academicYears" => AcademicYear::where("campus_id", Auth::user()->campus_id)->orderBy("encours", "desc")->get(),
             'professeurs' => User::where('role', 'professeur')->get(),
             'classes' => Classe::all(),
-            'cours' => Cour::with(['professeur', 'matiere', 'classe'])->get(),
             'semaines' => Semaine::all(),
             'salles' => Salle::all()
         ]);
@@ -176,6 +174,16 @@ class Cours extends Component
     {
         $this->isOpen = false;
         $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut", "id", "semaine_id"]);
+    }
+
+    public function delete($id)
+    {
+        $cours = Cour::find($id);
+        if ($cours) {
+            $cours->is_deleting = true;
+            $cours->save();
+            $this->dispatch('coursDeleted');
+        }
     }
 
     public function save()

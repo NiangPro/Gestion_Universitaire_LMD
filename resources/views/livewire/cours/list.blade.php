@@ -25,6 +25,28 @@
                         <td class="text-center">
                             <!-- <a href="" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a> -->
                             <a href="#" class="btn btn-warning btn-sm rounded-pill" wire:click="edit({{ $c->id }})"><i class="fa fa-edit"></i></a>
+                            <button type="button" class="btn btn-danger btn-sm rounded-pill" data-toggle="modal" data-target="#deleteModal{{ $c->id }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            <div class="modal fade modalId" id="deleteModal{{ $c->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ $c->id }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ $c->id }}">Suppression</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Etes-vous sur de vouloir supprimer ce cours ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                                            <button type="button" class="btn btn-danger" wire:click="delete({{ $c->id }})">Oui</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
                         </td>
                     </tr>
