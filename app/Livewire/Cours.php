@@ -186,8 +186,7 @@ class Cours extends Component
             $isSalleOccupee = Cour::where('salle_id', $this->salle_id)
                 ->where('semaine_id', $this->semaine_id)
                 ->where(function($query) {
-                    $query->whereBetween('heure_debut', [$this->heure_debut, $this->heure_fin])
-                        ->orWhereBetween('heure_fin', [$this->heure_debut, $this->heure_fin]);
+                    $query->where('heure_fin', '>', $this->heure_debut);
                 })
                 ->where('id', '!=', $this->id ?? 0)
                 ->exists();
@@ -195,8 +194,7 @@ class Cours extends Component
             $isClasseOccupee = Cour::where('classe_id', $this->classe_id)
                 ->where('semaine_id', $this->semaine_id)
                 ->where(function($query) {
-                    $query->whereBetween('heure_debut', [$this->heure_debut, $this->heure_fin])
-                        ->orWhereBetween('heure_fin', [$this->heure_debut, $this->heure_fin]);
+                    $query->where('heure_fin', '>', $this->heure_debut);
                 })
                 ->where('id', '!=', $this->id ?? 0)
                 ->exists();
@@ -204,8 +202,7 @@ class Cours extends Component
             $isProfesseurOccupe = Cour::where('professeur_id', $this->professeur_id)
                 ->where('semaine_id', $this->semaine_id)
                 ->where(function($query) {
-                    $query->whereBetween('heure_debut', [$this->heure_debut, $this->heure_fin])
-                        ->orWhereBetween('heure_fin', [$this->heure_debut, $this->heure_fin]);
+                    $query->where('heure_fin', '>', $this->heure_debut);
                 })
                 ->where('id', '!=', $this->id ?? 0)
                 ->exists();
