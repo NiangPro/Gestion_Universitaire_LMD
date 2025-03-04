@@ -96,7 +96,7 @@
                         class="fa fa-cog"></i><span class="nav-text">Parametres</span></a>
                 <ul aria-expanded="false">
                     <li><a href="{{route('profil')}}">Profil</a></li>
-                    
+                    <li><a href="{{route('abonnement')}}">Abonnements</a></li>
                     <li><a href="./app-calender.html">Général</a></li>
                 </ul>
             </li>
