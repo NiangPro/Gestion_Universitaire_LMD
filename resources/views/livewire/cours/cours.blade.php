@@ -64,7 +64,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Ajouter un cours</h5>
+                            <h5 class="modal-title">{{$modalTitle}}</h5>
                             <button type="button" class="close" wire:click="closeModal">
                                 <span>&times;</span>
                             </button>
@@ -89,6 +89,13 @@
         iziToast.success({
             title: 'Cours',
             message: 'Ajout avec succes',
+            position: 'topRight'
+        });
+    });
+    window.addEventListener('updated', event => {
+        iziToast.success({
+            title: 'Cours',
+            message: 'Mis à jour avec succes',
             position: 'topRight'
         });
     });

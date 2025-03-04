@@ -28,10 +28,10 @@ class Cours extends Component
     public $matieres = null;
     public $courses = [];
     public $title = "Liste des cours";
+    public $modalTitle = "Ajouter un cours";
 
     // Propriétés pour le formulaire
-    public $titre;
-    public $description;
+    public $id = null;
     public $professeur_id;
     public $matiere_id;
     public $classe_id;
@@ -124,6 +124,32 @@ class Cours extends Component
         }
     }
 
+    public function edit($id)
+    {
+        $course = Cour::find($id);
+
+        $this->id = $course->id;
+        $this->professeur_id = $course->professeur_id;
+        $this->matiere_id = $course->matiere_id;
+        $this->classe_id = $course->classe_id;
+        $this->salle_id = $course->salle_id;
+        $this->semaine_id = $course->semaine_id;
+        $this->heure_debut = $course->heure_debut;
+        $this->heure_fin = $course->heure_fin;
+        $this->statut = $course->statut;
+        $this->matieres = [];
+
+        $classe = Classe::find($this->classe_id);
+            foreach ($classe->filiere->uniteEnseignements as $unite) {
+                foreach ($unite->matieres as $matiere) {
+                    $this->matieres[] = $matiere;
+                }
+            }
+
+        $this->modalTitle = "Modification cours";
+        $this->isOpen = true;
+    }
+
     #[Layout("components.layouts.app")]
     public function render()
     {
@@ -156,26 +182,39 @@ class Cours extends Component
         $this->validate();
 
         try {
-
-            Cour::create([
-                'professeur_id' => $this->professeur_id,
-                'matiere_id' => $this->matiere_id,
-                'classe_id' => $this->classe_id,
-                'salle_id' => $this->salle_id,
-                'semaine_id' => $this->semaine_id,
-                'heure_debut' => $this->heure_debut,
-                'campus_id' => Auth::user()->campus_id,
-                'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
-                'heure_fin' => $this->heure_fin,
-                'statut' => $this->statut,
-            ]);
+            if($this->id){
+                $cour = Cour::find($this->id);
+                $cour->update([
+                    'professeur_id' => $this->professeur_id,
+                    'matiere_id' => $this->matiere_id,
+                    'classe_id' => $this->classe_id,
+                    'salle_id' => $this->salle_id,
+                    'semaine_id' => $this->semaine_id,
+                    'heure_debut' => $this->heure_debut,
+                    'heure_fin' => $this->heure_fin,
+                    'statut' => $this->statut,
+                ]);
+                $this->dispatch('updated');
+            } else {
+                Cour::create([
+                    'professeur_id' => $this->professeur_id,
+                    'matiere_id' => $this->matiere_id,
+                    'classe_id' => $this->classe_id,
+                    'salle_id' => $this->salle_id,
+                    'semaine_id' => $this->semaine_id,
+                    'heure_debut' => $this->heure_debut,
+                    'campus_id' => Auth::user()->campus_id,
+                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                    'heure_fin' => $this->heure_fin,
+                    'statut' => $this->statut,
+                ]);
+                $this->dispatch('added');
+            }
+            
 
             $this->closeModal();
-            $this->dispatch('added');
             $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut"]);
         } catch (\Exception $e) {
-            // Ajout du message d'erreur
-            dd($e->getMessage());
             $this->dispatch('alert');
         }
     }

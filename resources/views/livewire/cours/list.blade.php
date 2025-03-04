@@ -22,9 +22,9 @@
                         <td>{{ $c->salle->nom }}</td>
                         <td>{{ $c->heure_debut }} - {{ $c->heure_fin }}</td>
                         <td>{{ $c->matiere->nom }}</td>
-                        <td>
-                            <a href="" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
-                            <a href="" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                        <td class="text-center">
+                            <!-- <a href="" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a> -->
+                            <a href="#" class="btn btn-warning btn-sm rounded-pill" wire:click="edit({{ $c->id }})"><i class="fa fa-edit"></i></a>
                             
                         </td>
                     </tr>

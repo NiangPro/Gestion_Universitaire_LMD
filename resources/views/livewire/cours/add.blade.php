@@ -109,7 +109,11 @@
 
                 <div class="text-right">
                     <button type="button" class="btn btn-secondary" wire:click="closeModal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    @if($id)
+                    <button type="submit" class="btn btn-warning">Modifier</button>
+                    @else
+                    <button type="submit" class="btn btn-success">Enregistrer</button>
+                    @endif
                 </div>
             </form>
         </div>
