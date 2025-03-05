@@ -4,7 +4,6 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\LoginMiddleware;
 use App\Http\Middleware\SuperAdminEtAdminMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
-use App\Livewire\Abonnements;
 use App\Livewire\AcademicYears;
 use App\Livewire\Activations;
 use App\Livewire\Classes;
@@ -13,6 +12,7 @@ use App\Livewire\Corbeille;
 use App\Livewire\Cours;
 use App\Livewire\Dashboard;
 use App\Livewire\Departements;
+use App\Livewire\EmploisDuTemps;
 use App\Livewire\Etablissements;
 use App\Livewire\Etudiant;
 use App\Livewire\Filieres;
@@ -55,7 +55,7 @@ Route::get("/unite_enseignement", UniteEnseignements::class)->middleware(AdminMi
 Route::get("/classes", Classes::class)->middleware(AdminMiddleware::class)->name("classe");
 Route::get("/cours", Cours::class)->middleware(AdminMiddleware::class)->name("cours");
 Route::get("/configurations", Configurations::class)->middleware(AdminMiddleware::class)->name("configuration");
-Route::get("/abonnements", Abonnements::class)->middleware(AdminMiddleware::class)->name("abonnement");
+Route::get("/emplois_du_temps", EmploisDuTemps::class)->middleware(AdminMiddleware::class)->name("emploisdutemps");
 Route::get("/historiques", Historiques::class)->middleware(SuperAdminEtAdminMiddleware::class)->name("historique");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");
 

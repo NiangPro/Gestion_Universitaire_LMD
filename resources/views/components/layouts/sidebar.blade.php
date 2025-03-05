@@ -69,6 +69,10 @@
                 <i class="fa fa-laptop"></i><span
                 class="nav-text">Cours</span>
             </a></li>
+            <li><a href="{{route('emploisdutemps')}}" aria-expanded="false">
+                <i class="fa fa-calendar"></i><span
+                class="nav-text">Emplois du temps</span>
+            </a></li>
             <li><a href="{{route('etudiant')}}" aria-expanded="false">
                 <i class="fa fa-users"></i><span
                 class="nav-text">Etudiants</span>
@@ -96,7 +100,7 @@
                         class="fa fa-cog"></i><span class="nav-text">Parametres</span></a>
                 <ul aria-expanded="false">
                     <li><a href="{{route('profil')}}">Profil</a></li>
-                    <li><a href="{{route('abonnement')}}">Abonnements</a></li>
+                    
                     <li><a href="./app-calender.html">Général</a></li>
                 </ul>
             </li>

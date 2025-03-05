@@ -10,7 +10,6 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use App\Models\User;
-use App\Models\Matiere;
 use App\Models\Classe;
 use App\Models\Salle;
 use App\Models\Semaine;
