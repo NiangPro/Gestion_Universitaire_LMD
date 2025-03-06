@@ -25,6 +25,7 @@ class EmploisDuTemps extends Component
 
     public function updatedAcademicYear($value)
     {
+        $this->trouve = false;
         $this->academicYear = $value;
         $this->reset(["type", "cours", "classrooms", "teachers", "courses"]);
     }
@@ -32,6 +33,7 @@ class EmploisDuTemps extends Component
     public function updatedType($value)
     {
         $this->type = $value;
+        $this->trouve = false;
         $this->reset(["cours", "classrooms", "teachers", "courses"]);
 
 

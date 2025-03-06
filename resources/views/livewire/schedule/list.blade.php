@@ -25,22 +25,29 @@
                 <tr>
                     <td>{{ $heure }} - {{ $heures[$index + 1] ?? '20:00' }}</td>
                     @foreach($jours as $jour)
-                        <td>
-                                @foreach($courses as $cours)
-                                    @if($cours->semaine->jour == $jour && $cours->heure_debut >= $heure && $cours->heure_debut <= $heures[$index + 1])
-                                        <div class="bg-primary text-white p-1">
-                                            @if($type == 'classe')
-                                                {{ $cours->matiere->nom }}<br>
-                                                {{ $cours->professeur->prenom }} {{ $cours->professeur->nom }}<br>
-                                            @else
-                                                {{ $cours->matiere->nom }}<br>
-                                                {{ $cours->classe->nom }} <br>({{ strtolower($cours->classe->filiere->nom) }})<br>
-                                            @endif
-                                            Salle: {{ $cours->salle->nom }}
-                                        </div>
+                    @php 
+                        $findc = false;
+                    @endphp
+                        @foreach($courses as $cours)
+                            @if($cours->semaine->jour == $jour && (($cours->heure_debut >= $heure && $cours->heure_debut <= $heures[$index + 1]) || ($cours->heure_debut <= $heure && $cours->heure_fin >= $heure)))
+                            @php 
+                                $findc = true;
+                            @endphp    
+                            <td class="bg-primary text-white text-center p-1">
+                                    @if($type == 'classe')
+                                        {{ $cours->matiere->nom }}<br>
+                                        {{ $cours->professeur->prenom }} {{ $cours->professeur->nom }}<br>
+                                    @else
+                                        {{ $cours->matiere->nom }}<br>
+                                        {{ $cours->classe->nom }} <br>({{ strtolower($cours->classe->filiere->nom) }})<br>
                                     @endif
-                                @endforeach
-                        </td>
+                                    Salle: {{ $cours->salle->nom }}
+                                </td>
+                            @endif
+                        @endforeach
+                        @if(!$findc)
+                            <td></td>
+                        @endif
                     @endforeach
                 </tr>
             @endforeach
