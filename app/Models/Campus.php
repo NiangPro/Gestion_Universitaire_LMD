@@ -19,35 +19,36 @@ class Campus extends Model
         "image",
         "is_deleting",
         "statut",
-        "date_fermeture",
-        "pack_id"
     ];
 
-    public function users(){
+    public function users()
+    {
         return $this->hasMany(User::class);
     }
 
-    public function admins(){
+    public function admins()
+    {
         return $this->users()->where('role', 'admin');
     }
 
-    public function eleves(){
+    public function eleves()
+    {
         return $this->users()->where('role', 'eleve');
     }
 
-    public function professeurs(){
+    public function professeurs()
+    {
         return $this->users()->where('role', 'professeur');
     }
 
-    public function parents(){
+    public function parents()
+    {
         return $this->users()->where('role', 'parent');
     }
 
-    public function pack(){
-        return $this->belongsTo(Pack::class, "pack_id");
-    }
 
-    public function academicYears(){
+    public function academicYears()
+    {
         return $this->hasMany(AcademicYear::class);
     }
 
@@ -56,31 +57,58 @@ class Campus extends Model
         return $this->academicYears()->where('encours', true)->first();
     }
 
-    public function departements(){
+    public function departements()
+    {
         return $this->hasMany(Departement::class);
     }
 
-    public function filieres(){
+    public function filieres()
+    {
         return $this->hasMany(Filiere::class);
     }
 
-    public function niveauxEtudes(){
+    public function niveauxEtudes()
+    {
         return $this->hasMany(NiveauEtude::class);
     }
 
-    public function uniteEnseignements(){
+    public function uniteEnseignements()
+    {
         return $this->hasMany(UniteEnseignement::class);
     }
 
-    public function matieres(){
+    public function matieres()
+    {
         return $this->hasMany(Matiere::class);
     }
 
-    public function classes(){
+    public function classes()
+    {
         return $this->hasMany(Classe::class);
     }
 
-    public function historiques(){
+    public function historiques()
+    {
         return $this->hasMany(Historique::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+            ->where('status', 'active')
+            ->where('payment_status', 'paid')
+            ->where('end_date', '>', now())
+            ->latest()
+            ->first();
+    }
+
+    public function hasActiveSubscription()
+    {
+        return $this->activeSubscription() !== null;
     }
 }

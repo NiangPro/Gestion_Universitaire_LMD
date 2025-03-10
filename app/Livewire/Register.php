@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Campus;
+use App\Models\Subscription;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -35,31 +36,31 @@ class Register extends Component
     ];
 
     public function messages()
-{
-    return [
-        'prenom.required' => 'Le prénom est obligatoire.',
-        'nom.required' => 'Le nom est obligatoire.',
-        'username.required' => "Le nom d'utilisateur est obligatoire.",
-        'username.unique' => "Ce nom d'utilisateur existe déjà.",
-        'tel.unique' => "Ce numéro de téléphone existe déjà.",
-        'adresse.required' => "L'adresse est obligatoire.",
-        'tel.required' => 'Le numéro de téléphone est obligatoire.',
-        'tel.regex' => 'Le numéro de téléphone doit être un numéro valide au Sénégal.',
-        'sexe.required' => 'Le sexe est obligatoire.',
-        'email.required' => "L'adresse e-mail est obligatoire.",
-        'email.unique' => "Cette adresse e-mail existe déjà.",
-        'password.required' => 'Le mot de passe est obligatoire.',
-        'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
-        'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+    {
+        return [
+            'prenom.required' => 'Le prénom est obligatoire.',
+            'nom.required' => 'Le nom est obligatoire.',
+            'username.required' => "Le nom d'utilisateur est obligatoire.",
+            'username.unique' => "Ce nom d'utilisateur existe déjà.",
+            'tel.unique' => "Ce numéro de téléphone existe déjà.",
+            'adresse.required' => "L'adresse est obligatoire.",
+            'tel.required' => 'Le numéro de téléphone est obligatoire.',
+            'tel.regex' => 'Le numéro de téléphone doit être un numéro valide au Sénégal.',
+            'sexe.required' => 'Le sexe est obligatoire.',
+            'email.required' => "L'adresse e-mail est obligatoire.",
+            'email.unique' => "Cette adresse e-mail existe déjà.",
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
 
-        'nomc.required' => 'Le nom du campus est obligatoire.',
-        'emailc.required' => "L'adresse e-mail du campus est obligatoire.",
-        'emailc.unique' => 'Cette adresse e-mail du campus existe déjà.',
-        'telc.required' => 'Le numéro de téléphone du campus est obligatoire.',
-        'telc.regex' => 'Le numéro de téléphone du campus doit être un numéro valide au Sénégal.',
-        'adressec.required' => "L'adresse du campus est obligatoire.",
-    ];
-}
+            'nomc.required' => 'Le nom du campus est obligatoire.',
+            'emailc.required' => "L'adresse e-mail du campus est obligatoire.",
+            'emailc.unique' => 'Cette adresse e-mail du campus existe déjà.',
+            'telc.required' => 'Le numéro de téléphone du campus est obligatoire.',
+            'telc.regex' => 'Le numéro de téléphone du campus doit être un numéro valide au Sénégal.',
+            'adressec.required' => "L'adresse du campus est obligatoire.",
+        ];
+    }
 
 
     public function submit()
@@ -73,9 +74,20 @@ class Register extends Component
             'image' => "campus.jpg",
             'tel' => $this->telc,
             'adresse' => $this->adressec,
-            'pack_id' => $this->idpack,
-            'date_fermeture' => Carbon::now()->addWeek(), // Définit la date de fermeture à une semaine à partir de maintenant
         ]);
+
+        $subscription = new Subscription([
+            'campus_id' => $campus->id,
+            'pack_id' => $this->idpack,
+            'start_date' => now(),
+            'end_date' => Carbon::now()->addWeek(),
+            'status' => 'active',
+            'payment_status' => 'paid',
+            'amount_paid' => 0,
+            'payment_method' => 'free'
+        ]);
+
+        $subscription->save();
 
         // Enregistrement de l'administrateur avec le campus_id
         User::create([
@@ -102,7 +114,8 @@ class Register extends Component
         return view('livewire.register');
     }
 
-    function mount($id){
+    function mount($id)
+    {
         $this->idpack = $id;
 
         if (Auth::user()) {

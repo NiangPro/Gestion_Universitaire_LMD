@@ -21,7 +21,13 @@ class Pack extends Model
         "couleur"
     ];
 
-    public function campuses(){
+    public function campuses()
+    {
         return $this->hasMany(Campus::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
     }
 }
