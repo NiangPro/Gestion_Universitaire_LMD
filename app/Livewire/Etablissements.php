@@ -20,22 +20,23 @@ class Etablissements extends Component
     public $outils;
     public $deleteItem;
 
-    #[Rule('required', message:'Le champ nom est obligatoire')]
+    #[Rule('required', message: 'Le champ nom est obligatoire')]
     public $nom;
-    #[Rule('required', message:'Le champ téléphone est obligatoire')]
-    #[Rule('regex:/^[33|70|75|76|77|78]+[0-9]{7}$/', message:'Le numéro de téléphone doit être un numéro valide au Sénégal.')]
+    #[Rule('required', message: 'Le champ téléphone est obligatoire')]
+    #[Rule('regex:/^[33|70|75|76|77|78]+[0-9]{7}$/', message: 'Le numéro de téléphone doit être un numéro valide au Sénégal.')]
     public $telephone;
-    #[Rule('required', message:'Le champ adresse est obligatoire')]
+    #[Rule('required', message: 'Le champ adresse est obligatoire')]
     public $adresse;
-    #[Rule('required', message:'Le champ email est obligatoire')]
+    #[Rule('required', message: 'Le champ email est obligatoire')]
     public $email;
     public $id;
     public $image;
     public $etat;
 
     // 'email' => 'required|email|unique:campuses,email', // Validation de l'email unique
-   
-    public function getCampus($id){
+
+    public function getCampus($id)
+    {
         $c = Campus::where("id", $id)->first();
         $this->camp = $c;
 
@@ -51,13 +52,15 @@ class Etablissements extends Component
         $this->title = "Les informations de `$this->nom`";
     }
 
-    public function change($status){
+    public function change($status)
+    {
         $this->status = $status;
 
         $this->title = "Liste des établissements";
     }
 
-    public function changeStatus($id, $etat){
+    public function changeStatus($id, $etat)
+    {
         $val = $etat == "actif" ? 1 : 0;
 
         $camp = Campus::where("id", $id)->first();
@@ -73,8 +76,8 @@ class Etablissements extends Component
     {
         $this->validate();
 
-         // Définir la date de fermeture à un mois à partir d'aujourd'hui
-         $dateFermeture = Carbon::now()->addMonth();
+        // Définir la date de fermeture à un mois à partir d'aujourd'hui
+        $dateFermeture = Carbon::now()->addMonth();
         // Sauvegarde du campus dans la base de données
         Campus::create([
             'nom' => ucfirst($this->nom),
@@ -88,12 +91,13 @@ class Etablissements extends Component
         // Réinitialiser les champs du formulaire après l'ajout
         $this->reset(["nom", "telephone", "adresse", "email"]);
 
-        
+
         // Émettre un événement pour fermer le modal
         $this->dispatch('campusAdded');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $c = Campus::where("id", $id)->first();
         $c->is_deleting = true;
         $c->save();
@@ -109,9 +113,12 @@ class Etablissements extends Component
         ]);
     }
 
-    public function mount(){
+    public function mount()
+    {
         $this->outils = new Outils();
         $this->outils->isLogged();
-        $this->deleteItem = Activation::where("nom", "campuses")->first()->status;
+
+        $activation = Activation::where("nom", "campuses")->first();
+        $this->deleteItem = $activation ? $activation->status : false; // Provide a default value if no record exists
     }
 }
