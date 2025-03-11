@@ -6,6 +6,7 @@ use App\Models\Pack;
 use App\Models\Subscription;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class Abonnement extends Component
@@ -14,12 +15,9 @@ class Abonnement extends Component
     public $packs;
     public $remainingDays;
     public $selectedPack;
-    public $showRenewModal = false;
-    public $renewalDuration = 'monthly'; // monthly ou annual
+    public $renewalDuration = 'monthly';
+    public $usersCount = 0;
     public $compareMode = false;
-    public $usersCount = 0; // Nombre d'utilisateurs actuels
-
-    protected $listeners = ['resetRenewal'];
 
     public function mount()
     {
@@ -27,6 +25,11 @@ class Abonnement extends Component
         $this->packs = Pack::where('is_deleting', false)->get();
         $this->calculateRemainingDays();
         $this->usersCount = $this->getCurrentUsersCount();
+    }
+
+    private function getCurrentUsersCount()
+    {
+        return Auth::user()->campus->users()->count();
     }
 
     public function calculateRemainingDays()
@@ -38,13 +41,15 @@ class Abonnement extends Component
         }
     }
 
-    private function getCurrentUsersCount()
+    public function getProgressWidth()
     {
-        // Remplacez ceci par votre logique réelle de comptage d'utilisateurs
-        return Auth::user()->campus->users()->count();
+        if (!$this->currentSubscription || !$this->currentSubscription->pack->limite) {
+            return 0;
+        }
+        return min(100, ($this->usersCount / $this->currentSubscription->pack->limite) * 100);
     }
 
-    public function getUsersProgressColor()
+    public function getUserProgressBarColor()
     {
         if (!$this->currentSubscription) return 'bg-secondary';
 
@@ -64,29 +69,48 @@ class Abonnement extends Component
         $this->compareMode = !$this->compareMode;
     }
 
-    public function changePack($packId)
-    {
-        $this->selectedPack = Pack::findOrFail($packId);
-
-        // Vérifier si c'est le même pack
-        if ($this->currentSubscription && $this->currentSubscription->pack_id === $packId) {
-            session()->flash('info', 'Vous utilisez déjà ce pack. Vous pouvez le renouveler si vous le souhaitez.');
-            return;
-        }
-
-        $this->dispatch('show-confirmation-modal');
-    }
-
     public function showRenewModal()
     {
-        if ($this->currentSubscription) {
-            $this->dispatch('show-renew-modal');
-        }
+        $this->dispatch('openRenewModal');
     }
 
     public function showCancelModal()
     {
-        $this->dispatch('show-cancel-modal');
+        $this->dispatch('openCancelModal');
+    }
+
+    public function changePack($packId)
+    {
+        $this->selectedPack = Pack::findOrFail($packId);
+        $this->dispatch('openChangePackModal');
+    }
+
+    public function confirmPackChange()
+    {
+        try {
+            if ($this->currentSubscription) {
+                $this->currentSubscription->update([
+                    'status' => 'cancelled',
+                    'end_date' => Carbon::now()
+                ]);
+            }
+
+            Subscription::create([
+                'campus_id' => Auth::user()->campus_id,
+                'pack_id' => $this->selectedPack->id,
+                'start_date' => Carbon::now(),
+                'end_date' => Carbon::now()->addMonth(),
+                'status' => 'active',
+                'payment_status' => 'pending',
+                'amount_paid' => $this->selectedPack->mensuel
+            ]);
+
+            $this->dispatch('closeChangePackModal');
+            $this->mount();
+            session()->flash('success', 'Pack changé avec succès!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erreur lors du changement de pack : ' . $e->getMessage());
+        }
     }
 
     public function confirmCancellation()
@@ -94,12 +118,12 @@ class Abonnement extends Component
         try {
             if ($this->currentSubscription) {
                 $this->currentSubscription->update(['status' => 'cancelled']);
+                $this->dispatch('closeCancelModal');
                 $this->mount();
-                $this->dispatch('hide-cancel-modal');
-                session()->flash('success', 'Votre abonnement a été résilié avec succès.');
+                session()->flash('success', 'Abonnement résilié avec succès.');
             }
         } catch (\Exception $e) {
-            session()->flash('error', 'Une erreur est survenue lors de la résiliation.');
+            session()->flash('error', 'Erreur lors de la résiliation : ' . $e->getMessage());
         }
     }
 
@@ -128,7 +152,7 @@ class Abonnement extends Component
                 'amount_paid' => $amount
             ]);
 
-            $this->dispatch('hide-renew-modal');
+            $this->dispatch('closeRenewModal');
             $this->mount();
             session()->flash('success', 'Abonnement renouvelé avec succès!');
         } catch (\Exception $e) {
@@ -136,49 +160,7 @@ class Abonnement extends Component
         }
     }
 
-    public function confirmPackChange()
-    {
-        try {
-            if ($this->currentSubscription) {
-                $this->currentSubscription->update([
-                    'status' => 'cancelled',
-                    'end_date' => Carbon::now()
-                ]);
-            }
-
-            Subscription::create([
-                'campus_id' => Auth::user()->campus_id,
-                'pack_id' => $this->selectedPack->id,
-                'start_date' => Carbon::now(),
-                'end_date' => Carbon::now()->addMonth(),
-                'status' => 'active',
-                'payment_status' => 'pending',
-                'amount_paid' => $this->selectedPack->mensuel
-            ]);
-
-            $this->mount(); // Rafraîchir les données
-            $this->dispatch('hide-confirmation-modal');
-            session()->flash('success', 'Votre abonnement a été mis à jour avec succès!');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Une erreur est survenue lors du changement de pack.');
-        }
-    }
-
-    public function cancelSubscription()
-    {
-        if ($this->currentSubscription) {
-            $this->currentSubscription->update(['status' => 'cancelled']);
-            $this->mount();
-            session()->flash('success', 'Abonnement résilié avec succès!');
-        }
-    }
-
-    public function resetRenewal()
-    {
-        $this->renewalDuration = 'monthly';
-        $this->mount();
-    }
-
+    #[Layout("components.layouts.app")]
     public function render()
     {
         return view('livewire.abonnement.abonnement');

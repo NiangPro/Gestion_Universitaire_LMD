@@ -31,7 +31,7 @@
                         <h5 class="card-title">Pack : {{ $currentSubscription->pack->nom }}</h5>
                         <p class="card-text">
                             <span class="badge {{ $currentSubscription->status === 'active' ? 'badge-success' : 'badge-danger' }}">
-                                {{ \App\Helpers\MoneyHelper::getStatusTraduction($currentSubscription->status) }}
+                                {{ $currentSubscription->status === 'active' ? 'Actif' : 'Inactif' }}
                             </span>
                         </p>
                         <p class="card-text">
@@ -46,14 +46,14 @@
                             <h6>Utilisation du pack</h6>
                             <div class="d-flex justify-content-between mb-1">
                                 <span>{{ $usersCount }} utilisateurs sur {{ $currentSubscription->pack->limite }}</span>
-                                <span class="{{ $this->getUsersProgressColor() }}">
+                                <span class="{{ $this->getUserProgressBarColor() }}">
                                     {{ round(($usersCount / $currentSubscription->pack->limite) * 100) }}%
                                 </span>
                             </div>
                             <div class="progress" style="height: 10px;">
-                                <div class="progress-bar {{ $this->getUsersProgressColor() }}"
+                                <div class="progress-bar {{ $this->getUserProgressBarColor() }}"
                                     role="progressbar"
-                                    style="width: {{ ($usersCount / $currentSubscription->pack->limite) * 100 }}%"
+                                    style="width: {{ $this->getProgressWidth() }}%"
                                     aria-valuenow="{{ $usersCount }}"
                                     aria-valuemin="0"
                                     aria-valuemax="{{ $currentSubscription->pack->limite }}">
@@ -148,43 +148,6 @@
         </div>
         @endif
 
-        <!-- Modal de confirmation de changement -->
-        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title">Confirmer le changement</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @if($selectedPack)
-                        <div class="text-center mb-4">
-                            <div class="rounded-circle bg-primary p-3 d-inline-block mb-3">
-                                <i class="fas fa-exchange-alt text-white fs-4"></i>
-                            </div>
-                            <h4>Passage au pack "{{ $selectedPack->nom }}"</h4>
-                            <p class="text-muted">Êtes-vous sûr de vouloir changer de pack ?</p>
-                        </div>
-                        <div class="alert alert-info">
-                            <h6 class="mb-2">Détails du nouveau pack :</h6>
-                            <p class="mb-1">Prix mensuel : {{ \App\Helpers\MoneyHelper::formatMontant($selectedPack->mensuel) }}</p>
-                            <p class="mb-0">Prix annuel : {{ \App\Helpers\MoneyHelper::formatMontant($selectedPack->annuel) }}</p>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                        <button wire:click="confirmPackChange" class="btn btn-primary">
-                            <i class="fas fa-check mr-2"></i>
-                            Confirmer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Modal de renouvellement -->
         <div class="modal fade" id="renewModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -261,6 +224,41 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
                         <button type="button" class="btn btn-danger" wire:click="confirmCancellation">
                             <i class="fas fa-times mr-2"></i>Confirmer la résiliation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de changement de pack -->
+        <div class="modal fade" id="changePackModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title">Confirmer le changement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @if($selectedPack)
+                        <div class="text-center mb-4">
+                            <div class="rounded-circle bg-primary p-3 d-inline-block mb-3">
+                                <i class="fas fa-exchange-alt text-white"></i>
+                            </div>
+                            <h4>Passage au pack "{{ $selectedPack->nom }}"</h4>
+                        </div>
+                        <div class="alert alert-info">
+                            <h6 class="mb-2">Détails du nouveau pack :</h6>
+                            <p class="mb-1">Prix mensuel : {{ \App\Helpers\MoneyHelper::formatMontant($selectedPack->mensuel) }}</p>
+                            <p class="mb-0">Limite utilisateurs : {{ $selectedPack->limite }}</p>
+                        </div>
+                        @endif
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary" wire:click="confirmPackChange">
+                            <i class="fas fa-check mr-2"></i>Confirmer
                         </button>
                     </div>
                 </div>
@@ -363,37 +361,43 @@
             transform: translateY(-3px);
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .modal.show {
+            display: block;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
     </style>
     @endpush
 
+    <!-- Script pour gérer la modale -->
     <script>
-        document.addEventListener('livewire:initialized', () => {
-            const confirmationModal = $('#confirmationModal');
-            const renewModal = $('#renewModal');
-            const cancelModal = $('#cancelModal');
-
-            Livewire.on('show-confirmation-modal', () => {
-                confirmationModal.modal('show');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestionnaire pour la modale de renouvellement
+            window.addEventListener('openRenewModal', event => {
+                $('#renewModal').modal('show');
+            });
+            window.addEventListener('closeRenewModal', event => {
+                $('#renewModal').modal('hide');
             });
 
-            Livewire.on('hide-confirmation-modal', () => {
-                confirmationModal.modal('hide');
+            // Gestionnaire pour la modale de résiliation
+            window.addEventListener('openCancelModal', event => {
+                $('#cancelModal').modal('show');
+            });
+            window.addEventListener('closeCancelModal', event => {
+                $('#cancelModal').modal('hide');
             });
 
-            Livewire.on('show-renew-modal', () => {
-                renewModal.modal('show');
+            // Gestionnaire pour la modale de changement de pack
+            window.addEventListener('openChangePackModal', event => {
+                $('#changePackModal').modal('show');
             });
-
-            Livewire.on('hide-renew-modal', () => {
-                renewModal.modal('hide');
-            });
-
-            Livewire.on('show-cancel-modal', () => {
-                cancelModal.modal('show');
-            });
-
-            Livewire.on('hide-cancel-modal', () => {
-                cancelModal.modal('hide');
+            window.addEventListener('closeChangePackModal', event => {
+                $('#changePackModal').modal('hide');
             });
         });
     </script>
