@@ -8,7 +8,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\SubscriptionRenewed;
+use Livewire\Attributes\Title;
 
+#[Title("Abonnements")]
 class Abonnement extends Component
 {
     public $currentSubscription;
@@ -25,6 +30,11 @@ class Abonnement extends Component
         $this->packs = Pack::where('is_deleting', false)->get();
         $this->calculateRemainingDays();
         $this->usersCount = $this->getCurrentUsersCount();
+
+        // Vérifier si l'abonnement expire bientôt
+        if ($this->remainingDays <= 7) {
+            session()->flash('warning', 'Votre abonnement expire dans ' . $this->remainingDays . ' jours !');
+        }
     }
 
     private function getCurrentUsersCount()
@@ -142,7 +152,7 @@ class Abonnement extends Component
                 ]);
             }
 
-            Subscription::create([
+            $newSubscription = Subscription::create([
                 'campus_id' => Auth::user()->campus_id,
                 'pack_id' => $this->currentSubscription->pack_id,
                 'start_date' => Carbon::now(),
@@ -152,7 +162,18 @@ class Abonnement extends Component
                 'amount_paid' => $amount
             ]);
 
+            try {
+                Mail::to(Auth::user()->email)->send(new SubscriptionRenewed($newSubscription));
+            } catch (\Exception $e) {
+                Log::error('Erreur d\'envoi d\'email : ' . $e->getMessage());
+            }
+
+            // Fermer proprement la modal
             $this->dispatch('closeRenewModal');
+
+            // Nettoyer le backdrop et réactiver le scroll
+            $this->dispatch('cleanupModal');
+
             $this->mount();
             session()->flash('success', 'Abonnement renouvelé avec succès!');
         } catch (\Exception $e) {
