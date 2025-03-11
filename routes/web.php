@@ -32,6 +32,7 @@ use App\Livewire\Register;
 use App\Livewire\Surveillant;
 use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SubscriptionPaymentController;
 
 Route::get("/", Home::class)->name("home");
 Route::get("/connexion", Login::class)->name("login");
@@ -70,4 +71,10 @@ if (app()->environment('local')) {
 Route::middleware(['auth'])->group(function () {
     Route::get('/two-factor-auth', \App\Http\Livewire\Auth\TwoFactorAuth::class)->name('two-factor.auth');
     Route::get('/two-factor-challenge', \App\Http\Livewire\Auth\TwoFactorChallenge::class)->name('two-factor.challenge');
+});
+
+Route::prefix('subscription/payment')->name('subscription.payment.')->group(function () {
+    Route::get('success', [SubscriptionPaymentController::class, 'success'])->name('success');
+    Route::get('cancel', [SubscriptionPaymentController::class, 'cancel'])->name('cancel');
+    Route::post('callback', [SubscriptionPaymentController::class, 'callback'])->name('callback');
 });
