@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
@@ -186,5 +187,13 @@ class User extends Authenticatable
     public function informationMedicale()
     {
         return $this->hasOne(InformationMedicale::class);
+    }
+
+    /**
+     * Get the inscriptions for the user.
+     */
+    public function inscriptions(): HasMany
+    {
+        return $this->hasMany(Inscription::class, 'etudiant_id');
     }
 }

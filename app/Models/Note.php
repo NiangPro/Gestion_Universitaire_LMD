@@ -9,7 +9,7 @@ class Note extends Model
 {
     protected $fillable = [
         'etudiant_id',
-        'cours_id',
+        'academic_year_id',
         'type_evaluation',  // (CC, TP, Examen)
         'note',
         'coefficient',
@@ -23,8 +23,9 @@ class Note extends Model
         return $this->belongsTo(User::class, 'etudiant_id');
     }
 
-    public function cours(): BelongsTo
+    public function academic_year(): BelongsTo
     {
-        return $this->belongsTo(Cour::class, 'cours_id');
+        return $this->belongsTo(AcademicYear::class, 'academic_year_id');
     }
+
 }

@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('matiere_id')->nullable();
+            $table->foreign('matiere_id')->references('id')->on('matieres')->onDelete('cascade');
             $table->unsignedBigInteger('etudiant_id')->nullable();
             $table->foreign('etudiant_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('cours_id')->nullable();
-            $table->foreign('cours_id')->references('id')->on('cours')->onDelete('cascade');
+            $table->unsignedBigInteger('academic_year_id')->nullable();
+            $table->foreign('academic_year_id')->references('id')->on('academic_years')->onDelete('cascade');
             $table->string('type_evaluation');
             $table->decimal('note', 5, 2);
             $table->decimal('coefficient', 5, 2);

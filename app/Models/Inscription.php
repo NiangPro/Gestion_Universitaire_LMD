@@ -5,10 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Inscription extends Model
 {
+    use HasFactory;
+
     protected $table = "inscriptions";
+    
     protected $fillable = [
         "user_id",
         "campus_id",
@@ -22,7 +26,8 @@ class Inscription extends Model
         "tenue",
         "commentaire",
         "status",
-        "date_inscription"
+        "date_inscription",
+        "etudiant_id"
     ];
 
     public function user()
@@ -57,7 +62,7 @@ class Inscription extends Model
     
     public function tuteur()
     {
-        return $this->belongsTo(Tuteur::class, "tuteur_id");
+        return $this->belongsTo(User::class, "tuteur_id");
     }
 
     /**
@@ -68,5 +73,11 @@ class Inscription extends Model
         return $this->hasMany(Commentaire::class);
     }
 
-    use HasFactory;
+    /**
+     * Get the student that owns the inscription.
+     */
+    public function etudiant(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'etudiant_id');
+    }
 }
