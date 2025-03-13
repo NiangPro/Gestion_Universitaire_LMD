@@ -170,9 +170,9 @@ class User extends Authenticatable
         return $this->role == "parent";
     }
 
-    public function estEleve()
+    public function estEtudiant()
     {
-        return $this->role == "eleve";
+        return $this->role == "etudiant";
     }
 
     public function estProfesseur()

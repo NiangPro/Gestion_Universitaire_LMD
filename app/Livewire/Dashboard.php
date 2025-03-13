@@ -18,10 +18,14 @@ class Dashboard extends Component
     public $currentAcademicYear;
     public $totalCours;
     public $totalAbsences;
-    public $totalEtudiants;
     public $totalRetards;
     public $totalNotes;
-    public $recentActivities = []	;
+    public $recentActivities = [];
+    public $showEmploiModal = false;
+    public $showNotesModal = false;
+    public $emploiDuTemps;
+    public $moyennesParMatiere = [];
+    public $totalEtudiants;
     public $currentClasse;
     public $moyenneGenerale;
 
@@ -32,7 +36,7 @@ class Dashboard extends Component
         
         if ($this->user->estProfesseur()) {
             $this->loadProfesseurData();
-        } else if ($this->user->estEleve()) {
+        } else if ($this->user->estEtudiant()) {
             $this->loadEleveData();
         }
     }
@@ -103,6 +107,54 @@ class Dashboard extends Component
             if ($notes->count() > 0) {
                 $this->moyenneGenerale = round($notes->avg('note'), 2);
             }
+        }
+    }
+
+    public function toggleEmploiModal()
+    {
+        $this->showEmploiModal = !$this->showEmploiModal;
+        if ($this->showEmploiModal) {
+            $this->loadEmploiDuTemps();
+        }
+    }
+
+    public function toggleNotesModal()
+    {
+        $this->showNotesModal = !$this->showNotesModal;
+        if ($this->showNotesModal) {
+            $this->loadNotes();
+        }
+    }
+
+    private function loadEmploiDuTemps()
+    {
+        if ($this->currentClasse) {
+            $this->emploiDuTemps = Cour::where('classe_id', $this->currentClasse->id)
+                ->where('academic_year_id', $this->currentAcademicYear->id)
+                ->with(['professeur', 'matiere', 'salle', 'semaine'])
+                ->orderBy('semaine_id')
+                ->orderBy('heure_debut')
+                ->get()
+                ->groupBy('semaine.nom');
+        }
+    }
+
+    private function loadNotes()
+    {
+        if ($this->user->estEtudiant()) {
+            $notes = Note::where('etudiant_id', $this->user->id)
+                ->where('academic_year_id', $this->currentAcademicYear->id)
+                ->with(['cours.matiere'])
+                ->get();
+
+            // Grouper les notes par matière et calculer les moyennes
+            $this->moyennesParMatiere = $notes->groupBy('cours.matiere.nom')
+                ->map(function ($notesMatiere) {
+                    return [
+                        'notes' => $notesMatiere,
+                        'moyenne' => round($notesMatiere->avg('note'), 2)
+                    ];
+                });
         }
     }
 
