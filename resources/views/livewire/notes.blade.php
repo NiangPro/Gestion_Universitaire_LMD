@@ -46,7 +46,7 @@
             <!-- Modal d'ajout de note -->
             @if($showModal)
             <div class="modal show d-block" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Ajouter une note</h5>
@@ -58,7 +58,7 @@
                             <div class="modal-body">
                                 <div class="row">
                                     <!-- Sélection de la classe -->
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label>Classe</label>
                                         <select wire:model="classe_id" class="form-control" wire:change="loadEtudiants">
                                             <option value="">Sélectionner une classe</option>
@@ -73,7 +73,7 @@
 
                                     <!-- Sélection de l'étudiant (apparaît après sélection de la classe) -->
                                     @if($classe_id)
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label>Étudiant</label>
                                         <select wire:model="etudiant_id" class="form-control">
                                             <option value="">Sélectionner un étudiant</option>
@@ -95,11 +95,18 @@
 
                                     <div class="form-group col-md-6">
                                         <label>Coefficient</label>
-                                        <input type="number" class="form-control" wire:model="coefficient" min="1">
+                                        <select  wire:model="coefficient" class="form-control">
+                                            <option value="">Sélectionner un coefficient</option>
+                                            @foreach($coefficients as $c)
+                                                <option value="{{ $c->id }}">
+                                                    {{ $c->valeur }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                         @error('coefficient') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label>Type d'évaluation</label>
                                         <select wire:model="type_evaluation" class="form-control">
                                             <option value="">Sélectionner le type</option>

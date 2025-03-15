@@ -60,6 +60,7 @@
                         class="fa fa-chalkboard-teacher"></i><span class="nav-text">Ens. & Suivi</span></a>
                 <ul aria-expanded="false">
                     <li><a href="{{route('cours')}}">Cours</a></li>
+                    <li><a href="{{route('note')}}">Notes</a></li>
                     <li><a href="">Absences</a></li>
                     <li><a href="">Retards</a></li>
                     <li><a href="{{route('emploisdutemps')}}">Emplois du temps</a></li>

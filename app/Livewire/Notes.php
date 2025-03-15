@@ -11,7 +11,10 @@ use App\Models\User;
 use Livewire\Attributes\On;
 use App\Models\Classe;
 use App\Models\AcademicYear;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
+#[Title("Notes")]
 class Notes extends Component
 {
     use WithPagination;
@@ -177,6 +180,7 @@ class Notes extends Component
             ->get();
     }
 
+    #[Layout("components.layouts.app")]
     public function render()
     {
         $notes = Note::with(['etudiant', 'cours'])
@@ -204,7 +208,8 @@ class Notes extends Component
             'classes' => $this->classes,
             'cours' => Cour::where('campus_id', Auth::user()->campus_id)
                           ->where('is_deleting', 0)
-                          ->get()
+                          ->get(),
+            'coefficients' => Auth::user()->campus->coefficients
         ]);
     }
 }
