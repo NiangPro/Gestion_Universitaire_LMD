@@ -11,7 +11,9 @@ use App\Models\Retard;
 use App\Models\AcademicYear;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
+#[Title("Tableau de bord")]
 class Dashboard extends Component
 {
     public $user;
@@ -161,6 +163,11 @@ class Dashboard extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        return view('livewire.dashboard');
+        if (Auth::user()->estSuperAdmin()) {
+            return view('livewire.dashboard.dashboardAdmin');
+        } else {
+            return view('livewire.dashboard.dashboard');
+        }
+        
     }
 }

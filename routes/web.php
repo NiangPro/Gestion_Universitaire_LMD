@@ -34,10 +34,6 @@ use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
 use App\Livewire\Notes;
-use App\Livewire\Absences;
-use App\Livewire\Progression;
-use App\Livewire\Bulletins;
-use App\Livewire\Competences;
 
 Route::get("/", Home::class)->name("home");
 Route::get("/connexion", Login::class)->name("login");
@@ -84,3 +80,5 @@ Route::prefix('subscription/payment')->name('subscription.payment.')->group(func
     Route::get('cancel', [SubscriptionPaymentController::class, 'cancel'])->name('cancel');
     Route::post('callback', [SubscriptionPaymentController::class, 'callback'])->name('callback');
 });
+
+

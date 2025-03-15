@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Campus;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -18,7 +17,7 @@ class Countdown extends Component
     
     public function render()
     {
-        $this->dateFermeture = Auth::user()->campus->date_fermeture;
+        $this->dateFermeture = Auth::user()->campus->activeSubscription()->end_date;
         return view('livewire.countdown');
     }
 }

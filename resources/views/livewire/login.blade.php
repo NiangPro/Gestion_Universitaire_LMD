@@ -1,15 +1,15 @@
 <div>
-    <div class="container-fluid">
+    <div class="container-fluid mt-5">
         <div class="row justify-content-center align-items-center min-vh-100">
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-5">
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
                         <h4 class="text-center mb-4">Connexion</h4>
                         
                         <form wire:submit="seconnecter">
                             <div class="mb-3">
-                                <label for="login" class="form-label">Email/Username/Téléphone</label>
-                                <input type="text" wire:model="login" class="form-control @error('login') is-invalid @enderror" id="login">
+                                <label for="login" class="form-label">Identifiant</label>
+                                <input type="text" wire:model="login" placeholder="Email, téléphone ou nom d'utilisateur" class="form-control @error('login') is-invalid @enderror" id="login">
                                 @error('login')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -19,9 +19,9 @@
                                 <label for="password" class="form-label">Mot de passe</label>
                                 <div class="input-group">
                                     <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" id="password">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                    <!-- <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                                        <i class="fa fa-eye"></i>
+                                    </button> -->
                                 </div>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
