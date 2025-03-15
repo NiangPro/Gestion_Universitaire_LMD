@@ -45,27 +45,16 @@
                     <li><a href="{{route('parent')}}">Parents</a></li>
                 </ul>
             </li>
-            <li><a href="{{route('departement')}}" aria-expanded="false">
-                    <i class="fa fa-university"></i><span
-                        class="nav-text">Départements</span>
-                </a></li>
 
-            <li><a href="{{route('classe')}}" aria-expanded="false">
-                    <i class="fa fa-list-alt"></i><span
-                        class="nav-text">Classes</span>
-                </a></li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="fa fa-graduation-cap"></i><span class="nav-text">Gestion Notes</span></a>
+                        class="fa fa-sitemap"></i><span class="nav-text">Org. Académique</span></a>
                 <ul aria-expanded="false">
-                    <li><a href="{{route('niveauetude')}}">Niveaux d'étude</a></li>
+                    <!-- <li><a href="{{route('niveauetude')}}">Niveaux d'étude</a></li> -->
+                    <li><a href="{{route('departement')}}">Départements</a></li>
                     <li><a href="{{route('filiere')}}">Filières</a></li>
                     <li><a href="{{route('uniteenseignement')}}">U.E</a></li>
-                    <li><a href="{{route('note')}}">Notes</a></li>
-                    {{-- <li><a href="{{route('matiere')}}">Matières</a>
-            </li> --}}
-            <li><a href="{{route('parent')}}">Bulletins</a></li>
-
-        </ul>
+                    <li><a href="{{route('classe')}}">Classes</a></li>
+                </ul>
         </li>
         <li><a href="{{route('cours')}}" aria-expanded="false">
                 <i class="fa fa-laptop"></i><span
