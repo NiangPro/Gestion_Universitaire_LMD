@@ -55,15 +55,16 @@
                     <li><a href="{{route('uniteenseignement')}}">U.E</a></li>
                     <li><a href="{{route('classe')}}">Classes</a></li>
                 </ul>
-        </li>
-        <li><a href="{{route('cours')}}" aria-expanded="false">
-                <i class="fa fa-laptop"></i><span
-                    class="nav-text">Cours</span>
-            </a></li>
-        <li><a href="{{route('emploisdutemps')}}" aria-expanded="false">
-                <i class="fa fa-calendar"></i><span
-                    class="nav-text">Emplois du temps</span>
-            </a></li>
+            </li>
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                        class="fa fa-chalkboard-teacher"></i><span class="nav-text">Ens. & Suivi</span></a>
+                <ul aria-expanded="false">
+                    <li><a href="{{route('cours')}}">Cours</a></li>
+                    <li><a href="">Absences</a></li>
+                    <li><a href="">Retards</a></li>
+                    <li><a href="{{route('emploisdutemps')}}">Emplois du temps</a></li>
+                </ul>
+            </li>
         <li><a href="{{route('etudiant')}}" aria-expanded="false">
                 <i class="fa fa-users"></i><span
                     class="nav-text">Etudiants</span>
