@@ -13,6 +13,8 @@ class Historique extends Model
 
     protected $fillable = [
         "type",
+        "table",
+        "element_id",
         "description",
         "ip",
         "navigateur",

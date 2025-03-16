@@ -1,5 +1,6 @@
 <div>
     <div class="container-fluid py-4">
+        @if($currentAcademicYear)
         <!-- En-tête -->
         <div class="row mb-4">
             <div class="col-12">
@@ -192,5 +193,10 @@
                 </div>
             </div>
         </div>
+        @else 
+            <div class="alert alert-warning">
+                <strong>Veuillez d'abord <a href="{{ route('academicyear')}}">ajouter et activer une année académique</a> pour voir les autres fonctionnalités</strong>
+            </div>
+        @endif
     </div>
 </div>

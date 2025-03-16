@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('historiques', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string('type');
-            $table->text('description');
+            $table->text('description')->nullable();
+            $table->string('table')->nullable();
+            $table->string('element_id')->nullable();
             $table->string('ip', 45)->nullable();
             $table->string('navigateur')->nullable();
             $table->unsignedBigInteger('campus_id')->nullable();

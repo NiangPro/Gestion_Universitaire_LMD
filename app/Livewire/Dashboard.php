@@ -51,8 +51,10 @@ class Dashboard extends Component
         if ($this->user->estProfesseur()) {
             $this->loadProfesseurData();
         }else if($this->user->estAdmin()){
-            $this->loadStatistiques();
-            $this->loadInscriptionsRecentes();
+            if ($this->currentAcademicYear) {
+                $this->loadStatistiques();
+                $this->loadInscriptionsRecentes();
+            }
         } else if ($this->user->estEtudiant()) {
             $this->loadEleveData();
         }

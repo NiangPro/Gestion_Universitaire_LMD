@@ -91,7 +91,6 @@
                                 <small class="text-muted">/mois</small>
                                 <p class="text-muted mt-2">ou {{ \App\Helpers\MoneyHelper::formatMontant($pack->annuel) }}/an</p>
                             </div>
-                            <p class="card-text text-center mb-4">{{ $pack->text }}</p>
                             <ul class="list-unstyled">
                                 <li class="mb-2">
                                     <i class="fas fa-check text-success mr-2"></i>
