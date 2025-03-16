@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Classe;
 use App\Models\Filiere;
-use App\Models\NiveauEtude;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;

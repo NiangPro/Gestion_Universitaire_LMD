@@ -43,7 +43,7 @@
                             <div class="progress" style="height: 10px;">
                                 <div class="progress-bar {{ $this->getUserProgressBarColor() }}"
                                     role="progressbar"
-                                    style="width: {{ $this->getProgressWidth() }}%"
+                                    style="width: {{ $this->getProgressWidth() }}%;"
                                     aria-valuenow="{{ $usersCount }}"
                                     aria-valuemin="0"
                                     aria-valuemax="{{ $currentSubscription->pack->limite }}">
