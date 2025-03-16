@@ -9,6 +9,8 @@ use App\Models\Note;
 use App\Models\Absence;
 use App\Models\Retard;
 use App\Models\AcademicYear;
+use App\Models\Classe;
+use App\Models\Inscription;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -18,18 +20,28 @@ class Dashboard extends Component
 {
     public $user;
     public $currentAcademicYear;
-    public $totalCours;
-    public $totalAbsences;
-    public $totalRetards;
-    public $totalNotes;
+    public $totalCours = 0;
+    public $totalAbsences = 0;
+    public $totalRetards = 0;
+    public $totalNotes = 0;
     public $recentActivities = [];
     public $showEmploiModal = false;
     public $showNotesModal = false;
     public $emploiDuTemps;
     public $moyennesParMatiere = [];
-    public $totalEtudiants;
+    public $totalEtudiants = 0;
     public $currentClasse;
     public $moyenneGenerale;
+    public $totalProfesseurs = 0;
+    public $totalClasses = 0;
+    public $inscriptionsRecentes = [];
+    public $totalInscriptions = 0;
+    public $montantTotal = 0;
+
+
+
+
+
 
     public function mount()
     {
@@ -38,6 +50,9 @@ class Dashboard extends Component
         
         if ($this->user->estProfesseur()) {
             $this->loadProfesseurData();
+        }else if($this->user->estAdmin()){
+            $this->loadStatistiques();
+            $this->loadInscriptionsRecentes();
         } else if ($this->user->estEtudiant()) {
             $this->loadEleveData();
         }
@@ -160,11 +175,58 @@ class Dashboard extends Component
         }
     }
 
+    private function loadStatistiques()
+    {
+        // Statistiques des étudiants
+        $this->totalEtudiants = User::where('role', 'eleve')
+            ->where('campus_id', $this->user->campus_id)
+            ->count();
+
+        // Statistiques des professeurs
+        $this->totalProfesseurs = User::where('role', 'professeur')
+            ->where('campus_id', $this->user->campus_id)
+            ->count();
+
+        // Statistiques des classes
+        $this->totalClasses = Classe::where('campus_id', $this->user->campus_id)
+            // ->where('academic_year_id', $this->currentAcademicYear->id)
+            ->count();
+
+        // Statistiques des cours
+        $this->totalCours = Cour::where('campus_id', $this->user->campus_id)
+            ->where('academic_year_id', $this->currentAcademicYear->id)
+            ->count();
+
+        // Statistiques des inscriptions et montants
+        $inscriptions = Inscription::where('campus_id', $this->user->campus_id)
+            ->where('academic_year_id', $this->currentAcademicYear->id)
+            ->get();
+
+        $this->totalInscriptions = $inscriptions->count();
+        $this->montantTotal = $inscriptions->sum('montant');
+    }
+
+    private function loadInscriptionsRecentes()
+    {
+        $this->inscriptionsRecentes = Inscription::where('campus_id', $this->user->campus_id)
+            ->where('academic_year_id', $this->currentAcademicYear->id)
+            ->with(['etudiant', 'classe'])
+            ->latest()
+            ->take(5)
+            ->get();
+    }
+
+    
+
+
     #[Layout("components.layouts.app")]
     public function render()
     {
         if (Auth::user()->estSuperAdmin()) {
-            return view('livewire.dashboard.dashboardAdmin');
+            return view('livewire.dashboard.dashboardSuperAdmin');
+        }else if(Auth::user()->estAdmin()){
+            return view('livewire.dashboard.dashboard-admin');
+
         } else {
             return view('livewire.dashboard.dashboard');
         }

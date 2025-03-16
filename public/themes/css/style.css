@@ -11765,7 +11765,7 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
   [data-sibebarbg="color_2"] .quixnav .metismenu > li > a {
     color: #b3b3b3; }
   [data-sibebarbg="color_2"] .quixnav .metismenu > li:hover > a, [data-sibebarbg="color_2"] .quixnav .metismenu > li:focus > a, [data-sibebarbg="color_2"] .quixnav .metismenu > li.mm-active > a {
-    background-color: #292B48;
+    background-color: #479CD5;
     color: #fff; }
   [data-layout="horizontal"][data-sibebarbg="color_2"] .quixnav .metismenu > li {
     border-color: #3c3e68; }

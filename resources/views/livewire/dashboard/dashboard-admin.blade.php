@@ -7,7 +7,7 @@
                     <div class="card-body">
                         <h1 class="h3 mb-2">Tableau de bord Administrateur</h1>
                         <p class="text-muted mb-0">Bienvenue, {{ $user->prenom }} {{ $user->nom }}</p>
-                        <small class="text-muted">Année académique : {{ $currentAcademicYear->debut }} - {{ $currentAcademicYear->fin }}</small>
+                        <small class="text-muted">Année académique : {{ date("d/m/Y", strtotime($currentAcademicYear->debut)) }} - {{ date("d/m/Y", strtotime($currentAcademicYear->fin)) }}</small>
                     </div>
                 </div>
             </div>
