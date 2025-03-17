@@ -30,6 +30,7 @@
     <!-- ===============================================-->
     <link href="{{asset('assets/css/theme.css')}}" rel="stylesheet" />
     <link href="{{asset('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap')}}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 @yield("css")
     @livewireStyles
 
@@ -72,24 +73,24 @@
             <!-- Logo et Informations de Contact -->
             <div class="col-12 col-lg-4 mb-5 mb-lg-0">
               <div class="footer-brand mb-4">
-                <h3 class="text-white fw-bold">SchoolManager</h3>
+                <h3 class="text-white fw-bold">EduLink</h3>
                 <p class="text-light mb-3">La solution complète pour la gestion de votre établissement</p>
               </div>
               <div class="contact-info">
                 <div class="d-flex align-items-center mb-3">
                   <i class="fas fa-map-marker-alt text-light me-3"></i>
                   <p class="text-light mb-0">
-                    Cocody Riviera, Abidjan<br>
-                    Côte d'Ivoire
+                    Parcelles Assainies, Dakar<br>
+                    Senegal
                   </p>
                 </div>
                 <div class="d-flex align-items-center mb-3">
                   <i class="fas fa-phone text-light me-3"></i>
-                  <p class="text-light mb-0">+225 07 07 07 07 07</p>
+                  <p class="text-light mb-0">+221 785678585</p>
                 </div>
                 <div class="d-flex align-items-center">
                   <i class="fas fa-envelope text-light me-3"></i>
-                  <p class="text-light mb-0">contact@schoolmanager.ci</p>
+                  <p class="text-light mb-0">contact@edulink.com</p>
                 </div>
               </div>
             </div>
@@ -171,7 +172,7 @@
           <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
               <p class="text-light mb-0">
-                &copy; {{ date('Y') }} SchoolManager. Tous droits réservés.
+                &copy; {{ date('Y') }} EduLink. Tous droits réservés.
               </p>
             </div>
             <div class="col-md-6 text-center text-md-end">
@@ -204,6 +205,7 @@
     <script src="{{asset('assets/vendors/is/is.min.js')}}"></script>
     <script src="{{asset('https://polyfill.io/v3/polyfill.min.js?features=window.scroll')}}"></script>
     <script src="{{asset('assets/js/theme.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 
     @livewireScripts
   

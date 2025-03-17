@@ -14,7 +14,7 @@ class Home extends Component
     #[Layout("components.layouts.home")]
     public function render()
     {
-        return view('livewire.accueil', [
+        return view('livewire.home2', [
             "packs" => Pack::where("is_deleting", false)->orderBy("annuel", "ASC")->get()
         ]);
     }
