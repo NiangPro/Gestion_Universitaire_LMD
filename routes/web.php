@@ -33,9 +33,11 @@ use App\Livewire\Surveillant;
 use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
+use App\Livewire\Fonctionnalite;
 use App\Livewire\Notes;
 
 Route::get("/", Home::class)->name("home");
+Route::get("/fonctionnalites", Fonctionnalite::class)->name("fonctionnalite");
 Route::get("/connexion", Login::class)->name("login");
 Route::get("/tableau_de_bord", Dashboard::class)->middleware(LoginMiddleware::class)->name("dashboard");
 Route::get("/etablissements", Etablissements::class)->middleware(SuperAdminMiddleware::class)->name("etablissement");

@@ -52,8 +52,8 @@
           <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto pt-2 pt-lg-0 font-base">
               <li class="nav-item px-2" ><a class="nav-link fw-medium active" href="{{route('home')}}">Accueil</a></li>
-              <!-- <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#fonction">Fonctionnalités</a></li>
-              <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#services">Services </a></li>
+              <li class="nav-item px-2" ><a class="nav-link" href="{{route('fonctionnalite')}}">Fonctionnalités</a></li>
+              <!-- <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#services">Services </a></li>
               <li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#testimonial">Testimonial </a></li> -->
             </ul>
             <form class="ps-lg-5">

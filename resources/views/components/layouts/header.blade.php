@@ -40,7 +40,7 @@
                     @endif
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
-                            <img src="{{asset('images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} {{ucfirst(Auth()->user()->nom)}} <i class="fa fa-chevron-down"></i>
+                            <img src="{{asset('storage/images/'.Auth()->user()->image)}}" alt="">{{ucfirst(Auth()->user()->prenom)}} {{ucfirst(Auth()->user()->nom)}} <i class="fa fa-chevron-down"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a href="{{route('profil')}}" class="dropdown-item">
