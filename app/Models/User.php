@@ -194,6 +194,6 @@ class User extends Authenticatable
      */
     public function inscriptions(): HasMany
     {
-        return $this->hasMany(Inscription::class, 'etudiant_id');
+        return $this->hasMany(Inscription::class, 'user_id');
     }
 }

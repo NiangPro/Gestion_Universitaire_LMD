@@ -78,6 +78,6 @@ class Inscription extends Model
      */
     public function etudiant(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'etudiant_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
