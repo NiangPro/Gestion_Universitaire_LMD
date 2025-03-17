@@ -8060,7 +8060,7 @@ a {
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #479CD5;
+  background-color: #091E40;
   transition: all .2s ease;
   z-index: 4; }
   .nav-header .logo-abbr {
@@ -10315,7 +10315,7 @@ html[dir="rtl"] [direction="rtl"][data-sidebar-style="compact"]:not([data-layout
   top: 5rem;
   padding-top: 0;
   z-index: 2;
-  background-color: #479CD5;
+  background-color: #091E40;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   transition: all .2s ease; }
   .quixnav .quixnav-scroll {

@@ -1,7 +1,7 @@
 <div>
     <!-- Hero Section -->
     <section class="hero-section position-relative overflow-hidden bg-gradient-primary text-white">
-        <div class="container position-relative py-5" style="z-index: 2;">
+        <div class="container position-relative py-2" style="z-index: 2;">
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
                     <span class="badge bg-warning text-dark mb-3 px-3 py-2">Plateforme de Gestion Scolaire</span>
@@ -45,6 +45,17 @@
                                     <i class="fas fa-graduation-cap text-primary fa-2x me-3"></i>
                                     <div>
                                         <h6 class="text-dark mb-0">1000+ Étudiants</h6>
+                                        <small class="text-muted">Gestion simplifiée</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="position-absolute bottom-0 start-0 animation-float delay-1">
+                            <div class="card bg-white p-3 rounded-lg shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-school text-primary fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="text-dark mb-0">10+ Établissements</h6>
                                         <small class="text-muted">Gestion simplifiée</small>
                                     </div>
                                 </div>

@@ -33,8 +33,10 @@ use App\Livewire\Surveillant;
 use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
+use App\Livewire\Absences;
 use App\Livewire\Fonctionnalite;
 use App\Livewire\Notes;
+use App\Livewire\Retards;
 use App\Livewire\Services;
 
 Route::get("/", Home::class)->name("home");
@@ -64,8 +66,10 @@ Route::get("/cours", Cours::class)->middleware(AdminMiddleware::class)->name("co
 Route::get("/configurations", Configurations::class)->middleware(AdminMiddleware::class)->name("configuration");
 Route::get("/emplois_du_temps", EmploisDuTemps::class)->middleware(AdminMiddleware::class)->name("emploisdutemps");
 Route::get("/historiques", Historiques::class)->middleware(SuperAdminEtAdminMiddleware::class)->name("historique");
-Route::get("/notes", Notes::class)->middleware(SuperAdminEtAdminMiddleware::class)->name("note");
-Route::get("/abonnements", Abonnement::class)->middleware(LoginMiddleware::class)->name("abonnement");
+Route::get("/notes", Notes::class)->middleware(AdminMiddleware::class)->name("note");
+Route::get("/absences", Absences::class)->middleware(AdminMiddleware::class)->name("absence");
+Route::get("/retards", Retards::class)->middleware(AdminMiddleware::class)->name("retard");
+Route::get("/abonnements", Abonnement::class)->middleware(AdminMiddleware::class)->name("abonnement");
 Route::get("/profil", Profil::class)->middleware(LoginMiddleware::class)->name("profil");
 
 // Route de test de sécurité (à utiliser uniquement en développement)

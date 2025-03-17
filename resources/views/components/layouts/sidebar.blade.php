@@ -49,7 +49,6 @@
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                         class="fa fa-sitemap"></i><span class="nav-text">Org. Académique</span></a>
                 <ul aria-expanded="false">
-                    <!-- <li><a href="{{route('niveauetude')}}">Niveaux d'étude</a></li> -->
                     <li><a href="{{route('departement')}}">Départements</a></li>
                     <li><a href="{{route('filiere')}}">Filières</a></li>
                     <li><a href="{{route('uniteenseignement')}}">U.E</a></li>
@@ -61,8 +60,8 @@
                 <ul aria-expanded="false">
                     <li><a href="{{route('cours')}}">Cours</a></li>
                     <li><a href="{{route('note')}}">Notes</a></li>
-                    <li><a href="">Absences</a></li>
-                    <li><a href="">Retards</a></li>
+                    <li><a href="{{route('absence')}}">Absences</a></li>
+                    <li><a href="{{route('retard')}}">Retards</a></li>
                     <li><a href="{{route('emploisdutemps')}}">Emplois du temps</a></li>
                 </ul>
             </li>
