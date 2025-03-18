@@ -6,7 +6,7 @@
                 <div class="col-lg-6">
                     <span class="badge mb-3 px-3 py-2" style="background-color: #479CD5; color: #FF8A00;">Plateforme de Gestion Universitaire</span>
                     <h1 class="display-3 fw-bold mb-4">
-                        Transformez la Gestion de Votre Établissement Université
+                        Transformez la Gestion de Votre Université
                     </h1>
                     <p class="lead mb-4 opacity-75">
                         Une solution tout-en-un pour gérer efficacement votre université. De l'administration aux résultats, en passant par la communication.

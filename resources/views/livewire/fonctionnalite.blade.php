@@ -101,7 +101,7 @@
                     <div class="card border-0 shadow-lg">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="bg-warning text-white rounded-circle p-3 mr-3">
+                                <div class="text-white rounded-circle p-3 mr-3" style="background-color: #FF8A00;">
                                     <i class="fas fa-cog fa-2x"></i>
                                 </div>
                                 <h3 class="h4 mb-0">Administration</h3>
@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 mt-4 mt-md-0">
-                    <h4 class="text-warning">Administration simplifiée</h4>
+                    <h4 class="" style="color: #FF8A00;">Administration simplifiée</h4>
                     <p class="text-muted">Gérez efficacement les aspects administratifs et financiers de votre établissement avec nos outils dédiés.</p>
                 </div>
             </div>

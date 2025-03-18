@@ -71,9 +71,9 @@
             <div class="col-12 col-lg-4 mb-5 mb-lg-0">
               <div class="footer-brand mb-4">
                 <h3 class="text-white text-center fw-bold">  
-                  <img class="me-3" width="200" height="100" src="{{asset('images/logo.png')}}" alt="" /> 
+                  <img class="me-3" width="180" height="90" src="{{asset('images/logo.png')}}" alt="" /> 
                 </h3>
-                <p class="text-light mb-3">La solution complète pour la gestion de votre établissement</p>
+                <!-- <p class="text-light mb-3">La solution complète pour la gestion de votre établissement</p> -->
               </div>
               <div class="contact-info">
                 <div class="d-flex align-items-center mb-3">
