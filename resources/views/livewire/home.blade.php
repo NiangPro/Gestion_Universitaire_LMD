@@ -1,28 +1,67 @@
 <div>
-<div>
-    <!-- Hero Section avec Animation -->
-    <section class="hero-section position-relative overflow-hidden">
-        <div class="container position-relative" style="z-index: 2;">
+    <!-- Hero Section -->
+    <section class="hero-section position-relative overflow-hidden bg-gradient-primary text-white">
+        <div class="container position-relative py-2" style="z-index: 2;">
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-3 fw-bold mb-4 text-gradient">
-                        La Gestion Scolaire Réinventée
+                    <span class="badge mb-3 px-3 py-2" style="background-color: #479CD5; color: #FF8A00;">Plateforme de Gestion Universitaire</span>
+                    <h1 class="display-3 fw-bold mb-4">
+                        Transformez la Gestion de Votre Établissement Université
                     </h1>
-                    <p class="lead mb-4">
-                        Transformez votre établissement avec notre solution tout-en-un de gestion scolaire intelligente.
+                    <p class="lead mb-4 opacity-75">
+                        Une solution tout-en-un pour gérer efficacement votre université. De l'administration aux résultats, en passant par la communication.
                     </p>
-                    <div class="d-flex gap-3">
-                        <a href="#pricing" class="btn btn-primary btn-lg px-4 rounded-pill">
-                            Commencer maintenant
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="{{ route('register', ['id' => 1]) }}" class="btn btn-light btn-lg px-4 rounded-pill">
+                            Commencer gratuitement
                         </a>
-                        <a href="#features" class="btn btn-outline-light btn-lg px-4 rounded-pill">
-                            Découvrir
+                        <a href="#demo" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                            Voir la démo
                         </a>
+                    </div>
+                    <div class="mt-5 d-flex gap-4">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-white p-2 me-2">
+                                <i class="fas fa-check text-primary"></i>
+                            </div>
+                            <span>Installation rapide</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-white p-2 me-2">
+                                <i class="fas fa-check text-primary"></i>
+                            </div>
+                            <span>Support 24/7</span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <div class="floating-image">
-                        <img src="{{ asset('images/dashboard-preview.png') }}" alt="Dashboard Preview" class="img-fluid rounded-lg shadow-2xl">
+                    <div class="position-relative">
+                        <div class="floating-dashboard">
+                            <video src="{{ asset('images/home.mp4') }}" autoplay muted loop class="img-fluid rounded-lg shadow-2xl" style="border-radius: 20px; box-shadow: 5 5 10px 0 rgba(246, 156, 46, 0.5);"></video>
+                            <!-- <img src="{{ asset('images/services.png') }}" alt="Dashboard" class="img-fluid rounded-lg shadow-2xl"> -->
+                        </div>
+                        <!-- <div class="position-absolute top-0 end-0 animation-float delay-1">
+                            <div class="card bg-white p-3 rounded-lg shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-graduation-cap text-primary fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="text-dark mb-0">1000+ Étudiants</h6>
+                                        <small class="text-muted">Gestion simplifiée</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="position-absolute bottom-0 end-0 animation-float delay-1">
+                            <div class="card bg-white p-3 rounded-lg shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-school text-primary fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="text-dark mb-0">10+ Établissements</h6>
+                                        <small class="text-muted">Gestion simplifiée</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -34,79 +73,102 @@
         </div>
     </section>
 
-    <!-- Statistiques -->
+    <!-- Statistiques Section -->
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="row g-4 text-center">
+            <div class="row g-4">
                 <div class="col-md-3 col-6">
-                    <div class="stat-card p-4 rounded-lg bg-white shadow-sm">
-                        <h3 class="counter mb-2">1000+</h3>
-                        <p class="text-muted mb-0">Établissements</p>
+                    <div class="card border-0 bg-white shadow-sm h-100 hover-translate">
+                        <div class="card-body text-center">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-school fa-2x text-primary"></i>
+                            </div>
+                            <h2 class="counter mb-2">100+</h2>
+                            <p class="text-muted mb-0">Établissements</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="stat-card p-4 rounded-lg bg-white shadow-sm">
-                        <h3 class="counter mb-2">50k+</h3>
-                        <p class="text-muted mb-0">Étudiants</p>
+                    <div class="card border-0 bg-white shadow-sm h-100 hover-translate">
+                        <div class="card-body text-center">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-users fa-2x text-success"></i>
+                            </div>
+                            <h2 class="counter mb-2">5000+</h2>
+                            <p class="text-muted mb-0">Étudiants</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="stat-card p-4 rounded-lg bg-white shadow-sm">
-                        <h3 class="counter mb-2">5k+</h3>
-                        <p class="text-muted mb-0">Professeurs</p>
+                    <div class="card border-0 bg-white shadow-sm h-100 hover-translate">
+                        <div class="card-body text-center">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-chalkboard-teacher fa-2x text-info"></i>
+                            </div>
+                            <h2 class="counter mb-2">500+</h2>
+                            <p class="text-muted mb-0">Professeurs</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="stat-card p-4 rounded-lg bg-white shadow-sm">
-                        <h3 class="counter mb-2">99.9%</h3>
-                        <p class="text-muted mb-0">Disponibilité</p>
+                    <div class="card border-0 bg-white shadow-sm h-100 hover-translate">
+                        <div class="card-body text-center">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-book fa-2x text-warning"></i>
+                            </div>
+                            <h2 class="counter mb-2">1000+</h2>
+                            <p class="text-muted mb-0">Cours</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Fonctionnalités -->
-    <section id="features" class="py-5">
+    <!-- Fonctionnalités Section -->
+    <section class="py-5">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-4 mb-3">Fonctionnalités Principales</h2>
-                <p class="lead text-muted">Une solution complète pour votre établissement</p>
+                <h2 class="display-5 fw-bold mb-3">Fonctionnalités Principales</h2>
+                <p class="lead text-muted">Découvrez nos outils puissants pour une gestion efficace</p>
             </div>
 
             <div class="row g-4">
+                <!-- Gestion des Étudiants -->
                 <div class="col-lg-4 col-md-6">
-                    <div class="feature-card card border-0 shadow-hover h-100">
+                    <div class="card feature-card border-0 shadow-sm h-100 hover-translate">
                         <div class="card-body p-4">
-                            <div class="feature-icon mb-4">
-                                <i class="fas fa-graduation-cap fa-2x text-primary"></i>
+                            <div class="feature-icon bg-primary-soft rounded-circle mb-4">
+                                <i class="fas fa-user-graduate text-primary"></i>
                             </div>
                             <h4 class="mb-3">Gestion des Étudiants</h4>
-                            <p class="text-muted mb-0">Gérez efficacement les dossiers étudiants, les inscriptions et le suivi des performances.</p>
+                            <p class="text-muted mb-0">Gérez efficacement les dossiers étudiants, les inscriptions et suivez leurs performances académiques.</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Gestion des Notes -->
                 <div class="col-lg-4 col-md-6">
-                    <div class="feature-card card border-0 shadow-hover h-100">
+                    <div class="card feature-card border-0 shadow-sm h-100 hover-translate">
                         <div class="card-body p-4">
-                            <div class="feature-icon mb-4">
-                                <i class="fas fa-chalkboard-teacher fa-2x text-success"></i>
+                            <div class="feature-icon bg-success-soft rounded-circle mb-4">
+                                <i class="fas fa-chart-line text-success"></i>
                             </div>
-                            <h4 class="mb-3">Gestion des Professeurs</h4>
-                            <p class="text-muted mb-0">Optimisez la gestion des emplois du temps et le suivi des cours.</p>
+                            <h4 class="mb-3">Gestion des Notes</h4>
+                            <p class="text-muted mb-0">Système complet de notation avec calcul automatique des moyennes et génération de bulletins.</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Emploi du Temps -->
                 <div class="col-lg-4 col-md-6">
-                    <div class="feature-card card border-0 shadow-hover h-100">
+                    <div class="card feature-card border-0 shadow-sm h-100 hover-translate">
                         <div class="card-body p-4">
-                            <div class="feature-icon mb-4">
-                                <i class="fas fa-chart-line fa-2x text-info"></i>
+                            <div class="feature-icon bg-info-soft rounded-circle mb-4">
+                                <i class="fas fa-calendar-alt text-info"></i>
                             </div>
-                            <h4 class="mb-3">Suivi en Temps Réel</h4>
-                            <p class="text-muted mb-0">Accédez aux statistiques et rapports détaillés en temps réel.</p>
+                            <h4 class="mb-3">Emploi du Temps</h4>
+                            <p class="text-muted mb-0">Planifiez et gérez facilement les emplois du temps des classes et des professeurs.</p>
                         </div>
                     </div>
                 </div>
@@ -114,49 +176,56 @@
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="py-5 bg-light">
+    <!-- Section Tarifs -->
+    <section class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-4 mb-3">Tarifs Transparents</h2>
+                <h2 class="display-5 fw-bold mb-3">Nos Offres</h2>
                 <p class="lead text-muted">Choisissez le plan qui correspond à vos besoins</p>
             </div>
 
             <div class="row g-4 justify-content-center">
-                @foreach ($packs as $p)
+                @foreach($packs as $pack)
                 <div class="col-lg-4 col-md-6">
-                    <div class="pricing-card card border-0 shadow-hover h-100">
-                        <div class="card-header border-0 py-4" style="background: {{$p->couleur}};">
-                            <h3 class="mb-0" style="color: {{$p->text}};">{{$p->nom}}</h3>
+                    <div class="card pricing-card border-0 shadow-sm hover-translate h-100">
+                        <div class="card-header border-0 py-4 bg-transparent">
+                            <div class="pricing-icon mb-3" style="background: {{$pack->couleur}}40;">
+                                <i class="fas fa-cube" style="color: {{$pack->couleur}};"></i>
+                            </div>
+                            <h3 class="mb-0" style="color: {{$pack->couleur}};text-align: center;">{{$pack->nom}}</h3>
                         </div>
-                        <div class="card-body p-4">
-                            <div class="price-section text-center mb-4">
-                                <h2 class="display-4 mb-0">{{ number_format($p->mensuel, 0, ",", " ") }}</h2>
-                                <p class="text-muted">XOF/mois</p>
-                                <p class="annual-price">ou {{ number_format($p->annuel, 0, ",", " ") }} XOF/an</p>
+                        <div class="card-body">
+                            <div class="price-value text-center mb-4">
+                                <h2 class="display-4 mb-0 fw-bold">
+                                    {{ number_format($pack->mensuel, 0, ",", " ") }}
+                                </h2>
+                                <p class="text-muted">FCFA/mois</p>
+                                <span class="badge bg-light text-dark">
+                                    ou {{ number_format($pack->annuel, 0, ",", " ") }} FCFA/an
+                                </span>
                             </div>
-                            <div class="features-list mb-4">
-                                <div class="d-flex align-items-center mb-3">
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-3 d-flex align-items-center">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>Jusqu'à {{$p->limite}} élèves</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
+                                    Jusqu'à {{$pack->limite}} élèves
+                                </li>
+                                <li class="mb-3 d-flex align-items-center">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>Utilisateurs illimités</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
+                                    Gestion complète
+                                </li>
+                                <li class="mb-3 d-flex align-items-center">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>Support 24/7</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
+                                    Support technique
+                                </li>
+                                <li class="mb-3 d-flex align-items-center">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>Mises à jour gratuites</span>
-                                </div>
-                            </div>
-                            <a href="{{route('register',['id'=>$p->id])}}" 
+                                    Mises à jour gratuites
+                                </li>
+                            </ul>
+                            <a href="{{ route('register', ['id' => $pack->id]) }}" 
                                class="btn btn-lg w-100 rounded-pill" 
-                               style="background: {{$p->couleur}}; color: {{$p->text}};">
-                                Commencer
+                               style="background: {{$pack->couleur}}; color: {{$pack->text}};">
+                                Choisir ce pack
                             </a>
                         </div>
                     </div>
@@ -167,15 +236,15 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="cta-section py-5">
+    <section class="py-5 bg-gradient-primary text-white">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8 text-center text-lg-start">
-                    <h2 class="mb-3">Prêt à transformer votre établissement ?</h2>
-                    <p class="lead mb-0">Rejoignez les milliers d'établissements qui nous font confiance.</p>
+                    <h2 class="display-6 fw-bold mb-3">Prêt à transformer votre établissement ?</h2>
+                    <p class="lead mb-0 opacity-75">Rejoignez les établissements qui nous font confiance</p>
                 </div>
                 <div class="col-lg-4 text-center text-lg-end mt-4 mt-lg-0">
-                    <a href="#pricing" class="btn btn-primary btn-lg rounded-pill px-4">
+                    <a href="{{ route('register', ['id' => 1]) }}" class="btn btn-light btn-lg rounded-pill px-4">
                         Commencer maintenant
                     </a>
                 </div>
@@ -184,20 +253,10 @@
     </section>
 </div>
 
+@section("css")
 <style>
-/* Styles généraux */
-.text-gradient {
-    background: linear-gradient(45deg, #2937f0, #9f1ae2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, #0c1027 0%, #2937f0 100%);
-    color: white;
-    position: relative;
-    overflow: hidden;
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #479CD5, #FF8A00);
 }
 
 .hero-shapes div {
@@ -227,24 +286,12 @@
     right: 10%;
 }
 
-.floating-image {
-    animation: float 6s ease-in-out infinite;
+.hover-translate {
+    transition: transform 0.3s ease;
 }
 
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
-}
-
-/* Cards */
-.shadow-hover {
-    transition: all 0.3s ease;
-}
-
-.shadow-hover:hover {
+.hover-translate:hover {
     transform: translateY(-5px);
-    box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
 }
 
 .feature-icon {
@@ -253,43 +300,49 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 24px;
     border-radius: 50%;
-    background: rgba(41, 55, 240, 0.1);
 }
 
-/* Pricing Cards */
-.pricing-card {
-    transition: all 0.3s ease;
+.bg-primary-soft { background-color: rgba(41, 55, 240, 0.1); }
+.bg-success-soft { background-color: rgba(40, 167, 69, 0.1); }
+.bg-info-soft { background-color: rgba(23, 162, 184, 0.1); }
+
+.floating-dashboard {
+    animation: float 6s ease-in-out infinite;
 }
 
-.pricing-card:hover {
-    transform: scale(1.02);
+.animation-float {
+    animation: float 4s ease-in-out infinite;
 }
 
-.annual-price {
-    font-size: 0.9rem;
-    color: #6c757d;
+.delay-1 {
+    animation-delay: 1s;
 }
 
-/* Stats */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+.pricing-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
 .counter {
     font-size: 2.5rem;
     font-weight: bold;
-    background: linear-gradient(45deg, #2937f0, #9f1ae2);
+    background: linear-gradient(45deg, #479CD5, #FF8A00);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
-/* CTA Section */
-.cta-section {
-    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-section {
-        text-align: center;
-    }
-}
 </style>
-</div>
+@endsection

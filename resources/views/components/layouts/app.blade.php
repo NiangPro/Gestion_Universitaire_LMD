@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="apple-touch-icon"  href="assets{{asset('images/logo.png')}}">
+    <link rel="icon" type="image/png"  href="assets{{asset('images/logo.png')}}">
+    <link rel="shortcut icon" type="image/x-icon" href="assets{{asset('images/logo.png')}}">
     <title>{{ $title ?? 'Page Title' }}</title>
     @if (!request()->is("/"))
     <link href="{{asset('themes/vendor/pg-calendar/css/pignose.calendar.min.css')}}" rel="stylesheet">
