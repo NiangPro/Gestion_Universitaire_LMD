@@ -55,7 +55,7 @@
               <li class="nav-item px-2" ><a class="nav-link fw-medium active" href="{{route('home')}}">Accueil</a></li>
               <li class="nav-item px-2" ><a class="nav-link" href="{{route('fonctionnalite')}}">Fonctionnalités</a></li>
                <li class="nav-item px-2"><a class="nav-link" href="{{ route('service')}}">Services </a></li>
-              <!--<li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#testimonial">Testimonial </a></li> -->
+              <li class="nav-item px-2" ><a class="nav-link" href="{{route('contact')}}">Contact </a></li>
             </ul>
             <form class="ps-lg-5">
               <a href="{{route('login')}}" class="btn btn-outline-primary order-0" >Connexion</a>

@@ -8,7 +8,7 @@
                     <p class="lead">Une solution complète de gestion scolaire pour optimiser votre établissement</p>
                 </div>
                 <div class="col-md-6">
-                    <img src="{{ asset('storage/images/fonctionnalite.png') }}" style="box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);border-radius: 10px;" class="img-fluid">
+                    <img src="{{ asset('images/fonctionnalite.png') }}" style="box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);border-radius: 10px;" class="img-fluid">
                 </div>
             </div>
         </div>

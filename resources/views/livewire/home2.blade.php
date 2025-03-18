@@ -37,7 +37,7 @@
                 <div class="col-lg-6 d-none d-lg-block">
                     <div class="position-relative">
                         <div class="floating-dashboard">
-                            <img src="{{ asset('storage/images/services.png') }}" alt="Dashboard" class="img-fluid rounded-lg shadow-2xl">
+                            <img src="{{ asset('images/services.png') }}" alt="Dashboard" class="img-fluid rounded-lg shadow-2xl">
                         </div>
                         <div class="position-absolute top-0 end-0 animation-float delay-1">
                             <div class="card bg-white p-3 rounded-lg shadow-sm">

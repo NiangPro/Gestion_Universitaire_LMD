@@ -8,7 +8,7 @@
                     <p class="lead mb-4">Transformez votre établissement avec notre plateforme complète de gestion académique</p>
                 </div>
                 <div class="col-lg-6">
-                    <img src="{{ asset('storage/images/services.png') }}" style="box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);border-radius: 10px;"  alt="University Management" class="img-fluid">
+                    <img src="{{ asset('images/services.png') }}" style="box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);border-radius: 10px;"  alt="University Management" class="img-fluid">
                 </div>
             </div>
         </div>
