@@ -18,7 +18,7 @@
                         <select wire:model.live="classe" class="form-control">
                             <option value="">Classe</option>
                             @foreach ($classes as $classe)
-                                <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
+                                <option value="{{ $classe->id }}">{{ $classe->nom }} -> {{ $classe->filiere->nom }} </option>
                             @endforeach
                         </select>
                     </div>

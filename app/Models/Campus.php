@@ -31,9 +31,9 @@ class Campus extends Model
         return $this->users()->where('role', 'admin');
     }
 
-    public function eleves()
+    public function etudiants()
     {
-        return $this->users()->where('role', 'eleve');
+        return $this->users()->where('role', 'etudiant');
     }
 
     public function professeurs()

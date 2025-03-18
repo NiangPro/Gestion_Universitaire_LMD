@@ -37,9 +37,10 @@
                 <div class="col-lg-6 d-none d-lg-block">
                     <div class="position-relative">
                         <div class="floating-dashboard">
-                            <img src="{{ asset('images/services.png') }}" alt="Dashboard" class="img-fluid rounded-lg shadow-2xl">
+                            <video src="{{ asset('images/home.mp4') }}" autoplay muted loop class="img-fluid rounded-lg shadow-2xl" style="border-radius: 20px; box-shadow: 5 5 10px 0 rgba(246, 156, 46, 0.5);"></video>
+                            <!-- <img src="{{ asset('images/services.png') }}" alt="Dashboard" class="img-fluid rounded-lg shadow-2xl"> -->
                         </div>
-                        <div class="position-absolute top-0 end-0 animation-float delay-1">
+                        <!-- <div class="position-absolute top-0 end-0 animation-float delay-1">
                             <div class="card bg-white p-3 rounded-lg shadow-sm">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-graduation-cap text-primary fa-2x me-3"></i>
@@ -49,8 +50,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="position-absolute bottom-0 start-0 animation-float delay-1">
+                        </div> -->
+                        <div class="position-absolute bottom-0 end-0 animation-float delay-1">
                             <div class="card bg-white p-3 rounded-lg shadow-sm">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-school text-primary fa-2x me-3"></i>
