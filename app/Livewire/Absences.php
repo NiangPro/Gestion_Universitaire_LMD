@@ -19,7 +19,7 @@ class Absences extends Component
 {
     use WithPagination;
 
-    #[Layout("components.layouts.app")]
+    public $isOpen = false;
     public $selectedCampus = '';
     public $selectedYear = '';
     public $selectedStatus = '';
@@ -48,11 +48,22 @@ class Absences extends Component
         'commentaire' => 'nullable|string'
     ];
 
+    public function showAddAbsenceModal()
+    {
+        $this->isOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->isOpen = false;
+    }
+
     public function mount()
     {
         $this->date = now()->format('Y-m-d\TH:i');
     }
 
+    #[Layout("components.layouts.app")]
     public function render()
     {
         $query = Absence::query()

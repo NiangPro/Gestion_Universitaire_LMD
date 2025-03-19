@@ -6,7 +6,7 @@
     <div class="card shadow-sm">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
             <h5 class="mb-0 font-weight-bold text-primary">Gestion des Absences</h5>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAbsenceModal">
+            <button type="button"  wire:click="showAddAbsenceModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAbsenceModal">
                 <i class="fas fa-plus-circle me-2"></i>Nouvelle Absence
             </button>
         </div>
@@ -92,8 +92,9 @@
         </div>
     </div>
 
+    @if ($isOpen)
     <!-- Modal Ajout Absence -->
-    <div class="modal fade" id="addAbsenceModal" tabindex="-1" aria-hidden="true" wire:ignore.self>
+    <div class="modal fade" id="addAbsenceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -150,6 +151,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 @push('styles')
