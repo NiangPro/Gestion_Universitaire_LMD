@@ -15,6 +15,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Rule;
 use App\Services\MatriculeService;
 use App\Livewire\Traits\WithCustomTabs;
+use App\Models\Campus;
 
 #[Title("Etudiants")]
 class Etudiant extends Component
@@ -132,6 +133,17 @@ class Etudiant extends Component
     // Propriété pour l'onglet actif
     public $activeTab = 'list';
 
+    // Propriétés pour la réinscription
+    public $etudiant;
+    public $derniere_inscription;
+    public $campus_id;
+    public $academic_year_id;
+    
+    // Propriétés pour les listes déroulantes
+    public $campuses = [];
+    public $academic_years = [];
+   
+
     // Méthodes existantes
     public function updatedClasse($value)
     {
@@ -145,26 +157,53 @@ class Etudiant extends Component
 
     public function updatedMatricule($value)
     {
-        $this->matricule = $value;
+        if ($value) {
+            $this->etudiant = User::where('matricule', $value)
+                ->where('role', 'etudiant')
+                ->where('campus_id', auth()->user()->campus_id)
+                ->first();
+
+            if ($this->etudiant) {
+                $this->derniere_inscription = Inscription::where('user_id', $this->etudiant->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                
+                // Pré-remplir certains champs avec les données existantes
+                $this->nom = $this->etudiant->nom;
+                $this->prenom = $this->etudiant->prenom;
+                $this->campus_id = $this->derniere_inscription->campus_id;
+            }
+        }
     }
 
     // Nouvelles méthodes pour l'inscription
     public function mount()
     {
+        $this->loadCampuses();
         $this->loadClasses();
         $this->loadAcademicYears();
-        $this->loadTuteurs();
+        $this->loadEtudiants();
     }
 
-    private function loadClasses()
+    protected function loadCampuses()
+    {
+        // Si l'utilisateur est un admin, il voit tous les campus
+        // Sinon, il ne voit que son campus
+        if (auth()->user()->role === 'admin') {
+            $this->campuses = Campus::all();
+        } else {
+            $this->campuses = collect([auth()->user()->campus]);
+        }
+    }
+
+    protected function loadClasses()
     {
         $this->classes = auth()->user()->campus->classes;
-        Log::info('Classes chargées:', ['classes' => $this->classes]);
     }
 
-    private function loadAcademicYears()
+    protected function loadAcademicYears()
     {
-        $this->academicYears = AcademicYear::orderBy('debut', 'desc')->get();
+        $this->academic_years = AcademicYear::orderBy('debut', 'desc')->get();
     }
 
     protected function loadTuteurs()
@@ -360,12 +399,11 @@ class Etudiant extends Component
             // Réinitialiser le formulaire
             $this->reset();
             
-            // Basculer vers l'onglet liste après la sauvegarde
-            $this->setActiveTab('list');
-            
             // Notification de succès
-            session()->flash('success', 'Étudiant inscrit avec succès.');
-
+            $this->dispatch('saved');
+            // Redirection vers la liste des étudiants
+            return redirect()->route('etudiants');
+            
             Log::info('Redirection vers la liste des étudiants');
             return redirect()->route('etudiants.index');
 
@@ -411,39 +449,29 @@ class Etudiant extends Component
 
     protected function loadEtudiants()
     {
-        if (!$this->classe) {
-            $this->etudiants = collect();
-            return;
-        }
-
-        $query = Inscription::query()
-            ->join('users', 'inscriptions.user_id', '=', 'users.id')
-            ->where('inscriptions.classe_id', $this->classe)
-            ->where('inscriptions.campus_id', auth()->user()->campus_id);
-
-        if ($this->annee_academique) {
-            $query->where('inscriptions.academic_year_id', $this->annee_academique);
-        }
+        $query = User::where('role', 'etudiant')
+            ->where('campus_id', auth()->user()->campus_id);
 
         if ($this->search) {
             $query->where(function($q) {
-                $q->where('users.nom', 'like', '%' . $this->search . '%')
-                    ->orWhere('users.prenom', 'like', '%' . $this->search . '%');
+                $q->where('matricule', 'like', '%' . $this->search . '%')
+                    ->orWhere('nom', 'like', '%' . $this->search . '%')
+                    ->orWhere('prenom', 'like', '%' . $this->search . '%');
             });
         }
 
-        $this->etudiants = $query->select('users.*', 'inscriptions.id as inscription_id')->get();
+        $this->etudiants = $query->get();
     }
 
     public function voir($id)
     {
-        return redirect()->route('etudiant.show', $id);
+        return redirect()->route('etudiant', $id);
     }
 
-    public function modifier($id)
-    {
-        return redirect()->route('etudiant.edit', $id);
-    }
+    // public function modifier($id)
+    // {
+    //     return redirect()->route('etudiant.edit', $id);
+    // }
 
     public function confirmerSuppression($id)
     {
@@ -503,6 +531,61 @@ class Etudiant extends Component
     public function setActiveTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public function reinscrire()
+    {
+        $this->validate([
+            'classe_id' => 'required|exists:classes,id',
+            'etat' => 'required|in:Payé,Avance',
+            'montant' => 'required|numeric|min:0',
+            'restant' => 'required_if:etat,Avance|nullable|numeric|min:0',
+            'tenue' => 'required|in:1,0',
+            'commentaire' => 'nullable|string'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Créer la nouvelle inscription en utilisant les informations du formulaire
+            $inscription = Inscription::create([
+                'user_id' => $this->etudiant->id,
+                'campus_id' => $this->campus_id,
+                'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
+                'classe_id' => $this->classe_id,
+                'tuteur_id' => $this->derniere_inscription->tuteur_id,
+                'medical_id' => $this->derniere_inscription->medical_id,
+                'relation' => $this->derniere_inscription->relation,
+                'montant' => $this->montant,
+                'restant' => $this->restant ?? 0,
+                'tenue' => $this->tenue,
+                'commentaire' => $this->commentaire,
+                'status' => 'en_cours',
+                'date_inscription' => now()
+            ]);
+
+            DB::commit();
+
+            // Réinitialiser le formulaire
+            $this->reset([
+                'matricule', 'classe_id', 'etat', 'montant', 'restant', 'tenue', 'commentaire'
+            ]);
+
+            // Message de succès
+            $this->dispatch('saved');
+
+            // Redirection vers la liste des étudiants
+            return redirect()->route('etudiants');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur lors de la réinscription:', [
+                'error' => $e->getMessage(),
+                'etudiant_id' => $this->etudiant->id
+            ]);
+
+            session()->flash('error', 'Une erreur est survenue lors de la réinscription: ' . $e->getMessage());
+        }
     }
 
     #[Layout("components.layouts.app")]

@@ -46,17 +46,19 @@
                         <div class="tab-pane fade {{ $activeTab === 'reinscrire' ? 'show active' : '' }}" id="reinscrire" role="tabpanel" wire:ignore.self>
                             <div class="pt-4">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <select class="form-control" wire:model.live="matricule" name="matricule" id="matricule">
-                                            <option value="">Selectionner un étudiant</option>
-                                            <option value="1">NGLP123456</option>
-                                            <option value="2">NGLP123457</option>
-                                            <option value="3">NGLP123458</option>
+                                    <div class="col-md-6">
+                                        <select class="form-control" wire:model.live="matricule">
+                                            <option value="">Sélectionner un étudiant</option>
+                                            @foreach($etudiants as $etudiant)
+                                                <option value="{{ $etudiant->matricule }}">
+                                                    {{ $etudiant->matricule }} - {{ $etudiant->nom }} {{ $etudiant->prenom }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 @if ($matricule)
-                                    @include("livewire.etudiant.inscription")
+                                    @include("livewire.etudiant.reinscription")
                                 @endif
                             </div>
                         </div>

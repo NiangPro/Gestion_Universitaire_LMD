@@ -17,7 +17,7 @@
                         <label class="text-label">Sexe</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"> <i class="fa fa-user" style="font-size:15px;"></i> </span>
+                                <span class="input-group-text"> <i class="fa fa-venus-mars" style="font-size:15px;"></i> </span>
                             </div>
                             <select class="form-control @error('sexe') is-invalid @enderror" wire:model="sexe" id="sexe" name="sexe">
                                 <option value="">Selectionné</option>
