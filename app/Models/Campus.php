@@ -115,4 +115,30 @@ class Campus extends Model
     public function coefficients(){
         return $this->hasMany(Coefficient::class);
     }
+
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
+    }
+
+    public function cours()
+    {
+        return $this->hasMany(Cour::class);
+    }
+
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
+
+    public function currentInscriptions()
+    {
+        return $this->inscriptions()->where('academic_year_id', $this->currentAcademicYear()->id);
+    }
+    
 }

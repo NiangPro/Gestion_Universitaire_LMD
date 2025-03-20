@@ -24,6 +24,9 @@ class Absences extends Component
     public $selectedYear = '';
     public $selectedStatus = '';
     public $search = '';
+    public $academicYear = null;
+    public $inscriptions = [];
+    public $absences = [];
     
     // Formulaire
     public $etudiant_id;
@@ -48,6 +51,32 @@ class Absences extends Component
         'commentaire' => 'nullable|string'
     ];
 
+    public function updatedCoursId($value)
+    {
+        $classe = Cour::find($value)->classe;
+        $this->inscriptions = Auth::user()->campus->currentInscriptions()->where('classe_id', $classe->id)->get();
+    }
+
+    public function updatedSelectedYear($value)
+    {
+        $this->absences = Absence::where('academic_year_id', $value)->get();
+    }
+
+    public function updatedSearch($value)
+    {
+        $this->absences = Absence::where('academic_year_id', $this->selectedYear)
+            ->where(function($query) use ($value) {
+                $query->whereHas('etudiant', function($query) use ($value) {
+                    $query->where('nom', 'like', '%' . $value . '%')
+                          ->orWhere('prenom', 'like', '%' . $value . '%');
+                })->orWhereHas('cours', function($query) use ($value) {
+                    $query->whereHas('matiere', function($query) use ($value) {
+                        $query->where('nom', 'like', '%' . $value . '%');
+                    });
+                });
+            })->get();
+    }
+
     public function showAddAbsenceModal()
     {
         $this->isOpen = true;
@@ -61,36 +90,18 @@ class Absences extends Component
     public function mount()
     {
         $this->date = now()->format('Y-m-d\TH:i');
+        $this->academicYear = Auth::user()->campus->currentAcademicYear();
     }
 
     #[Layout("components.layouts.app")]
     public function render()
     {
-        $query = Absence::query()
-            ->with(['etudiant', 'cours'])
-            ->when($this->selectedCampus, function($q) {
-                return $q->where('campus_id', $this->selectedCampus);
-            })
-            ->when($this->selectedYear, function($q) {
-                return $q->where('academic_year_id', $this->selectedYear);
-            })
-            ->when($this->selectedStatus, function($q) {
-                return $q->where('status', $this->selectedStatus);
-            })
-            ->when($this->search, function($q) {
-                return $q->whereHas('etudiant', function($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%');
-                })->orWhereHas('cours', function($query) {
-                    $query->where('nom', 'like', '%' . $this->search . '%');
-                });
-            });
 
-        return view('livewire.absences', [
-            'absences' => $query->latest()->paginate(10),
-            'campus' => Campus::all(),
-            'years' => AcademicYear::all(),
+        return view('livewire.absence.absences', [
+            // 'absences' => $query->latest()->paginate(10),
+            'years' => Auth::user()->campus->academicYears,
             'etudiants' => Auth::user()->campus->etudiants,
-            'cours' => Cour::all()
+            'cours' => Auth::user()->campus->cours->where('academic_year_id', $this->academicYear->id)
         ]);
     }
 
@@ -107,20 +118,20 @@ class Absences extends Component
             'justifie' => $this->justifie,
             'commentaire' => $this->commentaire,
             'campus_id' => Auth::user()->campus_id,
-            'academic_year_id' => Auth::user()->campus->getCurrentAcademicYear()->id,
+            'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
             'created_by' => Auth::user()->id
         ];
 
         if ($this->isEditing) {
             Absence::find($this->absence_id)->update($data);
-            $this->dispatch('alert', ['type' => 'success', 'message' => 'Absence modifiée avec succès']);
+            $this->dispatch('updated');
         } else {
             Absence::create($data);
-            $this->dispatch('alert', ['type' => 'success', 'message' => 'Absence enregistrée avec succès']);
+            $this->dispatch('added');
         }
 
-        $this->reset(['etudiant_id', 'cours_id', 'status', 'motif', 'justifie', 'commentaire', 'isEditing', 'absence_id']);
-        $this->dispatch('close-modal');
+        $this->reset(['etudiant_id', 'cours_id', 'status', 'motif', 'justifie', 'commentaire', 'isEditing', 'absence_id', 'inscriptions']);
+        $this->closeModal();
     }
 
     public function edit(Absence $absence)
