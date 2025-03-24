@@ -6,14 +6,14 @@
                 <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="accordion-one" class="accordion accordion-with-icon">
+                            <div class="accordion accordion-with-icon">
                                 <div class="accordion__item">
-                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseOne" aria-expanded="false">
+                                    <div class="accordion__header" data-bs-toggle="collapse" data-bs-target="#departements-collapse">
                                         <span class="fa fa-cog"></span>
-                                        <span class="accordion__header--text  list-title">Départements</span>
-                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                        <span class="accordion__header--text list-title">Départements</span>
+                                        <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="with-icon_collapseOne" class="accordion__body collapse show" data-parent="#accordion-one" style="">
+                                    <div id="departements-collapse" class="collapse show">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($departements as $d)
@@ -88,14 +88,14 @@
                 <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="accordion-three" class="accordion accordion-with-icon">
+                            <div class="accordion accordion-with-icon">
                                 <div class="accordion__item">
-                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseThree" aria-expanded="false">
+                                    <div class="accordion__header" data-bs-toggle="collapse" data-bs-target="#classes-collapse">
                                         <span class="fa fa-cog"></span>
-                                        <span class="accordion__header--text  list-title">Classes</span>
-                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                        <span class="accordion__header--text list-title">Classes</span>
+                                        <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="with-icon_collapseThree" class="accordion__body collapse show" data-parent="#accordion-three" style="">
+                                    <div id="classes-collapse" class="collapse show">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($classes as $c)
@@ -178,14 +178,14 @@
                 <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="accordion-one" class="accordion accordion-with-icon">
+                            <div class="accordion accordion-with-icon">
                                 <div class="accordion__item">
-                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseOne" aria-expanded="false">
+                                    <div class="accordion__header" data-bs-toggle="collapse" data-bs-target="#coefficients-collapse">
                                         <span class="fa fa-cog"></span>
-                                        <span class="accordion__header--text  list-title">Coefficients</span>
-                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                        <span class="accordion__header--text list-title">Coefficients</span>
+                                        <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="with-icon_collapseOne" class="accordion__body collapse show" data-parent="#accordion-one" style="">
+                                    <div id="coefficients-collapse" class="collapse show">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($coefs as $c)
@@ -260,14 +260,14 @@
                 <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="accordion-one" class="accordion accordion-with-icon">
+                            <div class="accordion accordion-with-icon">
                                 <div class="accordion__item">
-                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseOne" aria-expanded="false">
+                                    <div class="accordion__header" data-bs-toggle="collapse" data-bs-target="#salles-collapse">
                                         <span class="fa fa-cog"></span>
-                                        <span class="accordion__header--text  list-title">Salles</span>
-                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                        <span class="accordion__header--text list-title">Salles</span>
+                                        <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="with-icon_collapseOne" class="accordion__body collapse show" data-parent="#accordion-one" style="">
+                                    <div id="salles-collapse" class="collapse show">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($salles as $s)
@@ -346,14 +346,14 @@
                 <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="accordion-two" class="accordion accordion-with-icon">
+                            <div class="accordion accordion-with-icon">
                                 <div class="accordion__item">
-                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseTwo" aria-expanded="false">
+                                    <div class="accordion__header" data-bs-toggle="collapse" data-bs-target="#filieres-collapse">
                                         <span class="fa fa-cog"></span>
-                                        <span class="accordion__header--text  list-title">Filières</span>
-                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                        <span class="accordion__header--text list-title">Filières</span>
+                                        <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="with-icon_collapseTwo" class="accordion__body collapse show" data-parent="#accordion-two" style="">
+                                    <div id="filieres-collapse" class="collapse show">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($filieres as $f)
@@ -435,14 +435,14 @@
                 <div class="col-xl-12 col-xxl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="accordion-four" class="accordion accordion-with-icon">
+                            <div class="accordion accordion-with-icon">
                                 <div class="accordion__item">
-                                    <div class="accordion__header collapsed" data-toggle="collapse" data-target="#with-icon_collapseFour" aria-expanded="false">
+                                    <div class="accordion__header" data-bs-toggle="collapse" data-bs-target="#ue-collapse">
                                         <span class="fa fa-cog"></span>
-                                        <span class="accordion__header--text  list-title">Unités d'enseignements (u.e)</span>
-                                        <span class="accordion__header--indicator indicator_bordered"></span>
+                                        <span class="accordion__header--text list-title">Unités d'enseignements (u.e)</span>
+                                        <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="with-icon_collapseFour" class="accordion__body collapse show" data-parent="#accordion-four" style="">
+                                    <div id="ue-collapse" class="collapse show">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($ues as $u)
@@ -569,7 +569,7 @@
 
     .list-config li {
         cursor: pointer;
-        color: #343957;
+        color: inherit;  /* Modifié pour supporter le mode sombre */
         line-height: 30px;
         font-size: 14px;
         font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -579,12 +579,11 @@
         color: #9a9eb4;
         font-size: 12px;
         text-indent: 20px;
-
     }
 
     .list-config li:hover {
-        background: #d8d8d8;
-        border-left: 5px solid #343957;
+        background: rgba(0, 0, 0, 0.1);  /* Modifié pour supporter le mode sombre */
+        border-left: 5px solid currentColor;  /* Utilise la couleur du texte actuelle */
     }
 
     .list-config li:hover>span+.item-actions {
@@ -594,33 +593,128 @@
     .item-actions {
         visibility: hidden;
     }
+
+    /* Styles pour le mode sombre */
+    [data-theme="dark"] .accordion__header,
+    body.dark-mode .accordion__header {
+        background-color: #2d2d2d !important;
+        border-color: #404040 !important;
+    }
+
+    [data-theme="dark"] .accordion__body,
+    body.dark-mode .accordion__body {
+        background-color: #2d2d2d !important;
+    }
+
+    [data-theme="dark"] .card,
+    body.dark-mode .card {
+        background-color: #2d2d2d !important;
+        border-color: #404040 !important;
+    }
+
+    [data-theme="dark"] .list-config li:hover,
+    body.dark-mode .list-config li:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .list-config li .subtitle,
+    body.dark-mode .list-config li .subtitle {
+        color: #808080;
+    }
+
+    /* Style pour l'indicateur */
+    .accordion__header {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .accordion__header--indicator {
+        position: absolute;
+        right: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .accordion__header.collapsed .accordion__header--indicator:before {
+        content: "\f067"; /* fa-plus */
+    }
+
+    .accordion__header:not(.collapsed) .accordion__header--indicator:before {
+        content: "\f068"; /* fa-minus */
+    }
 </style>
 @endsection
 
+@section('script')
 <script>
-    window.addEventListener('added', event => {
-        iziToast.success({
-            title: 'Configurations',
-            message: 'Ajout avec succes',
-            position: 'topRight'
-        });
-    });
-
-    window.addEventListener('updated', event => {
-        iziToast.success({
-            title: 'Configurations',
-            message: 'Mis à jour avec succes',
-            position: 'topRight'
-        });
-    });
-
-    window.addEventListener('deleted', event => {
-        iziToast.success({
-            title: 'Configurations',
-            message: 'Suppression avec succes',
-            position: 'topRight'
+    $(document).ready(function() {
+        $('.accordion__header').on('click', function() {
+            const target = $(this).data('bs-target');
+            $(this).toggleClass('collapsed');
+            
+            // Change l'icône
+            const indicator = $(this).find('.accordion__header--indicator');
+            if ($(this).hasClass('collapsed')) {
+                indicator.removeClass('fa-minus').addClass('fa-plus');
+            } else {
+                indicator.removeClass('fa-plus').addClass('fa-minus');
+            }
+            
+            $(target).collapse('toggle');
         });
 
-        $('.modalId').modal('hide');
+        // État initial
+        $('.accordion__header').each(function() {
+            const target = $(this).data('bs-target');
+            const indicator = $(this).find('.accordion__header--indicator');
+            if (!$(target).hasClass('show')) {
+                $(this).addClass('collapsed');
+                indicator.removeClass('fa-minus').addClass('fa-plus');
+            }
+        });
+
+        // Réinitialiser après changement de thème
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('theme-changed', () => {
+                $('.accordion__header').each(function() {
+                    const target = $(this).data('bs-target');
+                    const indicator = $(this).find('.accordion__header--indicator');
+                    if (!$(target).hasClass('show')) {
+                        $(this).addClass('collapsed');
+                        indicator.removeClass('fa-minus').addClass('fa-plus');
+                    } else {
+                        $(this).removeClass('collapsed');
+                        indicator.removeClass('fa-plus').addClass('fa-minus');
+                    }
+                });
+            });
+        });
+
+        // Gestion des notifications
+        window.addEventListener('added', event => {
+            iziToast.success({
+                title: 'Configurations',
+                message: 'Ajout avec succes',
+                position: 'topRight'
+            });
+        });
+
+        window.addEventListener('updated', event => {
+            iziToast.success({
+                title: 'Configurations',
+                message: 'Mis à jour avec succes',
+                position: 'topRight'
+            });
+        });
+
+        window.addEventListener('deleted', event => {
+            iziToast.success({
+                title: 'Configurations',
+                message: 'Suppression avec succes',
+                position: 'topRight'
+            });
+            $('.modalId').modal('hide');
+        });
     });
 </script>
+@endsection

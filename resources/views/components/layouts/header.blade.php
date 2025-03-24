@@ -4,10 +4,9 @@
             <div class="collapse navbar-collapse justify-content-between">
                 <div class="header-left">
                     <div class="search_bar dropdown">
-                        <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
-                            <i class="fa fa-lightbulb-o"></i>
-                        </span>
-                        
+                        <div class="theme-switch-wrapper">
+                            @livewire('theme-switch')
+                        </div>
                     </div>
                 </div>
 
