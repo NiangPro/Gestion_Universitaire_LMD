@@ -20,9 +20,10 @@ class Absences extends Component
     use WithPagination;
 
     public $isOpen = false;
-    public $selectedCampus = '';
-    public $selectedYear = '';
-    public $selectedStatus = '';
+    public $selectedCampus = null;
+    public $selectedYear = null;
+    public $selectedClasse = null;
+    public $classes = [];
     public $search = '';
     public $academicYear = null;
     public $inscriptions = [];
@@ -59,7 +60,18 @@ class Absences extends Component
 
     public function updatedSelectedYear($value)
     {
-        $this->absences = Absence::where('academic_year_id', $value)->get();
+        $this->classes = Auth::user()->campus->classes;
+        // $this->absences = Absence::where('academic_year_id', $value)->get();
+    }
+
+    public function updatedSelectedClasse($value)
+    {
+        $this->absences = Absence::where('academic_year_id', $this->selectedYear)
+            ->whereHas('etudiant', function($query) use ($value) {
+                $query->whereHas('inscriptions', function($query) use ($value) {
+                    $query->where('classe_id', $value);
+                });
+            })->get();
     }
 
     public function updatedSearch($value)

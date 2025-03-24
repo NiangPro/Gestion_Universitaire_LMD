@@ -12,7 +12,7 @@
         </div>
         <div class="card-body">
             <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label class="form-label">Année Académique</label>
                         <select wire:model.live="selectedYear" class="form-control">
@@ -29,18 +29,21 @@
                         </select>
                     </div>
                 </div>
-                <!-- <div class="col-md-4">
+                 @if($selectedYear)
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label class="form-label">Statut</label>
-                        <select wire:model.live="selectedStatus" class="form-control">
-                            <option value="">Tous les statuts</option>
-                            <option value="absent">Absent</option>
-                            <option value="present">Présent</option>
+                        <label class="form-label">Classe</label>
+                        <select wire:model.live="selectedClasse" class="form-control">
+                            <option value="">Toutes les classes</option>
+                            @foreach ($classes as $classe)
+                            <option value="{{ $classe->id }}">{{ $classe->nom }} - {{ $classe->filiere->nom }}</option>
+                            @endforeach
                         </select>
                     </div>
-                </div> -->
-                @if($selectedYear)
-                <div class="col-md-6">
+                </div>
+                @endif
+                @if($selectedClasse)
+                <div class="col-md-4">
                     <div class="form-group">
                         <label class="form-label">Rechercher</label>
                         <input type="text" wire:model.live.debounce.300ms="search" class="form-control" placeholder="Rechercher...">
@@ -53,38 +56,33 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
-                        <tr>
+                        <tr class="text-center">
                             <th>Étudiant</th>
                             <th>Cours</th>
                             <th>Date</th>
-                            <th>Statut</th>
                             <th>Justifié</th>
                             <th>Motif</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-center">
                         @foreach ($absences as $absence)
                         <tr>
                             <td>
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex justify-content-center align-items-center">
                                     <div>
                                         <h6 class="mb-0">{{ $absence->etudiant->prenom }} {{ $absence->etudiant->nom }}</h6>
-                                        <small class="text-muted">ID: {{ $absence->etudiant->matricule }}</small>
+                                        <small class="text-muted">{{ $absence->etudiant->matricule }}</small>
                                     </div>
                                 </div>
                             </td>
                             <td>{{ $absence->cours->matiere->nom }}</td>
-                            <td>{{ $absence->date->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <span class="badge bg-{{ $statuses[$absence->status] }}-subtle text-{{ $statuses[$absence->status] }}">
-                                    {{ $absence->status }}
-                                </span>
-                            </td>
+                            <td>{{ $absence->date->format('d/m/Y') }}</td>
+                            
                             <td>{{ $absence->justifie ? 'Oui' : 'Non' }}</td>
                             <td>{{ $absence->motif }}</td>
                             <td>
-                                <div class="d-flex gap-2">
+                                <div class="d-flex gap-2 justify-content-center">
                                     <button class="btn btn-sm btn-info" title="Éditer">
                                         <i class="fas fa-edit"></i>
                                     </button>
