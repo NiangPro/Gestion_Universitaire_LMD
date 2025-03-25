@@ -13,11 +13,16 @@ class TestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $title;
+    public $body;
+
     /**
      * Create a new message instance.
      */
-    public function __construct(private string $title, private string  $body)
+    public function __construct($title, $body)
     {
+        $this->title = $title;
+        $this->body = $body;
     }
 
     /**
@@ -36,7 +41,7 @@ class TestMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail',
+            view: 'emails.test-mail',
             with: [
                 'title' => $this->title,
                 'body' => $this->body,
@@ -52,5 +57,11 @@ class TestMail extends Mailable
     public function attachments(): array
     {
         return [];
+    }
+
+    public function build()
+    {
+        return $this->subject($this->title)
+                    ->view('emails.test-mail');
     }
 }

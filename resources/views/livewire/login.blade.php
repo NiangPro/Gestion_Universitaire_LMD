@@ -18,7 +18,7 @@
                             <div class="mb-3">
                                 <div class="form-group">
                                     <label for="password" class="form-label">Mot de passe</label>
-                                    <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" id="password">
+                                    <input type="password" wire:model="password" placeholder="Mot de passe" class="form-control @error('password') is-invalid @enderror" id="password">
                                     <!-- <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
                                         <i class="fa fa-eye"></i>
                                     </button> -->
@@ -44,7 +44,7 @@
                             </div>
 
                             <div class="mt-3 text-center">
-                                <a href="{{ route('password.request') }}" class="text-decoration-none">Mot de passe oublié ?</a>
+                                <a href="{{ route('forget') }}" class="text-decoration-none">Mot de passe oublié ?</a>
                             </div>
                         </form>
                     </div>

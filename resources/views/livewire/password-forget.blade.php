@@ -1,5 +1,5 @@
 <div class="authincation h-100 mt-5 pt-5 mb-5">
-    <div class="container-fluid h-100">
+    <div class="container-fluid h-100 mt-3">
         <div class="row justify-content-center h-100 align-items-center">
             <div class="col-md-6">
                 <div class="authincation-content">
