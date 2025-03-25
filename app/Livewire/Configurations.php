@@ -8,6 +8,7 @@ use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Matiere;
 use App\Models\Salle;
+use App\Models\Semestre;
 use App\Models\UniteEnseignement;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -54,6 +55,12 @@ class Configurations extends Component
         "idcoef" => null
     ];
 
+    public $semestre = [
+        "nom" => "",
+        "ordre" => null,
+        "idsemestre" => null
+    ];
+
     protected $messages = [
         "classe.nom.required" => "Le nom est requis",
         "classe.filiere_id.required" => "Le filière est requis",
@@ -66,7 +73,48 @@ class Configurations extends Component
         "ue.credit.required" => "Le crédit est requis",
         "coef.valeur.required" => "La valeur est requise",
         "ue.disciplines.required" => "Les disciplines sont requises",
+        "semestre.ordre.required" => "L'ordre est requis",
+        "semestre.ordre.unique" => "L'ordre doit être unique",
+        "semestre.ordre.min" => "L'ordre doit être compris entre 1 et 4",
+        "semestre.ordre.max" => "L'ordre doit être compris entre 1 et 4",
     ];
+
+    public function getSemestre($id){
+        $semestre = Semestre::where("id", $id)->first();
+
+        $this->semestre["idsemestre"] = $semestre->id;
+        $this->semestre["nom"] = $semestre->nom;
+        $this->semestre["ordre"] = $semestre->ordre;
+    }
+
+    public function storeSemestre(){
+        if ($this->semestre["idsemestre"]) {
+            $this->validate(["semestre.ordre" => "required|min:1|max:4|unique:semestres,ordre,{$this->semestre["idsemestre"]}"]);
+            $semestre = Semestre::where("id", $this->semestre["idsemestre"])->first();
+
+            $semestre->ordre = $this->semestre["ordre"];
+            $semestre->nom = "Semestre ".$this->semestre["ordre"];
+
+            $semestre->save();
+
+            $this->dispatch("updated");
+        }else{
+            $this->validate(["semestre.ordre" => "required|min:1|max:4|unique:semestres,ordre"]);
+            Semestre::create(["nom" => "Semestre ".$this->semestre["ordre"], "ordre" => $this->semestre["ordre"], "campus_id" => Auth::user()->campus_id]);
+            $this->dispatch("added");
+        }
+        
+        $this->reset(["semestre"]);
+    }
+
+    public function supprimerSemestre($id){
+        $semestre = Semestre::where("id", $id)->first();
+
+        $semestre->is_deleting = true;
+
+        $semestre->save();
+    }
+
 
     public function updatedUeValeur($value)
     {
@@ -227,6 +275,8 @@ class Configurations extends Component
         $this->reset(["salle"]);
     }
 
+
+
     public function supprimerCoefficient($id){
         $coef = Coefficient::where("id", $id)->first();
 
@@ -349,6 +399,7 @@ class Configurations extends Component
             "ues" => UniteEnseignement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "coefs" => Coefficient::where("is_deleting", false)->orderBy("valeur", "ASC")->get(),
             "salles" => Salle::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
+            "semestres" => Semestre::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
         ]);
     }
 }

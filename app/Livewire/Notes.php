@@ -11,6 +11,7 @@ use App\Models\User;
 use Livewire\Attributes\On;
 use App\Models\Classe;
 use App\Models\AcademicYear;
+use App\Models\Semestre;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 
@@ -26,7 +27,7 @@ class Notes extends Component
     public $coefficient;
     public $observation;
     public $date_evaluation;
-    public $semestre;
+    public $semestre_id;
     public $showModal = false;
     public $isEditing = false;
     public $noteId;
@@ -43,7 +44,7 @@ class Notes extends Component
         'type_evaluation' => 'required',
         'coefficient' => 'required|numeric|min:1',
         'date_evaluation' => 'required|date',
-        'semestre' => 'required'
+        'semestre_id' => 'required'
     ];
 
     public function mount()
@@ -65,7 +66,7 @@ class Notes extends Component
         $this->coefficient = $note->coefficient;
         $this->observation = $note->observation;
         $this->date_evaluation = $note->date_evaluation;
-        $this->semestre = $note->semestre;
+        $this->semestre_id = $note->semestre_id;
     }
 
     public function sauvegarderNote()
@@ -81,7 +82,7 @@ class Notes extends Component
                 'coefficient' => $this->coefficient,
                 'observation' => $this->observation,
                 'date_evaluation' => $this->date_evaluation,
-                'semestre' => $this->semestre
+                'semestre_id' => $this->semestre_id
             ]);
             $message = 'Note modifiée avec succès.';
         } else {
@@ -93,14 +94,14 @@ class Notes extends Component
                 'coefficient' => $this->coefficient,
                 'observation' => $this->observation,
                 'date_evaluation' => $this->date_evaluation,
-                'semestre' => $this->semestre
+                'semestre_id' => $this->semestre_id
             ]);
             $message = 'Note enregistrée avec succès.';
         }
 
         $this->reset(['showModal', 'isEditing', 'noteId', 'etudiant_id', 'cours_id', 
                      'note', 'type_evaluation', 'coefficient', 'observation', 
-                     'date_evaluation', 'semestre']);
+                     'date_evaluation', 'semestre_id']);
         session()->flash('message', $message);
     }
 
@@ -126,10 +127,10 @@ class Notes extends Component
         $this->reset(['searchTerm', 'filterType', 'filterSemestre']);
     }
 
-    public function calculerMoyenne($etudiant_id, $semestre)
+    public function calculerMoyenne($etudiant_id, $semestre_id)
     {
         $notes = Note::where('etudiant_id', $etudiant_id)
-                     ->where('semestre', $semestre)
+                     ->where('semestre_id', $semestre_id)
                      ->get();
 
         $totalPoints = 0;
@@ -199,13 +200,16 @@ class Notes extends Component
         }
 
         if ($this->filterSemestre) {
-            $notes->where('semestre', $this->filterSemestre);
+            $notes->where('semestre_id', $this->filterSemestre);
         }
 
-        return view('livewire.notes', [
+        return view('livewire.note.notes', [
             'notes' => $notes->orderBy('date_evaluation', 'desc')->paginate(10),
             'etudiants' => $this->getEtudiantsByCampus(),
             'classes' => $this->classes,
+            'semestres' => Semestre::where('campus_id', Auth::user()->campus_id)
+                          ->where('is_active', true)
+                          ->get(),
             'cours' => Cour::where('campus_id', Auth::user()->campus_id)
                           ->where('is_deleting', 0)
                           ->get(),

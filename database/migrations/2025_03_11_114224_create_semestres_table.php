@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('semestres', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->integer('ordre');
+            $table->integer('ordre')->unique();
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_deleting')->default(false);
             $table->unsignedBigInteger('campus_id');
             $table->foreign('campus_id')->references('id')->on('campuses')->onDelete('cascade');
             $table->timestamps();

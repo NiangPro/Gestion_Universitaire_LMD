@@ -8,7 +8,7 @@ class Semestre extends Model
 {
     protected $table = 'semestres';
     
-    protected $fillable = ['nom', 'ordre', 'is_active', 'campus_id'];
+    protected $fillable = ['nom', 'ordre', 'is_active', 'is_deleting', 'campus_id'];
 
     public function campus()
     {

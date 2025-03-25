@@ -145,5 +145,10 @@ class Campus extends Model
     {
         return $this->hasMany(Semestre::class);
     }
+
+    public function currentSemestre()
+    {
+        return $this->semestres()->where('is_active', true)->first();
+    }
     
 }
