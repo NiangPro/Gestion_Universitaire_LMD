@@ -140,5 +140,10 @@ class Campus extends Model
     {
         return $this->inscriptions()->where('academic_year_id', $this->currentAcademicYear()->id);
     }
+
+    public function semestres()
+    {
+        return $this->hasMany(Semestre::class);
+    }
     
 }

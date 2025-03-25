@@ -23,6 +23,8 @@ return new class extends Migration
             $table->decimal('note', 5, 2);
             $table->decimal('coefficient', 5, 2);
             $table->string('observation')->nullable();
+            $table->unsignedBigInteger('semestre_id');
+            $table->foreign('semestre_id')->references('id')->on('semestres')->onDelete('cascade');
             $table->timestamps();
         });
     }

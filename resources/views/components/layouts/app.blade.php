@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon"  href="assets{{asset('images/logo.png')}}">
     <link rel="icon" type="image/png"  href="assets{{asset('images/logo.png')}}">
     <link rel="shortcut icon" type="image/x-icon" href="assets{{asset('images/logo.png')}}">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ isset($title) ? $title : 'EduLink' }}</title>
     @if (!request()->is("/"))
     <link href="{{asset('themes/vendor/pg-calendar/css/pignose.calendar.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/css/style.css')}}" rel="stylesheet">
@@ -130,9 +130,9 @@
         ***********************************-->
         <div class="nav-header">
             <a href="index.html" class="brand-logo">
-                <img class="logo-abbr" src="themes/images/logo.png" alt="">
-                <img class="logo-compact" src="themes/images/logo-text.png" alt="">
-                <img class="brand-title" src="themes/images/logo-text.png" alt="">
+                <img class="logo-abbr" src="{{ asset('themes/images/logo.png')}}" alt="">
+                <img class="logo-compact" src="{{ asset('themes/images/logo-text.png')}}" alt="">
+                <img class="brand-title" src="{{ asset('themes/images/logo-text.png')}}" alt="">
             </a>
 
             <div class="nav-control">

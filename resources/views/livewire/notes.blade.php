@@ -133,7 +133,7 @@
                                         @error('semestre') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label>Observation</label>
                                         <textarea class="form-control" wire:model="observation"></textarea>
                                     </div>
