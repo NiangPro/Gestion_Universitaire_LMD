@@ -205,7 +205,7 @@
         xaxis: {
             show: false
         },
-        colors: ["#007BFF"],
+        colors: ["#479CD5"],
         grid: {
             color: "transparent",
             hoverable: true,

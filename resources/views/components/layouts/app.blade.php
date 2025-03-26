@@ -4,10 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="apple-touch-icon"  href="assets{{asset('images/logo.png')}}">
     <link rel="icon" type="image/png"  href="assets{{asset('images/logo.png')}}">
     <link rel="shortcut icon" type="image/x-icon" href="assets{{asset('images/logo.png')}}">
-    <title>{{ $title ?? 'Page Title' }}</title>
+    <title>{{ isset($title) ? $title : 'EduLink' }}</title>
     @if (!request()->is("/"))
     <link href="{{asset('themes/vendor/pg-calendar/css/pignose.calendar.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/css/style.css')}}" rel="stylesheet">
@@ -23,14 +24,86 @@
     @endif
     <link href="{{asset('iziToast.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/vendor/summernote/summernote.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/dark-mode.css') }}">
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+    <!-- Styles pour le mode sombre -->
+    <style>
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        body.dark-mode .card {
+            background-color: #444;
+            border-color: #555;
+            color: #fff;
+        }
+
+        body.dark-mode .navbar {
+            background-color: #222 !important;
+        }
+
+        body.dark-mode .navbar-light .navbar-nav .nav-link {
+            color: #fff !important;
+        }
+
+        body.dark-mode .table {
+            color: #fff;
+            background-color: #444;
+        }
+
+        body.dark-mode .table td,
+        body.dark-mode .table th {
+            border-color: #555;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #444;
+            color: #fff;
+        }
+
+        body.dark-mode .form-control {
+            background-color: #555;
+            border-color: #666;
+            color: #fff;
+        }
+
+        body.dark-mode .form-control:focus {
+            background-color: #666;
+            color: #fff;
+        }
+
+        body.dark-mode .list-group-item {
+            background-color: #444;
+            border-color: #555;
+            color: #fff;
+        }
+
+        body.dark-mode .dropdown-menu {
+            background-color: #444;
+            border-color: #555;
+        }
+
+        body.dark-mode .dropdown-item {
+            color: #fff;
+        }
+
+        body.dark-mode .dropdown-item:hover {
+            background-color: #555;
+        }
+
+        /* Ajoutez ici d'autres styles spécifiques à votre application */
+    </style>
 
     @yield('css')
     @livewireStyles
 </head>
 
-<body>
+<body class="{{ session()->get('darkMode') ? 'dark-mode' : '' }}">
 
     @if (Auth()->user())
     <!--*******************
@@ -56,9 +129,9 @@
         ***********************************-->
         <div class="nav-header">
             <a href="index.html" class="brand-logo">
-                <img class="logo-abbr" src="themes/images/logo.png" alt="">
-                <img class="logo-compact" src="themes/images/logo-text.png" alt="">
-                <img class="brand-title" src="themes/images/logo-text.png" alt="">
+                <img class="logo-abbr" src="{{ asset('themes/images/logo.png')}}" alt="">
+                <img class="logo-compact" src="{{ asset('themes/images/logo-text.png')}}" alt="">
+                <img class="brand-title" src="{{ asset('themes/images/logo-text.png')}}" alt="">
             </a>
 
             <div class="nav-control">
@@ -176,7 +249,7 @@
     <script src="{{ asset('themes/vendor/summernote/js/summernote.min.js')}}"></script>
     @stack('scripts')
     <script>
-        document.addEventListener('livewire:initialized', () => {
+        document.addEventListener('livewire:init', () => {
             const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
 
             Livewire.on('show-confirmation-modal', () => {
@@ -187,7 +260,17 @@
                 modal.hide();
             });
         });
+        Livewire.on('theme-changed', (event) => {
+            if (event.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            document.documentElement.setAttribute('data-theme', event.darkMode ? 'dark' : 'light');
+        });
     </script>
+    <script src="{{ asset('js/dark-mode.js') }}"></script>
+
 
     @yield('script')
 
@@ -217,6 +300,78 @@
     </script>
 
     @livewireScripts
+
+    <!-- 1. D'abord jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- 2. Scripts Livewire -->
+    @livewireScripts
+
+    <!-- 3. Bootstrap et autres dépendances -->
+    @if (!request()->is("/"))
+        <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    @endif
+
+    <!-- 4. Vos autres scripts -->
+    <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
+    <script src="{{asset('themes/js/custom.min.js')}}"></script>
+
+    <!-- 5. Script du thème sombre -->
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('theme-changed', (event) => {
+                const darkMode = event.darkMode;
+                if (darkMode) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+                document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+            });
+        });
+    </script>
+
+    <!-- 6. Autres scripts spécifiques -->
+    <script src="{{ asset('js/dark-mode.js') }}"></script>
+    @stack('scripts')
+    @yield('script')
+
+    <!-- Avant la fermeture de </body> -->
+    <script>
+        // Fonction pour appliquer le thème
+        function applyTheme(darkMode) {
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        }
+
+        // Au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier le localStorage
+            const savedTheme = localStorage.getItem('darkMode');
+            if (savedTheme !== null) {
+                const darkMode = savedTheme === 'true';
+                applyTheme(darkMode);
+            }
+        });
+
+        // Écouter les changements de thème via Livewire
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('theme-changed', (event) => {
+                const darkMode = event.darkMode;
+                // Sauvegarder dans localStorage
+                localStorage.setItem('darkMode', darkMode);
+                // Appliquer le thème
+                applyTheme(darkMode);
+            });
+        });
+    </script>
 </body>
 
 </html>

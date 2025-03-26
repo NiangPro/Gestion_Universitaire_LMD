@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Outils;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;

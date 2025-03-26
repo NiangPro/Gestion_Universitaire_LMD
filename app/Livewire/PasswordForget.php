@@ -31,10 +31,20 @@ class PasswordForget extends Component
     ];
 
     protected $rules = [
-        'form.code' => ['required','string'],
-        'form.email' => ['required', 'email', 'unique:users,email'],
-        'tel' => ['required', 'unique:users,tel', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
+        'form.code' => ['required', 'string'],
+        'form.email' => ['required', 'email'],
+        'form.tel' => ['required', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
         'form2.password' => 'required|string|min:6|confirmed',
+    ];
+
+    protected $messages = [
+        'form.email.required' => 'L\'email est obligatoire',
+        'form.email.email' => 'L\'email n\'est pas valide',
+        'form.tel.required' => 'Le téléphone est obligatoire',
+        'form.tel.regex' => 'Le format du téléphone n\'est pas valide',
+        'form2.password.required' => 'Le mot de passe est obligatoire',
+        'form2.password.min' => 'Le mot de passe doit contenir au moins 6 caractères',
+        'form2.password.confirmed' => 'Les mots de passe ne correspondent pas'
     ];
 
     protected function formInit()

@@ -17,7 +17,7 @@ class Countdown extends Component
     
     public function render()
     {
-        $this->dateFermeture = Auth::user()->campus->activeSubscription()->end_date;
+        $this->dateFermeture = Auth::user()->campus->activeSubscription() ? Auth::user()->campus->activeSubscription()->end_date:null;
         return view('livewire.countdown');
     }
 }

@@ -21,8 +21,13 @@ return new class extends Migration
             $table->foreign('academic_year_id')->references('id')->on('academic_years')->onDelete('cascade');
             $table->string('type_evaluation');
             $table->decimal('note', 5, 2);
-            $table->decimal('coefficient', 5, 2);
+            $table->unsignedBigInteger('coefficient_id')->nullable();
+            $table->foreign('coefficient_id')->references('id')->on('coefficients')->onDelete('cascade');
             $table->string('observation')->nullable();
+            $table->unsignedBigInteger('campus_id')->nullable();
+            $table->foreign('campus_id')->references('id')->on('campuses')->onDelete('cascade');
+            $table->unsignedBigInteger('semestre_id');
+            $table->foreign('semestre_id')->references('id')->on('semestres')->onDelete('cascade');
             $table->timestamps();
         });
     }

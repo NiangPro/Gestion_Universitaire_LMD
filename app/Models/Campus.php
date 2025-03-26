@@ -115,4 +115,75 @@ class Campus extends Model
     public function coefficients(){
         return $this->hasMany(Coefficient::class);
     }
+
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
+    }
+
+    public function cours()
+    {
+        return $this->hasMany(Cour::class);
+    }
+
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
+
+    public function currentNotes()
+    {
+        return $this->notes()->where('academic_year_id', $this->currentAcademicYear()->id);
+    }
+
+    public function currentNotesBySemestre($semestre_id)
+    {
+        return $this->currentNotes()->where('semestre_id', $semestre_id);
+    }
+
+    public function currentNotesByEtudiant($etudiant_id)
+    {
+        return $this->currentNotes()->where('etudiant_id', $etudiant_id);
+    }
+
+    public function currentNotesByMatiere($matiere_id)
+    {
+        return $this->currentNotes()->where('matiere_id', $matiere_id);
+    }
+
+    public function currentNotesByEtudiantAndMatiere($etudiant_id, $matiere_id)
+    {
+        return $this->currentNotes()->where('etudiant_id', $etudiant_id)->where('matiere_id', $matiere_id);
+    }
+
+    public function currentNotesByEtudiantAndSemestre($etudiant_id, $semestre_id)
+    {
+        return $this->currentNotes()->where('etudiant_id', $etudiant_id)->where('semestre_id', $semestre_id);
+    }
+
+    public function currentNotesBySemestreAndMatiere($semestre_id, $matiere_id)
+    {
+        return $this->currentNotes()->where('semestre_id', $semestre_id)->where('matiere_id', $matiere_id);
+    }
+    
+    public function currentInscriptions()
+    {
+        return $this->inscriptions()->where('academic_year_id', $this->currentAcademicYear()->id);
+    }
+
+    public function semestres()
+    {
+        return $this->hasMany(Semestre::class);
+    }
+
+    public function currentSemestre()
+    {
+        return $this->semestres()->where('is_active', true)->first();
+    }
+    
 }
