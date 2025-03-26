@@ -34,38 +34,45 @@
                 <!-- Filtres pour la liste des notes -->
             <div class="row mb-3">
                 <div class="col-md-4">
-                        <select wire:model="academic_year_id" class="form-control">
-                            <option value="">Sélectionner l'année académique</option>
-                            @foreach($academic_years as $year)
-                                <option value="{{ $year->id }}">
-                                    @if($year->en_cours)
-                                        <span class="badge badge-success">En cours</span>
-                                    @else
-                                        {{ date('Y', strtotime($year->debut)) }} - {{ date('Y', strtotime($year->fin)) }}
-                                    @endif
-                                </option>
-                            @endforeach
-                        </select>
-                </div>
-                    <div class="col-md-4">
-                        <select wire:model="classe_id" class="form-control">
-                            <option value="">Sélectionner une classe</option>
-                            @foreach($classes as $classe)
-                                <option value="{{ $classe->id }}">
-                                    {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
-                                </option>
-                            @endforeach
+                    <select wire:model.live="academic_year_id" class="form-control">
+                        <option value="">Sélectionner l'année académique</option>
+                        @foreach($academic_years as $year)
+                            <option value="{{ $year->id }}">
+                                @if($year->en_cours)
+                                    {{ $year->nom }} (En cours)
+                                @else
+                                    {{ date('Y', strtotime($year->debut)) }} - {{ date('Y', strtotime($year->fin)) }}
+                                @endif
+                            </option>
+                        @endforeach
                     </select>
                 </div>
-                    <div class="col-md-4">
-                        <select wire:model="semestre_id" class="form-control">
-                            <option value="">Sélectionner le semestre</option>
-                            @foreach($semestres as $semestre)
-                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                            @endforeach
+                <div class="col-md-4">
+                    <select wire:model.live="classe_id" class="form-control">
+                        <option value="">Sélectionner une classe</option>
+                        @foreach($classes as $classe)
+                            <option value="{{ $classe->id }}">
+                                {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
+                            </option>
+                        @endforeach
                     </select>
-                    </div>
                 </div>
+                <div class="col-md-4">
+                    <select wire:model.live="semestre_id" class="form-control">
+                        <option value="">Sélectionner le semestre</option>
+                        @foreach($semestres as $semestre)
+                            <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Indicateur de chargement -->
+            <div wire:loading class="text-center my-2">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Chargement...</span>
+                </div>
+            </div>
             @else
                 <!-- Filtres pour l'ajout de notes -->
                 <div class="row mb-3">

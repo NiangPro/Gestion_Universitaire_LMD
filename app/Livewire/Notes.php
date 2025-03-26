@@ -16,6 +16,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Models\UniteEnseignement;
 use App\Models\Matiere;
+use Livewire\Attributes\Reactive;
 
 #[Title("Notes")]
 class Notes extends Component
@@ -23,25 +24,28 @@ class Notes extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
+    public $academic_year_id;
+    public $classe_id;
+    public $semestre_id;
+
     public $etudiant_id = null;
     public $cours_id = null;
     public $note = null;
     public $coefficient_id = null;
     public $matiere_id = null;
     public $observation;
-    public $semestre_id = null;
     public $showModal = false;
+    public $showDetailsModal = false;
+    public $selectedNote;
     public $isEditing = false;
     public $noteId;
     public $searchTerm = '';
     public $filterType = '';
     public $filterSemestre = '';
-    public $classe_id = null;
     public $notes = [];
     public $ue_id = null;
     public $uniteEnseignements = [];
     public $matieres = [];
-    public $academic_year_id = null;
 
     protected $rules = [
         'classe_id' => 'required',
@@ -55,7 +59,16 @@ class Notes extends Component
 
     public function mount()
     {
-        $this->academic_year_id = Auth::user()->campus->currentAcademicYear()->id;
+        $currentAcademicYear = Auth::user()->campus->currentAcademicYear();
+        if ($currentAcademicYear) {
+            $this->academic_year_id = $currentAcademicYear->id;
+        }
+    }
+
+    public function updatedAcademicYearId()
+    {
+        $this->classe_id = null;
+        $this->resetPage();
     }
 
     public function edit($noteId)
@@ -244,7 +257,7 @@ class Notes extends Component
         }
 
         $notesQuery = Note::query()
-            ->with(['etudiant', 'matiere', 'coefficient'])
+            ->with(['etudiant', 'matiere', 'coefficient', 'semestre'])
             ->where('campus_id', Auth::user()->campus_id);
 
         if ($this->academic_year_id) {
@@ -252,10 +265,9 @@ class Notes extends Component
         }
 
         if ($this->classe_id) {
-            $notesQuery->whereHas('etudiant', function($query) {
-                $query->whereHas('inscriptions', function($q) {
-                    $q->where('classe_id', $this->classe_id);
-                });
+            $notesQuery->whereHas('etudiant.inscriptions', function($query) {
+                $query->where('classe_id', $this->classe_id)
+                    ->where('academic_year_id', $this->academic_year_id);
             });
         }
 
@@ -263,18 +275,22 @@ class Notes extends Component
             $notesQuery->where('semestre_id', $this->semestre_id);
         }
 
-        $notes = $notesQuery->orderBy('created_at', 'desc')->paginate(10);
+        $classes = Classe::where('campus_id', Auth::user()->campus_id)
+            ->where('is_deleting', 0)
+            ->where('academic_year_id', $this->academic_year_id)
+            ->with('filiere')
+            ->get();
 
         return view('livewire.note.notes', [
-            'notesList' => $notes,
-            'etudiants' => $this->getEtudiantsByCampus(),
-            'classes' => $this->classes,
+            'notesList' => $notesQuery->orderBy('created_at', 'desc')->paginate(10),
+            'academic_years' => AcademicYear::where('campus_id', Auth::user()->campus_id)
+                              ->orderBy('created_at', 'desc')
+                              ->get(),
+            'classes' => Auth::user()->campus->classes,
             'semestres' => Semestre::where('campus_id', Auth::user()->campus_id)
                           ->where('is_active', true)
                           ->get(),
-            'academic_years' => AcademicYear::where('campus_id', Auth::user()->campus_id)
-                          ->orderBy('created_at', 'desc')
-                          ->get(),
+            'etudiants' => $this->getEtudiantsByCampus(),
             'uniteEnseignements' => $this->uniteEnseignements,
             'matieres' => $this->matieres,
             'cours' => Cour::where('campus_id', Auth::user()->campus_id)
@@ -282,5 +298,24 @@ class Notes extends Component
                           ->get(),
             'coefficients' => Auth::user()->campus->coefficients
         ]);
+    }
+
+    public function showDetails($noteId)
+    {
+        $this->selectedNote = Note::with([
+            'etudiant.inscriptions.classe',
+            'matiere.uniteEnseignement',
+            'academicYear',
+            'semestre',
+            'coefficient'
+        ])->find($noteId);
+        
+        $this->showDetailsModal = true;
+    }
+
+    public function closeDetailsModal()
+    {
+        $this->showDetailsModal = false;
+        $this->selectedNote = null;
     }
 }
