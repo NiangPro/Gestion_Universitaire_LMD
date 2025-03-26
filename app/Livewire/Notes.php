@@ -42,7 +42,7 @@ class Notes extends Component
         'cours_id' => 'required',
         'note' => 'required|numeric|min:0|max:20',
         'type_evaluation' => 'required',
-        'coefficient' => 'required|numeric|min:1',
+        'coefficient' => 'required',
         'date_evaluation' => 'required|date',
         'semestre_id' => 'required'
     ];
@@ -84,7 +84,7 @@ class Notes extends Component
                 'date_evaluation' => $this->date_evaluation,
                 'semestre_id' => $this->semestre_id
             ]);
-            $message = 'Note modifiée avec succès.';
+            $this->dispatch('updatedNote');
         } else {
             Note::create([
                 'etudiant_id' => $this->etudiant_id,
@@ -96,13 +96,13 @@ class Notes extends Component
                 'date_evaluation' => $this->date_evaluation,
                 'semestre_id' => $this->semestre_id
             ]);
-            $message = 'Note enregistrée avec succès.';
+            $this->dispatch('addedNote');
         }
 
         $this->reset(['showModal', 'isEditing', 'noteId', 'etudiant_id', 'cours_id', 
                      'note', 'type_evaluation', 'coefficient', 'observation', 
                      'date_evaluation', 'semestre_id']);
-        session()->flash('message', $message);
+        $this->showModal = false;
     }
 
     public function confirmDelete($noteId)

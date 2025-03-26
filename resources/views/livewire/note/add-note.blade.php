@@ -17,7 +17,7 @@
                                             <option value="">Sélectionner une classe</option>
                                             @foreach($classes as $classe)
                                                 <option value="{{ $classe->id }}">
-                                                    {{ $classe->nom }}
+                                                    {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
                                                 </option>
                                             @endforeach
                                         </select>

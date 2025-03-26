@@ -16,6 +16,7 @@ class Note extends Model
         'coefficient',
         'observation',
         'date_evaluation',
+        'campus_id',
         'semestre_id'
     ];
 
@@ -37,5 +38,10 @@ class Note extends Model
     public function semestre()
     {
         return $this->belongsTo(Semestre::class);
+    }
+
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class);
     }
 }
