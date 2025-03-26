@@ -8,7 +8,7 @@
                                         <span class="accordion__header--text list-title">Coefficients</span>
                                         <span class="accordion__header--indicator fa fa-minus"></span>
                                     </div>
-                                    <div id="coefficients-collapse" class="collapse show">
+                                    <div id="coefficients-collapse" class="collapse">
                                         <div class="accordion__body--text">
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($coefs as $c)
