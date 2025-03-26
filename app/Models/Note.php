@@ -13,10 +13,9 @@ class Note extends Model
         'academic_year_id',
         'type_evaluation',  // (CC, TP, Examen)
         'note',
-        'coefficient',
         'observation',
-        'date_evaluation',
         'campus_id',
+        'coefficient_id',
         'semestre_id'
     ];
 
@@ -43,5 +42,10 @@ class Note extends Model
     public function campus()
     {
         return $this->belongsTo(Campus::class);
+    }
+
+    public function coefficient()
+    {
+        return $this->belongsTo(Coefficient::class);
     }
 }

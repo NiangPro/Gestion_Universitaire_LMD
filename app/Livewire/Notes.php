@@ -23,10 +23,9 @@ class Notes extends Component
     public $etudiant_id;
     public $cours_id;
     public $note;
-    public $type_evaluation;
-    public $coefficient;
+    public $coefficient_id;
+    public $matiere_id;
     public $observation;
-    public $date_evaluation;
     public $semestre_id;
     public $showModal = false;
     public $isEditing = false;
@@ -41,15 +40,13 @@ class Notes extends Component
         'etudiant_id' => 'required',
         'cours_id' => 'required',
         'note' => 'required|numeric|min:0|max:20',
-        'type_evaluation' => 'required',
-        'coefficient' => 'required',
-        'date_evaluation' => 'required|date',
+        'coefficient_id' => 'required',
+        'matiere_id' => 'required',
         'semestre_id' => 'required'
     ];
 
     public function mount()
     {
-        $this->date_evaluation = date('Y-m-d');
     }
 
     public function edit($noteId)
@@ -62,10 +59,8 @@ class Notes extends Component
         $this->etudiant_id = $note->etudiant_id;
         $this->cours_id = $note->cours_id;
         $this->note = $note->note;
-        $this->type_evaluation = $note->type_evaluation;
-        $this->coefficient = $note->coefficient;
+        $this->coefficient_id = $note->coefficient_id;
         $this->observation = $note->observation;
-        $this->date_evaluation = $note->date_evaluation;
         $this->semestre_id = $note->semestre_id;
     }
 
@@ -78,10 +73,9 @@ class Notes extends Component
                 'etudiant_id' => $this->etudiant_id,
                 'cours_id' => $this->cours_id,
                 'note' => $this->note,
-                'type_evaluation' => $this->type_evaluation,
-                'coefficient' => $this->coefficient,
+                'coefficient_id' => $this->coefficient_id,
                 'observation' => $this->observation,
-                'date_evaluation' => $this->date_evaluation,
+                'matiere_id' => $this->matiere_id,
                 'semestre_id' => $this->semestre_id
             ]);
             $this->dispatch('updatedNote');
@@ -90,18 +84,19 @@ class Notes extends Component
                 'etudiant_id' => $this->etudiant_id,
                 'cours_id' => $this->cours_id,
                 'note' => $this->note,
-                'type_evaluation' => $this->type_evaluation,
-                'coefficient' => $this->coefficient,
+                'matiere_id' => $this->matiere_id,
+                'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                'coefficient_id' => $this->coefficient_id,
                 'observation' => $this->observation,
-                'date_evaluation' => $this->date_evaluation,
+                'campus_id' => Auth::user()->campus_id,
                 'semestre_id' => $this->semestre_id
             ]);
             $this->dispatch('addedNote');
         }
 
         $this->reset(['showModal', 'isEditing', 'noteId', 'etudiant_id', 'cours_id', 
-                     'note', 'type_evaluation', 'coefficient', 'observation', 
-                     'date_evaluation', 'semestre_id']);
+                     'note', 'coefficient_id', 'observation', 
+                     'semestre_id']);
         $this->showModal = false;
     }
 
