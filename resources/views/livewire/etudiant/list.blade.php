@@ -8,7 +8,7 @@
                 <div class="col-md-4">
                     <select wire:model.live="annee_academique" class="form-control">
                         <option value="">Année académique</option>    
-                        @foreach ($academicYears as $academicYear)
+                        @foreach ($academic_years as $academicYear)
                             <option value="{{ $academicYear->id }}">{{ $academicYear->debut }} - {{ $academicYear->fin }}</option>
                         @endforeach
                     </select>
@@ -18,7 +18,7 @@
                         <select wire:model.live="classe" class="form-control">
                             <option value="">Classe</option>
                             @foreach ($classes as $classe)
-                                <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
+                                <option value="{{ $classe->id }}">{{ $classe->nom }} -> {{ $classe->filiere->nom }} </option>
                             @endforeach
                         </select>
                     </div>
@@ -45,6 +45,9 @@
                         </thead>
                         <tbody>
                             @foreach ($etudiants as $etudiant)
+                                @php
+                                    $inscription = $etudiant->inscriptions()->latest()->first();
+                                @endphp
                                 <tr>
                                     <td>{{ $etudiant->matricule }}</td>
                                     <td>{{ $etudiant->nom }}</td>
@@ -52,15 +55,14 @@
                                     <td>{{ $etudiant->sexe }}</td>
                                     <td>{{ date('d/m/Y', strtotime($etudiant->date_naissance)) }}</td>
                                     <td>
-                                        <button wire:click="voir({{ $etudiant->inscription_id }})" class="btn btn-sm btn-primary">
-                                            <i class="fa fa-eye"></i>
-                                        </button>
-                                        <button wire:click="modifier({{ $etudiant->inscription_id }})" class="btn btn-sm btn-warning">
+                                        <button wire:click="edit({{ $etudiant->id }})" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i>
                                         </button>
-                                        <button wire:click="confirmerSuppression({{ $etudiant->inscription_id }})" class="btn btn-sm btn-danger">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
+                                        @if($inscription)
+                                            <button wire:click="confirmerSuppression({{ $inscription->id }})" class="btn btn-sm btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

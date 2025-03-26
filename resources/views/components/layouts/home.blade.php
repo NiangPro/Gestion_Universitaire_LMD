@@ -16,12 +16,9 @@
     <!-- ===============================================-->
     <!--    Favicons-->
     <!-- ===============================================-->
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png">
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicons/favicon.ico">
-    <link rel="manifest" href="assets/img/favicons/manifest.json">
-    <meta name="msapplication-TileImage" content="assets/img/favicons/mstile-150x150.png">
+    <link rel="apple-touch-icon"  href="assets{{asset('images/logo.png')}}">
+    <link rel="icon" type="image/png"  href="assets{{asset('images/logo.png')}}">
+    <link rel="shortcut icon" type="image/x-icon" href="assets{{asset('images/logo.png')}}">
     <meta name="theme-color" content="#ffffff">
 
 
@@ -46,8 +43,8 @@
     <main class="main" id="top">
       <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" data-navbar-on-scroll="data-navbar-on-scroll">
         <div class="container"><a class="navbar-brand d-flex align-items-center fw-semi-bold fs-3" href="{{route('home')}}">
-           {{-- <img class="me-3" src="assets/img/gallery/logo.png" alt="" /> --}}
-           Edu<span class="" style="color:rgb(230, 149, 9);">Link</span>
+           <img class="me-3" width="100" height="50" src="{{asset('images/logo.png')}}" alt="" /> 
+           <!-- Edu<span class="" style="color:rgb(230, 149, 9);">Link</span> -->
           </a>
           <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
           <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
@@ -55,7 +52,7 @@
               <li class="nav-item px-2" ><a class="nav-link fw-medium active" href="{{route('home')}}">Accueil</a></li>
               <li class="nav-item px-2" ><a class="nav-link" href="{{route('fonctionnalite')}}">Fonctionnalités</a></li>
                <li class="nav-item px-2"><a class="nav-link" href="{{ route('service')}}">Services </a></li>
-              <!--<li class="nav-item px-2" data-anchor="data-anchor"><a class="nav-link" href="#testimonial">Testimonial </a></li> -->
+              <li class="nav-item px-2" ><a class="nav-link" href="{{route('contact')}}">Contact </a></li>
             </ul>
             <form class="ps-lg-5">
               <a href="{{route('login')}}" class="btn btn-outline-primary order-0" >Connexion</a>
@@ -73,8 +70,10 @@
             <!-- Logo et Informations de Contact -->
             <div class="col-12 col-lg-4 mb-5 mb-lg-0">
               <div class="footer-brand mb-4">
-                <h3 class="text-white fw-bold">EduLink</h3>
-                <p class="text-light mb-3">La solution complète pour la gestion de votre établissement</p>
+                <h3 class="text-white text-center fw-bold">  
+                  <img class="me-3" width="180" height="90" src="{{asset('images/logo.png')}}" alt="" /> 
+                </h3>
+                <!-- <p class="text-light mb-3">La solution complète pour la gestion de votre établissement</p> -->
               </div>
               <div class="contact-info">
                 <div class="d-flex align-items-center mb-3">

@@ -196,4 +196,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Inscription::class, 'user_id');
     }
+
+    public function tuteur()
+    {
+        return $this->hasOne(Tuteur::class, 'user_id');
+    }
+    
+    public function medical()
+    {
+        return $this->hasOne(Medical::class);
+    }
 }

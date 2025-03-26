@@ -38,11 +38,6 @@ class Dashboard extends Component
     public $totalInscriptions = 0;
     public $montantTotal = 0;
 
-
-
-
-
-
     public function mount()
     {
         $this->user = Auth::user();
@@ -68,12 +63,14 @@ class Dashboard extends Component
             ->count();
 
         // Nombre total d'élèves
-        $this->totalEtudiants = User::whereHas('classes', function($query) {
-            $query->whereHas('cours', function($q) {
-                $q->where('professeur_id', $this->user->id)
-                    ->where('academic_year_id', $this->currentAcademicYear->id);
-            });
-        })->where('role', 'eleve')->count();
+        // $this->totalEtudiants = User::whereHas('classes', function($query) {
+        //     $query->whereHas('cours', function($q) {
+        //         $q->where('professeur_id', $this->user->id)
+        //             ->where('academic_year_id', $this->currentAcademicYear->id);
+        //     });
+        // })->where('role', 'etudiant')->count();
+
+        $this->totalEtudiants = Auth::user()->campus->etudiants->count();
 
         // Dernières activités (notes, absences)
         $this->recentActivities = Note::where('academic_year_id', $this->currentAcademicYear->id)

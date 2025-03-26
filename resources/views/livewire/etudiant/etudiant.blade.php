@@ -68,3 +68,23 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    window.addEventListener('saved', event => {
+        iziToast.success({
+            title: 'Inscription',
+            message: 'Enregistré avec succès',
+            position: 'topRight'
+        });
+    });
+
+    window.addEventListener('deleted', event => {
+        iziToast.success({
+            title: 'Inscription',
+            message: 'Supprimé avec succès',
+            position: 'topRight'
+        });
+    });
+</script>
+@endpush

@@ -122,7 +122,7 @@ class Etudiant extends Component
     // Variables pour les listes déroulantes
     public $classes = [];
     public $tuteurs = [];
-    public $academicYears = [];
+    public $academic_years = [];
 
     // Propriétés pour la liste et le filtrage
     public $annee_academique = '';
@@ -141,7 +141,7 @@ class Etudiant extends Component
     
     // Propriétés pour les listes déroulantes
     public $campuses = [];
-    public $academic_years = [];
+    public $inscription_id = null;
    
 
     // Méthodes existantes
@@ -375,38 +375,55 @@ class Etudiant extends Component
                 Log::info('Dossier médical créé', ['medical_id' => $medical_id]);
             }
 
-            // Créer l'inscription
-            $inscription = Inscription::create([
-                'user_id' => $user->id,
-                'campus_id' => auth()->user()->campus_id,
-                'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
-                'classe_id' => $this->classe_id,
-                'tuteur_id' => $tuteur_id,
-                'medical_id' => $medical_id,
-                'relation' => $this->relation,
-                'montant' => $this->montant,
-                'restant' => $this->restant ?? 0,
-                'tenue' => $this->tenue,
-                'commentaire' => $this->commentaire,
-                'status' => 'en_cours',
-                'date_inscription' => now()
-            ]);
-            Log::info('Inscription créée', ['inscription_id' => $inscription->id]);
+            // Vérifiez si une inscription est en cours de modification
+            if ($this->inscription_id) {
+                $inscription = Inscription::findOrFail($this->inscription_id);
+                $inscription->update([
+                    'classe_id' => $this->classe_id,
+                    'tuteur_id' => $tuteur_id,
+                    'medical_id' => $medical_id,
+                    'relation' => $this->relation,
+                    'montant' => $this->montant,
+                    'restant' => $this->restant ?? 0,
+                    'tenue' => $this->tenue,
+                    'commentaire' => $this->commentaire,
+                    'status' => 'en_cours',
+                    'date_inscription' => now()
+                ]);
+                Log::info('Inscription mise à jour', ['inscription_id' => $inscription->id]);
+            } else {
+                // Créer une nouvelle inscription
+                $inscription = Inscription::create([
+                    'user_id' => $user->id,
+                    'campus_id' => auth()->user()->campus_id,
+                    'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
+                    'classe_id' => $this->classe_id,
+                    'tuteur_id' => $tuteur_id,
+                    'medical_id' => $medical_id,
+                    'relation' => $this->relation,
+                    'montant' => $this->montant,
+                    'restant' => $this->restant ?? 0,
+                    'tenue' => $this->tenue,
+                    'commentaire' => $this->commentaire,
+                    'status' => 'en_cours',
+                    'date_inscription' => now()
+                ]);
+                Log::info('Inscription créée', ['inscription_id' => $inscription->id]);
+            }
 
             DB::commit();
             Log::info('Transaction validée avec succès');
-
             // Réinitialiser le formulaire
             $this->reset();
+            
+            // Recharger les années académiques
+            $this->loadAcademicYears();
             
             // Notification de succès
             $this->dispatch('saved');
             // Redirection vers la liste des étudiants
             return redirect()->route('etudiants');
-            
-            Log::info('Redirection vers la liste des étudiants');
-            return redirect()->route('etudiants.index');
-
+        
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur lors de l\'inscription', [
@@ -462,28 +479,21 @@ class Etudiant extends Component
 
         $this->etudiants = $query->get();
     }
-
-    public function voir($id)
+    
+    public function confirmerSuppression($inscriptionId)
     {
-        return redirect()->route('etudiant', $id);
+        $this->dispatch('confirmerSuppression', $inscriptionId);
     }
 
-    // public function modifier($id)
-    // {
-    //     return redirect()->route('etudiant.edit', $id);
-    // }
-
-    public function confirmerSuppression($id)
-    {
-        $this->dispatch('confirmerSuppression', $id);
-    }
-
-    public function supprimer($id)
+    public function supprimer($inscriptionId)
     {
         try {
             DB::beginTransaction();
             
-            $inscription = Inscription::findOrFail($id);
+            // Trouver l'inscription par ID
+            $inscription = Inscription::findOrFail($inscriptionId);
+            
+            // Récupérer l'utilisateur associé à l'inscription
             $user = $inscription->user;
             
             // Supprimer l'inscription
@@ -495,15 +505,15 @@ class Etudiant extends Component
             DB::commit();
             
             // Notification de succès
-            session()->flash('success', 'Étudiant supprimé avec succès.');
+            session()->flash('success', 'Étudiant et inscription supprimés avec succès.');
             
             $this->loadEtudiants();
             
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Erreur lors de la suppression d\'un étudiant', [
+            Log::error('Erreur lors de la suppression d\'un étudiant et de son inscription', [
                 'error' => $e->getMessage(),
-                'inscription_id' => $id
+                'inscription_id' => $inscriptionId
             ]);
             
             // Notification d'erreur
@@ -586,6 +596,74 @@ class Etudiant extends Component
 
             session()->flash('error', 'Une erreur est survenue lors de la réinscription: ' . $e->getMessage());
         }
+    }
+
+    public function edit($etudiantId)
+    {
+        $etudiant = User::with('inscriptions', 'medical')
+            ->where('role', 'etudiant')
+            ->findOrFail($etudiantId);
+
+        $inscription = $etudiant->inscriptions()->latest()->first();
+
+        if ($inscription) {
+            $this->inscription_id = $inscription->id;
+            $this->classe_id = $inscription->classe_id;
+            $this->relation = $inscription->relation;
+            $this->montant = $inscription->montant;
+            $this->restant = $inscription->restant;
+            $this->tenue = $inscription->tenue;
+            $this->commentaire = $inscription->commentaire;
+        }
+
+        // Charger les propriétés de l'utilisateur
+        $this->nom = $etudiant->nom;
+        $this->prenom = $etudiant->prenom;
+        $this->username = $etudiant->username;
+        $this->email = $etudiant->email;
+        $this->tel = $etudiant->tel;
+        $this->sexe = $etudiant->sexe;
+        $this->date_naissance = $etudiant->date_naissance;
+        $this->lieu_naissance = $etudiant->lieu_naissance;
+        $this->nationalite = $etudiant->nationalite;
+        $this->adresse = $etudiant->adresse;
+        $this->ville = $etudiant->ville;
+        $this->etablissement_precedant = $etudiant->etablissement_precedant;
+
+        // Charger les propriétés du tuteur
+        $tuteur = User::find($inscription->tuteur_id);
+        if ($tuteur) {
+            $this->type_tuteur = 'Existant';
+            $this->tuteur_id = $tuteur->id;
+            $this->nom_tuteur = $tuteur->nom;
+            $this->prenom_tuteur = $tuteur->prenom;
+            $this->adresse_tuteur = $tuteur->adresse;
+            $this->tel_tuteur = $tuteur->tel;
+            $this->profession_tuteur = $tuteur->profession;
+        } else {
+            $this->type_tuteur = 'Nouveau';
+            $this->nom_tuteur = '';
+            $this->prenom_tuteur = '';
+            $this->adresse_tuteur = '';
+            $this->tel_tuteur = '';
+            $this->profession_tuteur = '';
+        }
+
+        // Charger les informations médicales
+        if ($etudiant->medical) {
+            $this->maladie = $etudiant->medical->maladie;
+            $this->description_maladie = $etudiant->medical->description;
+            $this->traitement = $etudiant->medical->traitement;
+            $this->nom_medecin = $etudiant->medical->nom_medecin;
+            $this->telephone_medecin = $etudiant->medical->telephone_medecin;
+        } else {
+            $this->maladie = 'Non';
+            $this->description_maladie = '';
+            $this->traitement = 'Non';
+            $this->nom_medecin = '';
+            $this->telephone_medecin = '';
+        }
+        $this->setActiveTab('add');
     }
 
     #[Layout("components.layouts.app")]

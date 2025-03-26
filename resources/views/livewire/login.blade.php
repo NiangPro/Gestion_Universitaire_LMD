@@ -16,8 +16,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="password" class="form-label">Mot de passe</label>
-                                <div class="input-group">
+                                <div class="form-group">
+                                    <label for="password" class="form-label">Mot de passe</label>
                                     <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" id="password">
                                     <!-- <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
                                         <i class="fa fa-eye"></i>
