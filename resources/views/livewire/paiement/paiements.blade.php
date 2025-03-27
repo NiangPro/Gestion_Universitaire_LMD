@@ -36,7 +36,7 @@
                     <!-- Liste des paiements -->
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead class="bg-light">
+                            <thead class="">
                                 <tr>
                                     <th>Date</th>
                                     <th>Référence</th>
