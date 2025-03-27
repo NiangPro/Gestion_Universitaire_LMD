@@ -148,9 +148,9 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
                         <!-- Type de paiement -->
-                        <div class="form-group">
+                        <div class="form-group col-md-6">
                             <label>Type de Paiement</label>
                             <select class="form-control" wire:model="type_paiement">
                                 <option value="">Sélectionner le type</option>
@@ -162,7 +162,7 @@
                         </div>
 
                         <!-- Montant -->
-                        <div class="form-group">
+                        <div class="form-group col-md-6">
                             <label>Montant</label>
                             <div class="input-group">
                                 <input type="number" class="form-control" wire:model="montant">
@@ -172,7 +172,7 @@
                             </div>
                             @error('montant') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
-
+                        </div>
                         <!-- Mode de paiement -->
                         <div class="form-group">
                             <label>Mode de Paiement</label>
