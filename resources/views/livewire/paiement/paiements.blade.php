@@ -232,6 +232,61 @@
     .modal-body .table td {
         vertical-align: middle;
     }
+
+    /* Styles pour le modal */
+    .modal-dialog {
+        max-width: 700px;
+        margin: 1.75rem auto;
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        max-height: calc(100vh - 210px);
+        overflow-y: auto;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        width: 30%;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 0.875rem;
+    }
+
+    /* Personnalisation de la barre de défilement */
+    .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 </style>
 @endpush
 

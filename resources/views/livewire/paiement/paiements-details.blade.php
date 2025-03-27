@@ -1,5 +1,5 @@
 <div class="modal fade show" style="display: block;" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog  modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
                     <h5 class="modal-title">
@@ -13,76 +13,78 @@
                     @if($selectedPaiement)
                     <div class="card border-0">
                         <div class="card-body p-0">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th class="bg-light">Référence</th>
-                                    <td>{{ $selectedPaiement->reference }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Date</th>
-                                    <td>{{ date('d/m/Y H:i', strtotime($selectedPaiement->date_paiement)) }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Étudiant</th>
-                                    <td>
-                                        {{ $selectedPaiement->user->nom }} {{ $selectedPaiement->user->prenom }}<br>
-                                        <small class="text-muted">{{ $selectedPaiement->user->matricule }}</small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Type</th>
-                                    <td>
-                                        @switch($selectedPaiement->type_paiement)
-                                            @case('inscription')
-                                                <span class="badge badge-info">Inscription</span>
-                                                @break
-                                            @case('mensualite')
-                                                <span class="badge badge-primary">Mensualité</span>
-                                                @break
-                                            @case('complement')
-                                                <span class="badge badge-warning">Complément</span>
-                                                @break
-                                        @endswitch
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Montant</th>
-                                    <td>{{ number_format($selectedPaiement->montant, 0, ',', ' ') }} FCFA</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Mode</th>
-                                    <td>
-                                        <span class="badge badge-secondary">
-                                            {{ ucfirst($selectedPaiement->mode_paiement) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Status</th>
-                                    <td>
-                                        @switch($selectedPaiement->status)
-                                            @case('valide')
-                                                <span class="badge badge-success">Validé</span>
-                                                @break
-                                            @case('en_attente')
-                                                <span class="badge badge-warning">En attente</span>
-                                                @break
-                                            @case('rejete')
-                                                <span class="badge badge-danger">Rejeté</span>
-                                                @break
-                                        @endswitch
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Année Académique</th>
-                                    <td>{{ date('Y', strtotime($selectedPaiement->academicYear->debut)) }} - {{ date('Y', strtotime($selectedPaiement->academicYear->fin)) }}</td>
-                                </tr>
-                                @if($selectedPaiement->observation)
-                                <tr>
-                                    <th class="bg-light">Observation</th>
-                                    <td>{{ $selectedPaiement->observation }}</td>
-                                </tr>
-                                @endif
+                            <table class="table table-bordered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th class="bg-light" style="width: 30%">Référence</th>
+                                        <td>{{ $selectedPaiement->reference }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Date</th>
+                                        <td>{{ $selectedPaiement->created_at->format('d/m/Y H:i') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Étudiant</th>
+                                        <td>
+                                            <strong>{{ $selectedPaiement->user->nom }} {{ $selectedPaiement->user->prenom }}</strong><br>
+                                            <small class="text-muted">Matricule: {{ $selectedPaiement->user->matricule }}</small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Type</th>
+                                        <td>
+                                            @switch($selectedPaiement->type_paiement)
+                                                @case('inscription')
+                                                    <span class="badge bg-info">Inscription</span>
+                                                    @break
+                                                @case('mensualite')
+                                                    <span class="badge bg-primary">Mensualité</span>
+                                                    @break
+                                                @case('complement')
+                                                    <span class="badge bg-warning">Complément</span>
+                                                    @break
+                                            @endswitch
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Montant</th>
+                                        <td><strong>{{ number_format($selectedPaiement->montant, 0, ',', ' ') }} FCFA</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Mode</th>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                {{ ucfirst($selectedPaiement->mode_paiement) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Statut</th>
+                                        <td>
+                                            @switch($selectedPaiement->status)
+                                                @case('valide')
+                                                    <span class="badge bg-success">Validé</span>
+                                                    @break
+                                                @case('en_attente')
+                                                    <span class="badge bg-warning">En attente</span>
+                                                    @break
+                                                @case('rejete')
+                                                    <span class="badge bg-danger">Rejeté</span>
+                                                    @break
+                                            @endswitch
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Année Académique</th>
+                                        <td>{{ date('Y', strtotime($selectedPaiement->academicYear->debut)) }} - {{ date('Y', strtotime($selectedPaiement->academicYear->fin)) }}</td>
+                                    </tr>
+                                    @if($selectedPaiement->observation)
+                                    <tr>
+                                        <th class="bg-light">Observation</th>
+                                        <td>{{ $selectedPaiement->observation }}</td>
+                                    </tr>
+                                    @endif
+                                </tbody>
                             </table>
                         </div>
                     </div>
