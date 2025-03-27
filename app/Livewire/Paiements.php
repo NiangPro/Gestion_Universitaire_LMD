@@ -28,6 +28,8 @@ class Paiements extends Component
     public $searchMatricule = '';
     public $suggestions = [];
     public $selectedEtudiant = null;
+    public $isEditing = false;
+    public $editingPaiement = null;
 
     protected $rules = [
         'etudiant_id' => 'required',
@@ -97,6 +99,61 @@ class Paiements extends Component
         $this->etudiant_id = null;
         $this->searchMatricule = '';
         $this->suggestions = [];
+    }
+
+    public function startEdit(Paiement $paiement)
+    {
+        if (!$paiement->isEditable()) {
+            session()->flash('error', 'Ce paiement ne peut plus être modifié (délai de 24h dépassé)');
+            return;
+        }
+
+        $this->isEditing = true;
+        $this->editingPaiement = $paiement;
+        $this->etudiant_id = $paiement->user_id;
+        $this->selectedEtudiant = $paiement->user;
+        $this->searchMatricule = $paiement->user->matricule;
+        $this->montant = $paiement->montant;
+        $this->type_paiement = $paiement->type_paiement;
+        $this->mode_paiement = $paiement->mode_paiement;
+        $this->observation = $paiement->observation;
+        $this->showModal = true;
+    }
+
+    public function updatePaiement()
+    {
+        if (!$this->editingPaiement || !$this->editingPaiement->isEditable()) {
+            session()->flash('error', 'Ce paiement ne peut plus être modifié');
+            return;
+        }
+
+        $this->validate();
+
+        try {
+            $this->editingPaiement->update([
+                'montant' => $this->montant,
+                'type_paiement' => $this->type_paiement,
+                'mode_paiement' => $this->mode_paiement,
+                'observation' => $this->observation
+            ]);
+
+            session()->flash('message', 'Paiement modifié avec succès');
+            $this->resetForm();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erreur lors de la modification du paiement');
+        }
+    }
+
+    private function resetForm()
+    {
+        $this->isEditing = false;
+        $this->editingPaiement = null;
+        $this->showModal = false;
+        $this->resetEtudiant();
+        $this->montant = '';
+        $this->type_paiement = '';
+        $this->mode_paiement = '';
+        $this->observation = '';
     }
 
     #[Layout('components.layouts.app')]

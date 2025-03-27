@@ -48,4 +48,9 @@ class Paiement extends Model
     {
         return "P" . str_pad(self::count() + 1, 6, "0", STR_PAD_LEFT);
     }
+
+    public function isEditable()
+    {
+        return $this->created_at->addDay()->greaterThan(now());
+    }
 }

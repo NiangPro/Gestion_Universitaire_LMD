@@ -96,6 +96,11 @@
                                             <button class="btn btn-sm btn-info" title="Détails">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+                                            @if($paiement->isEditable())
+                                                <button class="btn btn-sm btn-primary" wire:click="startEdit({{ $paiement->id }})" title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -127,13 +132,14 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">
-                        <i class="fas fa-plus-circle"></i> Nouveau Paiement
+                        <i class="fas fa-{{ $isEditing ? 'edit' : 'plus-circle' }}"></i> 
+                        {{ $isEditing ? 'Modifier le Paiement' : 'Nouveau Paiement' }}
                     </h5>
                     <button type="button" class="close text-white" wire:click="$set('showModal', false)">
                         <span>&times;</span>
                     </button>
                 </div>
-                <form wire:submit.prevent="savePaiement">
+                <form wire:submit.prevent="{{ $isEditing ? 'updatePaiement' : 'savePaiement' }}">
                     <div class="modal-body">
                         <!-- Recherche étudiant -->
                         <div class="form-group position-relative">
@@ -183,7 +189,7 @@
                         @if($selectedEtudiant)
                             <div class="mt-2 p-2 border rounded">
                                 <div class="d-flex justify-content-between align-items-center">
-<div>
+                                    <div>
                                         <strong>{{ $selectedEtudiant->nom }} {{ $selectedEtudiant->prenom }}</strong>
                                         <br>
                                         <small class="text-muted">Matricule: {{ $selectedEtudiant->matricule }}</small>
@@ -245,8 +251,8 @@
                         <button type="button" class="btn btn-warning" wire:click="$set('showModal', false)">
                             Annuler
                         </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Enregistrer
+                        <button type="submit" class="btn btn-primary" wire:click.prevent="{{ $isEditing ? 'updatePaiement' : 'savePaiement' }}">
+                            <i class="fas fa-save"></i> {{ $isEditing ? 'Modifier' : 'Enregistrer' }}
                         </button>
                     </div>
                 </form>
