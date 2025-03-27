@@ -30,6 +30,8 @@ class Paiements extends Component
     public $selectedEtudiant = null;
     public $isEditing = false;
     public $editingPaiement = null;
+    public $showDetailModal = false;
+    public $selectedPaiement = null;
 
     protected $rules = [
         'etudiant_id' => 'required',
@@ -161,6 +163,12 @@ class Paiements extends Component
         $this->type_paiement = '';
         $this->mode_paiement = '';
         $this->observation = '';
+    }
+
+    public function showDetails(Paiement $paiement)
+    {
+        $this->selectedPaiement = $paiement;
+        $this->showDetailModal = true;
     }
 
     #[Layout('components.layouts.app')]
