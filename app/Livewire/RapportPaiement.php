@@ -6,6 +6,7 @@ use App\Models\Paiement;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -162,6 +163,25 @@ class RapportPaiement extends Component
         $anneeActuelle = Carbon::parse($currentAcademicYear->debut)->format('Y');
         $anneePrecedente = $previousAcademicYear ? Carbon::parse($previousAcademicYear->debut)->format('Y') : null;
 
+        // Calcul du meilleur payeur
+        $meilleurPayeur = Paiement::where('campus_id', Auth::user()->campus_id)
+            ->whereBetween('date_paiement', [$this->dateDebut, $this->dateFin])
+            ->with('user')
+            ->select('user_id', DB::raw('SUM(montant) as total_paiements'))
+            ->groupBy('user_id')
+            ->orderByDesc('total_paiements')
+            ->first();
+
+        $infoMeilleurPayeur = null;
+        if ($meilleurPayeur) {
+            $infoMeilleurPayeur = [
+                'nom' => $meilleurPayeur->user->nom,
+                'prenom' => $meilleurPayeur->user->prenom,
+                'matricule' => $meilleurPayeur->user->matricule,
+                'total' => $meilleurPayeur->total_paiements
+            ];
+        }
+
         return [
             'total' => $paiements->sum('montant'),
             'count' => $paiements->count(),
@@ -174,7 +194,8 @@ class RapportPaiement extends Component
                 ->map(fn($group) => $group->sum('montant')),
             'comparaison_mensuelle' => $comparaisonMensuelle,
             'annee_actuelle' => $anneeActuelle,
-            'annee_precedente' => $anneePrecedente
+            'annee_precedente' => $anneePrecedente,
+            'meilleur_payeur' => $infoMeilleurPayeur
         ];
     }
 
