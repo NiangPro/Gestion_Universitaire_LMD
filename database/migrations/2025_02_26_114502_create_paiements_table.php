@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string("type_paiement");
             $table->string("mode_paiement");
             $table->decimal("montant");
+            $table->string("reference")->nullable();
+            $table->string("observation")->nullable();
+            $table->date("date_paiement")->nullable();
             $table->unsignedBigInteger("academic_year_id")->nullable();
             $table->foreign("academic_year_id")->references("id")->on("academic_years");
             $table->unsignedBigInteger("user_id")->nullable();
