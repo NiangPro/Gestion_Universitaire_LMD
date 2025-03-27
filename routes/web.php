@@ -37,6 +37,8 @@ use App\Livewire\Absences;
 use App\Livewire\Contact;
 use App\Livewire\Fonctionnalite;
 use App\Livewire\Notes;
+use App\Livewire\Paiements;
+use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
 
@@ -87,6 +89,8 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::get("/absences", Absences::class)->name("absence");
     Route::get("/retards", Retards::class)->name("retard");
     Route::get("/abonnements", Abonnement::class)->name("abonnement");
+    Route::get("/paiements", Paiements::class)->name("paiement");
+    Route::get("/rapports", RapportPaiement::class)->name("rapport");
 });
 
 // Routes communes Super Admin et Admin

@@ -69,6 +69,13 @@
                 <i class="fa fa-users"></i><span
                     class="nav-text">Etudiants</span>
             </a></li>
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                        class="fa fa-chalkboard-teacher"></i><span class="nav-text">Comptabilité</span></a>
+                <ul aria-expanded="false">
+                    <li><a href="{{route('paiement')}}">Paiements</a></li>
+                    <li><a href="{{route('rapport')}}">Rapports</a></li>
+                </ul>
+            </li>
         @endif
         <li><a href="{{route('message')}}" aria-expanded="false">
                 <i class="fa fa-times-circle text-danger"></i><span

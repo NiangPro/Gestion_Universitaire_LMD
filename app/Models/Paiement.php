@@ -16,6 +16,7 @@ class Paiement extends Model
         "montant",
         "user_id",
         "campus_id",
+        "academic_year_id",
     ];
 
     public function user()
@@ -26,6 +27,16 @@ class Paiement extends Model
     public function campus()
     {
         return $this->belongsTo(Campus::class, "campus_id");
+    }
+
+    public function etudiant()
+    {
+        return $this->user->where("role", "etudiant")->first();
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, "academic_year_id");
     }
     use HasFactory;
 }
