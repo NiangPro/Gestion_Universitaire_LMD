@@ -130,6 +130,26 @@
         </div>
     </div>
 
+    <!-- Après vos graphiques existants, ajoutez -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Comparaison mensuelle des paiements</h5>
+                    <div class="text-muted mb-3">
+                        <small>
+                            <i class="fas fa-square text-primary"></i> {{ $stats['annee_actuelle'] }} 
+                            @if($stats['annee_precedente'])
+                                <i class="fas fa-square text-secondary ms-3"></i> {{ $stats['annee_precedente'] }}
+                            @endif
+                        </small>
+                    </div>
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Liste des paiements -->
     <div class="card border-0 shadow-sm">
         <div class="card-body">
@@ -271,7 +291,71 @@
             }
         });
 
-        return { typeChart, evolutionChart };
+        // Histogramme mensuel comparatif
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyChart = new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(stats.comparaison_mensuelle),
+                datasets: [
+                    {
+                        label: 'Année ' + stats.annee_actuelle,
+                        data: Object.values(stats.comparaison_mensuelle).map(m => m.actuel),
+                        backgroundColor: '#0d6efd',
+                        borderColor: '#0d6efd',
+                        borderWidth: 1
+                    },
+                    {
+                        label: stats.annee_precedente ? 'Année ' + stats.annee_precedente : '',
+                        data: Object.values(stats.comparaison_mensuelle).map(m => m.precedent),
+                        backgroundColor: '#6c757d',
+                        borderColor: '#6c757d',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('fr-FR').format(value) + ' FCFA';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        return { 
+            typeChart, 
+            evolutionChart,
+            monthlyChart
+        };
     }
 
     document.addEventListener('livewire:initialized', function () {
@@ -288,6 +372,11 @@
             charts.evolutionChart.data.labels = Object.keys(stats.par_jour);
             charts.evolutionChart.data.datasets[0].data = Object.values(stats.par_jour);
             charts.evolutionChart.update();
+
+            // Mise à jour de l'histogramme comparatif
+            charts.monthlyChart.data.datasets[0].data = Object.values(stats.comparaison_mensuelle).map(m => m.actuel);
+            charts.monthlyChart.data.datasets[1].data = Object.values(stats.comparaison_mensuelle).map(m => m.precedent);
+            charts.monthlyChart.update();
         });
     });
 </script>
@@ -318,6 +407,11 @@
 
     .table td {
         vertical-align: middle;
+    }
+
+    /* Ajoutez des styles pour l'histogramme */
+    #monthlyChart {
+        min-height: 300px;
     }
 </style>
 @endpush

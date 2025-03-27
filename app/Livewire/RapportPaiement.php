@@ -118,6 +118,50 @@ class RapportPaiement extends Component
 
         $paiements = $query->get();
 
+        // Récupérer l'année académique actuelle et précédente
+        $currentAcademicYear = Auth::user()->campus->currentAcademicYear();
+        $previousAcademicYear = Auth::user()->campus->academicYears()
+            ->where('debut', '<', $currentAcademicYear->debut)
+            ->orderBy('debut', 'desc')
+            ->first();
+
+        // Paiements de l'année académique actuelle
+        $paiementsActuels = Paiement::where('campus_id', Auth::user()->campus_id)
+            ->where('academic_year_id', $currentAcademicYear->id)
+            ->selectRaw('MONTH(date_paiement) as mois, SUM(montant) as total')
+            ->groupBy('mois')
+            ->orderBy('mois')
+            ->get();
+
+        // Paiements de l'année académique précédente
+        $paiementsPrecedents = collect();
+        if ($previousAcademicYear) {
+            $paiementsPrecedents = Paiement::where('campus_id', Auth::user()->campus_id)
+                ->where('academic_year_id', $previousAcademicYear->id)
+                ->selectRaw('MONTH(date_paiement) as mois, SUM(montant) as total')
+                ->groupBy('mois')
+                ->orderBy('mois')
+                ->get();
+        }
+
+        // Préparer les données pour le graphique
+        $nomMois = [
+            1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
+            5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
+            9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
+        ];
+
+        $comparaisonMensuelle = collect($nomMois)->mapWithKeys(function ($nom, $numeroMois) use ($paiementsActuels, $paiementsPrecedents) {
+            return [$nom => [
+                'actuel' => $paiementsActuels->firstWhere('mois', $numeroMois)?->total ?? 0,
+                'precedent' => $paiementsPrecedents->firstWhere('mois', $numeroMois)?->total ?? 0
+            ]];
+        });
+
+        // Extraire les années des dates de début
+        $anneeActuelle = Carbon::parse($currentAcademicYear->debut)->format('Y');
+        $anneePrecedente = $previousAcademicYear ? Carbon::parse($previousAcademicYear->debut)->format('Y') : null;
+
         return [
             'total' => $paiements->sum('montant'),
             'count' => $paiements->count(),
@@ -128,6 +172,9 @@ class RapportPaiement extends Component
                 ->map(fn($group) => $group->sum('montant')),
             'par_jour' => $paiements->groupBy(fn($item) => Carbon::parse($item->date_paiement)->format('Y-m-d'))
                 ->map(fn($group) => $group->sum('montant')),
+            'comparaison_mensuelle' => $comparaisonMensuelle,
+            'annee_actuelle' => $anneeActuelle,
+            'annee_precedente' => $anneePrecedente
         ];
     }
 
