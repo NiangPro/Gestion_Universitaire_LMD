@@ -66,6 +66,8 @@ class Paiements extends Component
         $this->etudiant_id = $etudiantId;
         $this->searchMatricule = $this->selectedEtudiant->matricule;
         $this->suggestions = [];
+        
+        session()->flash('info', '👤 Étudiant sélectionné : ' . $this->selectedEtudiant->nom . ' ' . $this->selectedEtudiant->prenom);
     }
 
     public function savePaiement()
@@ -73,7 +75,7 @@ class Paiements extends Component
         $this->validate();
 
         try {
-            Paiement::create([
+            $paiement = Paiement::create([
                 'user_id' => $this->etudiant_id,
                 'montant' => $this->montant,
                 'type_paiement' => $this->type_paiement,
@@ -86,10 +88,10 @@ class Paiements extends Component
                 'reference' => Paiement::genererReference(),
             ]);
 
-            session()->flash('message', 'Paiement enregistré avec succès');
-            $this->reset(['showModal', 'montant', 'type_paiement', 'mode_paiement', 'observation', 'etudiant_id', 'searchMatricule']);
+            session()->flash('success', '✅ Nouveau paiement enregistré avec succès (Référence: ' . $paiement->reference . ')');
+            $this->resetForm();
         } catch (\Exception $e) {
-            session()->flash('error', 'Erreur lors de l\'enregistrement du paiement');
+            session()->flash('error', '❌ Erreur lors de l\'enregistrement du paiement : ' . $e->getMessage());
         }
     }
 
@@ -99,12 +101,14 @@ class Paiements extends Component
         $this->etudiant_id = null;
         $this->searchMatricule = '';
         $this->suggestions = [];
+        
+        // session()->flash('warning', '🔄 Sélection de l\'étudiant réinitialisée');
     }
 
     public function startEdit(Paiement $paiement)
     {
         if (!$paiement->isEditable()) {
-            session()->flash('error', 'Ce paiement ne peut plus être modifié (délai de 24h dépassé)');
+            session()->flash('error', '❌ Ce paiement ne peut plus être modifié car il date de plus de 24 heures');
             return;
         }
 
@@ -118,18 +122,21 @@ class Paiements extends Component
         $this->mode_paiement = $paiement->mode_paiement;
         $this->observation = $paiement->observation;
         $this->showModal = true;
+        
+        session()->flash('info', '📝 Vous êtes en train de modifier le paiement ' . $paiement->reference);
     }
 
     public function updatePaiement()
     {
         if (!$this->editingPaiement || !$this->editingPaiement->isEditable()) {
-            session()->flash('error', 'Ce paiement ne peut plus être modifié');
+            session()->flash('error', '❌ Ce paiement ne peut plus être modifié');
             return;
         }
 
         $this->validate();
 
         try {
+            $reference = $this->editingPaiement->reference;
             $this->editingPaiement->update([
                 'montant' => $this->montant,
                 'type_paiement' => $this->type_paiement,
@@ -137,10 +144,10 @@ class Paiements extends Component
                 'observation' => $this->observation
             ]);
 
-            session()->flash('message', 'Paiement modifié avec succès');
+            session()->flash('success', '✅ Le paiement ' . $reference . ' a été modifié avec succès');
             $this->resetForm();
         } catch (\Exception $e) {
-            session()->flash('error', 'Erreur lors de la modification du paiement');
+            session()->flash('error', '❌ Erreur lors de la modification du paiement : ' . $e->getMessage());
         }
     }
 

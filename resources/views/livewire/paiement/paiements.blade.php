@@ -1,4 +1,28 @@
 <div class="container-fluid">
+    @if (session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-1"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-1"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session()->has('warning'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-1"></i>
+            {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
@@ -290,5 +314,50 @@
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
     }
+    .alert {
+        border-left: 4px solid;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        border-left-color: #28a745;
+    }
+
+    .alert-danger {
+        border-left-color: #dc3545;
+    }
+
+    .alert-warning {
+        border-left-color: #ffc107;
+    }
+
+    .alert-info {
+        border-left-color: #17a2b8;
+    }
+
+    .alert i {
+        margin-right: 8px;
+    }
+
+    .alert .btn-close {
+        font-size: 0.8rem;
+    }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+    // Faire disparaître automatiquement les alertes après 5 secondes
+    window.addEventListener('livewire:load', function () {
+        Livewire.on('showAlert', () => {
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    });
+</script>
 @endpush
