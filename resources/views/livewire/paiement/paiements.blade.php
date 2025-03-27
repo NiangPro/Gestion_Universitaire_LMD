@@ -20,7 +20,7 @@
                                 <select wire:model.live="academic_year_id" class="form-control">
                                     <option value="">Toutes les années</option>
                                     @foreach($academic_years as $year)
-                                        <option value="{{ $year->id }}">{{ $year->nom }}</option>
+                                        <option value="{{ $year->id }}">{{ date('Y', strtotime($year->debut)) }} - {{ date('Y', strtotime($year->fin)) }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -51,7 +51,7 @@
                             <tbody>
                                 @forelse($paiements as $paiement)
                                     <tr>
-                                        <td>{{ $paiement->date_paiement->format('d/m/Y H:i') }}</td>
+                                        <td>{{ date('d/m/Y H:i', strtotime($paiement->date_paiement)) }}</td>
                                         <td>
                                             <span class="badge badge-light">{{ $paiement->reference }}</span>
                                         </td>
@@ -101,7 +101,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="8" class="text-center py-4">
-                                            <img src="{{ asset('images/empty.svg') }}" alt="Aucun paiement" 
+                                            <img src="{{ asset('images/empty.png') }}" alt="Aucun paiement" 
                                                  style="width: 200px; opacity: 0.5;">
                                             <p class="text-muted mt-3">Aucun paiement trouvé</p>
                                         </td>
