@@ -136,18 +136,66 @@
                 <form wire:submit.prevent="savePaiement">
                     <div class="modal-body">
                         <!-- Recherche étudiant -->
-                        <div class="form-group">
-                            <label>Matricule Étudiant</label>
+                        <div class="form-group position-relative">
+                            <label>Rechercher un étudiant</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" wire:model="searchMatricule" 
-                                       placeholder="Entrez le matricule...">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-primary" type="button" wire:click="searchEtudiant">
-                                        <i class="fas fa-search"></i>
+                                <input type="text" 
+                                       class="form-control" 
+                                       wire:model.live="searchMatricule" 
+                                       placeholder="Rechercher par matricule, nom ou prénom..."
+                                       autocomplete="off">
+                                @if($selectedEtudiant)
+                                    <div class="input-group-append">
+                                        <span class="input-group-text bg-success text-white">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Liste des suggestions -->
+                        @if(!empty($suggestions) && !$selectedEtudiant)
+                            <div class="position-absolute w-90 mt-1 shadow-sm  bg-primary text-white" style="z-index: 1000;">
+                                <div class="list-group">
+                                    @foreach($suggestions as $etudiant)
+                                        <button type="button" 
+                                                class="list-group-item list-group-item-action" 
+                                                wire:click="selectEtudiant({{ $etudiant->id }})">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>{{ $etudiant->matricule }}</strong><br>
+                                                    <small>{{ $etudiant->nom }} {{ $etudiant->prenom }}</small>
+                                                </div>
+                                                @if($etudiant->classe)
+                                                    <span class="badge badge-info">
+                                                        {{ $etudiant->classe->nom }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Affichage de l'étudiant sélectionné -->
+                        @if($selectedEtudiant)
+                            <div class="mt-2 p-2 border rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+<div>
+                                        <strong>{{ $selectedEtudiant->nom }} {{ $selectedEtudiant->prenom }}</strong>
+                                        <br>
+                                        <small class="text-muted">Matricule: {{ $selectedEtudiant->matricule }}</small>
+                                    </div>
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-danger" 
+                                            wire:click="resetEtudiant">
+                                        <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="row">
                         <!-- Type de paiement -->
                         <div class="form-group col-md-6">
@@ -172,9 +220,8 @@
                             </div>
                             @error('montant') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
-                        </div>
                         <!-- Mode de paiement -->
-                        <div class="form-group">
+                        <div class="form-group col-md-5">
                             <label>Mode de Paiement</label>
                             <select class="form-control" wire:model="mode_paiement">
                                 <option value="">Sélectionner le mode</option>
@@ -187,13 +234,15 @@
                         </div>
 
                         <!-- Observation -->
-                        <div class="form-group">
+                        <div class="form-group col-md-7">
                             <label>Observation</label>
                             <textarea class="form-control" wire:model="observation" rows="3"></textarea>
                         </div>
                     </div>
+                    </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" wire:click="$set('showModal', false)">
+                        <button type="button" class="btn btn-warning" wire:click="$set('showModal', false)">
                             Annuler
                         </button>
                         <button type="submit" class="btn btn-primary">
@@ -215,6 +264,25 @@
     }
     .table td {
         vertical-align: middle;
+    }
+    .list-group-item:hover {
+        cursor: pointer;
+        background-color: #f8f9fa;
+    }
+    .list-group {
+        max-height: 300px;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .list-group-item:first-child {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+    .list-group-item:last-child {
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 </style>
 @endpush

@@ -26,6 +26,8 @@ class Paiements extends Component
     public $observation;
     public $etudiant_id;
     public $searchMatricule = '';
+    public $suggestions = [];
+    public $selectedEtudiant = null;
 
     protected $rules = [
         'etudiant_id' => 'required',
@@ -39,20 +41,29 @@ class Paiements extends Component
         $this->academic_year_id = Auth::user()->campus->currentAcademicYear()->id;
     }
 
-    public function searchEtudiant()
+    public function updatedSearchMatricule()
     {
-        if ($this->searchMatricule) {
-            $etudiant = User::where('matricule', $this->searchMatricule)
-                           ->where('role', 'etudiant')
-                           ->where('campus_id', Auth::user()->campus_id)
-                           ->first();
-            
-            if ($etudiant) {
-                $this->etudiant_id = $etudiant->id;
-            } else {
-                session()->flash('error', 'Étudiant non trouvé');
-            }
+        if (strlen($this->searchMatricule) >= 2) {
+            $this->suggestions = User::where('campus_id', Auth::user()->campus_id)
+                ->where('role', 'etudiant')
+                ->where(function($query) {
+                    $query->where('matricule', 'like', '%' . $this->searchMatricule . '%')
+                          ->orWhere('nom', 'like', '%' . $this->searchMatricule . '%')
+                          ->orWhere('prenom', 'like', '%' . $this->searchMatricule . '%');
+                })
+                ->limit(5)
+                ->get();
+        } else {
+            $this->suggestions = [];
         }
+    }
+
+    public function selectEtudiant($etudiantId)
+    {
+        $this->selectedEtudiant = User::find($etudiantId);
+        $this->etudiant_id = $etudiantId;
+        $this->searchMatricule = $this->selectedEtudiant->matricule;
+        $this->suggestions = [];
     }
 
     public function savePaiement()
@@ -78,6 +89,14 @@ class Paiements extends Component
         } catch (\Exception $e) {
             session()->flash('error', 'Erreur lors de l\'enregistrement du paiement');
         }
+    }
+
+    public function resetEtudiant()
+    {
+        $this->selectedEtudiant = null;
+        $this->etudiant_id = null;
+        $this->searchMatricule = '';
+        $this->suggestions = [];
     }
 
     #[Layout('components.layouts.app')]

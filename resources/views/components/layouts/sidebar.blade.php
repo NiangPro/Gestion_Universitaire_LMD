@@ -70,7 +70,7 @@
                     class="nav-text">Etudiants</span>
             </a></li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="fa fa-chalkboard-teacher"></i><span class="nav-text">Comptabilité</span></a>
+                        class="fa fa-money-bills"></i><span class="nav-text">Comptabilité</span></a>
                 <ul aria-expanded="false">
                     <li><a href="{{route('paiement')}}">Paiements</a></li>
                     <li><a href="{{route('rapport')}}">Rapports</a></li>
