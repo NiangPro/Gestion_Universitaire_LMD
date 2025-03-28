@@ -163,22 +163,31 @@ class RapportPaiement extends Component
         $anneeActuelle = Carbon::parse($currentAcademicYear->debut)->format('Y');
         $anneePrecedente = $previousAcademicYear ? Carbon::parse($previousAcademicYear->debut)->format('Y') : null;
 
-        // Calcul du meilleur payeur
-        $meilleurPayeur = Paiement::where('campus_id', Auth::user()->campus_id)
-            ->whereBetween('date_paiement', [$this->dateDebut, $this->dateFin])
-            ->with('user')
-            ->select('user_id', DB::raw('SUM(montant) as total_paiements'))
-            ->groupBy('user_id')
-            ->orderByDesc('total_paiements')
+        // Calcul du meilleur payeur avec plus de détails
+        $meilleurPayeur = User::where('campus_id', Auth::user()->campus_id)
+            ->where('role', 'etudiant')
+            ->withSum(['paiements' => function($query) {
+                $query->whereBetween('date_paiement', [$this->dateDebut, $this->dateFin]);
+            }], 'montant')
+            ->withCount(['paiements' => function($query) {
+                $query->whereBetween('date_paiement', [$this->dateDebut, $this->dateFin]);
+            }])
+            ->with(['inscriptions' => function($query) {
+                $query->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
+                      ->with('classe');
+            }])
+            ->orderByDesc('paiements_sum_montant')
             ->first();
 
         $infoMeilleurPayeur = null;
-        if ($meilleurPayeur) {
+        if ($meilleurPayeur && $meilleurPayeur->paiements_sum_montant > 0) {
             $infoMeilleurPayeur = [
-                'nom' => $meilleurPayeur->user->nom,
-                'prenom' => $meilleurPayeur->user->prenom,
-                'matricule' => $meilleurPayeur->user->matricule,
-                'total' => $meilleurPayeur->total_paiements
+                'nom' => $meilleurPayeur->nom,
+                'prenom' => $meilleurPayeur->prenom,
+                'matricule' => $meilleurPayeur->matricule,
+                'total' => $meilleurPayeur->paiements_sum_montant,
+                'nombre_paiements' => $meilleurPayeur->paiements_count,
+                'classe' => $meilleurPayeur->inscriptions->first()?->classe?->nom ?? 'Non définie'
             ];
         }
 

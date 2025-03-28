@@ -113,7 +113,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm bg-warning text-dark">
                 <div class="card-body">
-                    <h6 class="card-title">L'étudiant qui a payé le plus</h6>
+                    <h6 class="card-title">Meilleur payeur</h6>
                     @if(isset($stats['meilleur_payeur']))
                         <div class="d-flex align-items-center">
                             <div class="rounded-circle bg-white p-3 me-3">
@@ -123,13 +123,22 @@
                                 <h4 class="mb-0">
                                     {{ $stats['meilleur_payeur']['nom'] }} {{ $stats['meilleur_payeur']['prenom'] }}
                                 </h4>
-                                <div class="text-dark">
-                                    <small>Matricule: {{ $stats['meilleur_payeur']['matricule'] }}</small>
+                                <div class="text-dark opacity-75">
+                                    <small>
+                                        <i class="fas fa-id-card me-1"></i> {{ $stats['meilleur_payeur']['matricule'] }}
+                                    </small>
+                                    <br>
+                                    <small>
+                                        <i class="fas fa-graduation-cap me-1"></i> {{ $stats['meilleur_payeur']['classe'] }}
+                                    </small>
                                 </div>
                                 <h3 class="mt-2 mb-0">
                                     {{ number_format($stats['meilleur_payeur']['total'], 0, ',', ' ') }} FCFA
                                 </h3>
-                                <small>Total des paiements</small>
+                                <small>
+                                    <i class="fas fa-receipt me-1"></i>
+                                    {{ $stats['meilleur_payeur']['nombre_paiements'] }} paiement(s)
+                                </small>
                             </div>
                         </div>
                     @else

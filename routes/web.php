@@ -34,6 +34,7 @@ use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
 use App\Livewire\Absences;
+use App\Livewire\Acces;
 use App\Livewire\Contact;
 use App\Livewire\Fonctionnalite;
 use App\Livewire\Notes;
@@ -91,6 +92,7 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::get("/abonnements", Abonnement::class)->name("abonnement");
     Route::get("/paiements", Paiements::class)->name("paiement");
     Route::get("/rapports", RapportPaiement::class)->name("rapport");
+    Route::get("/acces", Acces::class)->name("acces");
 });
 
 // Routes communes Super Admin et Admin

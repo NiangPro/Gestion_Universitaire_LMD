@@ -196,4 +196,41 @@ class User extends Authenticatable
     {
         return $this->hasMany(Inscription::class, 'user_id');
     }
+
+    /**
+     * Get all payments for the user.
+     */
+    public function paiements(): HasMany
+    {
+        return $this->hasMany(Paiement::class, 'user_id');
+    }
+
+    /**
+     * Get total payments for the user.
+     */
+    public function totalPaiements()
+    {
+        return $this->paiements()
+            ->selectRaw('user_id, SUM(montant) as total_montant, COUNT(*) as nombre_paiements')
+            ->groupBy('user_id')
+            ->first();
+    }
+
+    /**
+     * Get current academic year payments for the user.
+     */
+    public function paiementsAnneeEnCours()
+    {
+        return $this->paiements()
+            ->where('academic_year_id', $this->campus->currentAcademicYear()->id);
+    }
+
+    /**
+     * Get payments for a specific academic year.
+     */
+    public function paiementsParAnnee($academic_year_id)
+    {
+        return $this->paiements()
+            ->where('academic_year_id', $academic_year_id);
+    }
 }

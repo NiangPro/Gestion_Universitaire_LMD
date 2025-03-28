@@ -77,7 +77,7 @@
                 </ul>
             </li>
         @endif
-        <li><a href="{{route('message')}}" aria-expanded="false">
+        <li><a href="{{route('acces')}}" aria-expanded="false">
                 <i class="fa fa-times-circle text-danger"></i><span
                     class="nav-text">Accès</span>
             </a></li>
