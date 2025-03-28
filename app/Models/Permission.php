@@ -12,11 +12,18 @@ class Permission extends Model
         'can_create',
         'can_edit',
         'can_delete',
-        'user_id'
+        'user_id',
+        'role',
+        'campus_id'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class);
     }
 }
