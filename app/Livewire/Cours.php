@@ -125,6 +125,13 @@ class Cours extends Component
 
     public function edit($id)
     {
+        if (!Auth::user()->hasPermission('cours', 'edit')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de modifier les cours'
+            ]);
+            return;
+        }
+
         $course = Cour::find($id);
 
         $this->id = $course->id;
@@ -177,6 +184,13 @@ class Cours extends Component
 
     public function delete($id)
     {
+        if (!Auth::user()->hasPermission('cours', 'delete')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de supprimer les cours'
+            ]);
+            return;
+        }
+
         $cours = Cour::find($id);
         if ($cours) {
             $cours->is_deleting = true;

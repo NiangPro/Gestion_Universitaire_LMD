@@ -5,7 +5,9 @@
                 <h4 class="card-title">{{ $title }}</h4>
             </div>
             <div class="col-md-4 text-right">
-                <button class="btn btn-primary" wire:click="openModal">Ajouter un cours</button>
+                @if(Auth::user()->hasPermission('cours', 'create'))
+                    <button class="btn btn-primary" wire:click="openModal">Ajouter un cours</button>
+                @endif
             </div>
         </div>
         <div class="card-body">

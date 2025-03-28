@@ -22,14 +22,20 @@ class Acces extends Component
     public $isRoleMode = false;
 
     public $modules = [
-        'users' => 'Utilisateurs',
-        'paiements' => 'Paiements',
-        'inscriptions' => 'Inscriptions',
+        'academic_years' => 'Années académiques',
+        'absences' => 'Absences',
         'classes' => 'Classes',
         'cours' => 'Cours',
+        'departements' => 'Départements',
+        'etudiants' => 'Étudiants',
+        'filieres' => 'Filières',
+        'messages' => 'Messages',
         'notes' => 'Notes',
-        'absences' => 'Absences',
-        'messages' => 'Messages'
+        'paiements' => 'Paiements',
+        'professeurs' => 'Professeurs',
+        'rapports' => 'Rapports',
+        'retards' => 'Retards',
+        'ue' => 'Unités d\'enseignement'
     ];
 
     public $roles = [
@@ -43,6 +49,18 @@ class Acces extends Component
     
     public $permissions = [];
 
+    public function updatedIsRoleMode($value)
+    {
+        $this->selectedUser = null;
+        $this->selectedRole = null;
+        $this->resetPermissions();
+    }
+
+    public function mount()
+    {
+        $this->resetPermissions();
+    }
+
     public function resetPermissions()
     {
         $this->permissions = collect($this->modules)->mapWithKeys(function ($label, $module) {
@@ -55,17 +73,10 @@ class Acces extends Component
         })->toArray();
     }
 
-    public function mount()
+    public function selectUser($userId)
     {
-        $this->resetPermissions();
-    }
-
-    public function toggleMode()
-    {
-        $this->isRoleMode = !$this->isRoleMode;
-        $this->selectedUser = null;
-        $this->selectedRole = null;
-        $this->resetPermissions();
+        $this->selectedUser = User::find($userId);
+        $this->loadUserPermissions();
     }
 
     public function selectRole($role)
@@ -74,10 +85,30 @@ class Acces extends Component
         $this->loadRolePermissions();
     }
 
+    public function loadUserPermissions()
+    {
+        $this->resetPermissions();
+        if ($this->selectedUser) {
+            $userPermissions = Permission::where('user_id', $this->selectedUser->id)
+                ->where('campus_id', Auth::user()->campus_id)
+                ->get();
+
+            foreach ($userPermissions as $permission) {
+                if (isset($this->permissions[$permission->module])) {
+                    $this->permissions[$permission->module] = [
+                        'can_view' => $permission->can_view,
+                        'can_create' => $permission->can_create,
+                        'can_edit' => $permission->can_edit,
+                        'can_delete' => $permission->can_delete
+                    ];
+                }
+            }
+        }
+    }
+
     public function loadRolePermissions()
     {
         $this->resetPermissions();
-        
         if ($this->selectedRole) {
             $rolePermissions = Permission::where('role', $this->selectedRole)
                 ->where('campus_id', Auth::user()->campus_id)
@@ -144,31 +175,6 @@ class Acces extends Component
         session()->flash('success', 'Permissions du rôle mises à jour avec succès');
     }
 
-    public function selectUser($userId)
-    {
-        $this->selectedUser = User::find($userId);
-        $this->loadUserPermissions();
-    }
-
-    public function loadUserPermissions()
-    {
-        $this->resetPermissions();
-        
-        if ($this->selectedUser) {
-            $userPermissions = Permission::where('user_id', $this->selectedUser->id)->get();
-            foreach ($userPermissions as $permission) {
-                if (isset($this->permissions[$permission->module])) {
-                    $this->permissions[$permission->module] = [
-                        'can_view' => $permission->can_view,
-                        'can_create' => $permission->can_create,
-                        'can_edit' => $permission->can_edit,
-                        'can_delete' => $permission->can_delete
-                    ];
-                }
-            }
-        }
-    }
-
     public function savePermissions()
     {
         if (!$this->selectedUser) {
@@ -203,8 +209,7 @@ class Acces extends Component
                 ->where('id', '!=', Auth::id())
                 ->where(function($query) {
                     $query->where('nom', 'like', '%' . $this->search . '%')
-                        ->orWhere('prenom', 'like', '%' . $this->search . '%')
-                        ->orWhere('matricule', 'like', '%' . $this->search . '%');
+                        ->orWhere('prenom', 'like', '%' . $this->search . '%');
                 })
                 ->paginate(10);
         }
