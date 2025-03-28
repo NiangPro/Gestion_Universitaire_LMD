@@ -51,7 +51,7 @@
                         <div class="text-center mt-4 border-bottom-1 pb-3">
                             <div class="row">
                                 <div class="col">
-                                    <h3 class="m-b-0">{{count($camp->eleves)}}</h3><span>Elèves</span>
+                                    <h3 class="m-b-0">{{count($camp->etudiants)}}</h3><span>Elèves</span>
                                 </div>
                                 <div class="col">
                                     <h3 class="m-b-0">{{count($camp->professeurs)}}</h3><span>Professeurs</span>

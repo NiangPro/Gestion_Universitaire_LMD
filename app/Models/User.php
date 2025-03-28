@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasPermissions;
 
 
 /**
@@ -71,7 +72,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -157,12 +158,12 @@ class User extends Authenticatable
 
     public function estSuperAdmin()
     {
-        return $this->role == "superadmin";
+        return $this->role === 'superadmin';
     }
 
     public function estAdmin()
     {
-        return $this->role == "admin";
+        return $this->role === 'admin';
     }
 
     public function estParent()

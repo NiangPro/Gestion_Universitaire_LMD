@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Paiement;
 use App\Models\AcademicYear;
+use App\Models\Permission;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,9 @@ class Paiements extends Component
 
     public function mount()
     {
+        if (!Auth::user()->hasPermission('paiements', 'view')) {
+            return redirect()->route('dashboard');
+        }
         $this->academic_year_id = Auth::user()->campus->currentAcademicYear()->id;
     }
 
@@ -74,6 +78,10 @@ class Paiements extends Component
 
     public function savePaiement()
     {
+        if (!Auth::user()->hasPermission('paiements', 'create')) {
+            session()->flash('error', 'Vous n\'avez pas la permission de créer des paiements.');
+            return;
+        }
         $this->validate();
 
         try {
