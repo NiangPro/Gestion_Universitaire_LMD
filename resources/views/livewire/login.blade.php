@@ -35,7 +35,7 @@
                             <label for="password">
                                 <i class="fas fa-lock me-2"></i>Mot de passe
                             </label>
-                            <button type="button" class="btn password-toggle" onclick="togglePassword()">
+                            <button type="button" class="btn password-toggle" id="togglePasswordBtn">
                                 <i class="far fa-eye"></i>
                             </button>
                             @error('password')
@@ -187,20 +187,24 @@
 
     @push('scripts')
     <script>
-    function togglePassword() {
-        const passwordInput = document.getElementById('password');
-        const icon = event.currentTarget.querySelector('i');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    }
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('togglePasswordBtn');
+            const passwordInput = document.getElementById('password');
+            
+            toggleBtn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
     </script>
     @endpush
 </div>
