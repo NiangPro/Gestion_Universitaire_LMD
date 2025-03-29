@@ -16,9 +16,7 @@
         </div>
 
         <div class="card-body">
-            @if($status != "list")
-                @include('livewire.ue.add')
-            @else
+            @if($status == "list")
                 <!-- Filtres -->
                 <div class="row mb-4">
                     <div class="col-md-3">
@@ -161,7 +159,11 @@
                         </div>
                     </div>
                 </div>
-            @endif
+                @elseif($status == "add")
+                    @include('livewire.ue.add')
+                @elseif($status == "info")
+                    @include('livewire.ue.info')
+                @endif
         </div>
     </div>
 </div>
