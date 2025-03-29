@@ -54,7 +54,7 @@
 
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-hover">
-                                <thead>
+                                <thead class="thead-primary">
                                     <tr>
                                         <th>Département</th>
                                         <th>Description</th>
