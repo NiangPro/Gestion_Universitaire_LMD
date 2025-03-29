@@ -15,6 +15,9 @@ return new class extends Migration
             $table->bigIncrements("id"); 
             $table->string("nom"); 
             $table->unsignedBigInteger('filiere_id')->nullable();
+            $table->unsignedBigInteger('cout_formation')->nullable();
+            $table->unsignedBigInteger('cout_inscription')->nullable();
+            $table->unsignedBigInteger('mensualite')->nullable();
             $table->foreign('filiere_id')->references("id")->on("filieres")->onDelete("cascade");
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");

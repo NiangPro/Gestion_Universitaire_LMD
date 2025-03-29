@@ -16,6 +16,9 @@ class Classe extends Model
         "filiere_id",
         "campus_id",
         "academic_year_id",
+        "cout_formation",
+        "cout_inscription",
+        "mensualite",
         "is_deleting",
     ];
 
@@ -34,10 +37,10 @@ class Classe extends Model
         return $this->belongsTo(AcademicYear::class, "academic_year_id");
     }
 
-    public function eleves()
+    public function etudiants()
     {
-        return $this->belongsToMany(User::class, 'classe_eleve')
-            ->withPivot('academic_year_id')
+        return $this->belongsToMany(User::class, 'inscriptions', 'classe_id', 'user_id')
+            ->withPivot(['academic_year_id', 'montant', 'restant', 'status'])
             ->withTimestamps();
     }
 }

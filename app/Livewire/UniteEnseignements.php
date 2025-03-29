@@ -7,6 +7,7 @@ use App\Models\Matiere;
 use App\Models\UniteEnseignement;
 use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -25,7 +26,6 @@ class UniteEnseignements extends Component
     public $uniteEnseignement;
     
     // Pour les matières
-    public $matieres = [];
     public $newMatiere = [
         'nom' => '',
         'credit' => '',
@@ -45,19 +45,35 @@ class UniteEnseignements extends Component
     
 
     protected $rules = [
-        'nom' => 'required|string',
+        'nom' => 'required|string|min:2',
         'credit' => 'required|numeric|min:1',
-        'filiere_id' => 'required',
-        'matieres' => 'array',
-        'matieres.*.nom' => 'required|string',
-        'matieres.*.credit' => 'required|numeric|min:1',
-        'matieres.*.coefficient' => 'required|numeric|min:1',
-        'matieres.*.volume_horaire' => 'nullable|numeric|min:1'
+        'filiere_id' => 'required|exists:filieres,id',
+        'listeMatieres' => 'required|array|min:1', // Au moins une matière requise
+        'listeMatieres.*.nom' => 'required|string|min:2',
+        'listeMatieres.*.credit' => 'required|numeric|min:1',
+        'listeMatieres.*.coefficient' => 'required|numeric|min:1',
+        'listeMatieres.*.volume_horaire' => 'required|numeric|min:1' // Changé de nullable à required
+    ];
+
+    protected $messages = [
+        'nom.required' => 'Le nom de l\'UE est requis',
+        'nom.min' => 'Le nom doit contenir au moins 2 caractères',
+        'credit.required' => 'Le crédit est requis',
+        'credit.numeric' => 'Le crédit doit être un nombre',
+        'credit.min' => 'Le crédit doit être au moins 1',
+        'filiere_id.required' => 'La filière est requise',
+        'filiere_id.exists' => 'La filière sélectionnée n\'existe pas',
+        'listeMatieres.required' => 'Au moins une matière est requise',
+        'listeMatieres.min' => 'Au moins une matière est requise',
+        'listeMatieres.*.nom.required' => 'Le nom de la matière est requis',
+        'listeMatieres.*.credit.required' => 'Le crédit de la matière est requis',
+        'listeMatieres.*.coefficient.required' => 'Le coefficient de la matière est requis',
+        'listeMatieres.*.volume_horaire.required' => 'Le volume horaire de la matière est requis'
     ];
 
     public function mount()
     {
-        $this->matieres = [];
+        $this->listeMatieres = [];
         $this->outil = new Outils();
     }
 
@@ -129,10 +145,8 @@ class UniteEnseignements extends Component
     switch ($status) {
         case 'add':
             $this->title = "Ajouter une unité d'enseignement";
-            // Réinitialisation des champs du formulaire
-            $this->reset(['nom', 'credit', 'filiere_id', 'matieres', 'id']);
-            $this->matieres = []; // Réinitialisation explicite du tableau des matières
-            
+            $this->reset(['nom', 'credit', 'filiere_id', 'listeMatieres', 'id']);
+            $this->listeMatieres = []; 
             break;
         case 'list':
             $this->title = "Liste des unités d'enseignement";
@@ -207,7 +221,9 @@ public function edit($id)
     $this->status = "add";
     $this->title = "Modifier l'unité d'enseignement";
     
-    $ue = UniteEnseignement::with('matieres')->findOrFail($id);
+    $ue = UniteEnseignement::with(['matieres' => function($query) {
+        $query->where('is_deleting', false);
+    }])->findOrFail($id);
     
     // Remplir les informations de l'UE
     $this->id = $ue->id;
@@ -273,14 +289,39 @@ public function removeMatiere($index)
 
 public function store()
 {
-    $this->validate([
-        'nom' => 'required|string',
-        'credit' => 'required|numeric|min:1',
-        'filiere_id' => 'required',
+    \Log::info('Store method called');
+    \Log::info('Form Data:', [
+        'id' => $this->id,
+        'nom' => $this->nom,
+        'credit' => $this->credit,
+        'filiere_id' => $this->filiere_id,
+        'listeMatieres' => $this->listeMatieres
     ]);
 
     try {
+        $this->validate();
+
+        if (empty($this->listeMatieres)) {
+            $this->addError('listeMatieres', 'Au moins une matière est requise');
+            return;
+        }
+
+        // Vérifier que le total des crédits des matières correspond au crédit de l'UE
+        $totalCreditsMatiere = array_sum(array_column($this->listeMatieres, 'credit'));
+        if ($totalCreditsMatiere != $this->credit) {
+            $this->addError('credit', 'Le total des crédits des matières (' . $totalCreditsMatiere . ') doit être égal au crédit de l\'UE (' . $this->credit . ')');
+            return;
+        }
+
+        DB::beginTransaction();
+
         if ($this->id) {
+            \Log::info('Updating existing UE');
+            if (!Auth::user()->hasPermission('ue', 'edit')) {
+                $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+                return;
+            }
+
             $ue = UniteEnseignement::findOrFail($this->id);
             $ue->update([
                 'nom' => $this->nom,
@@ -288,7 +329,7 @@ public function store()
                 'filiere_id' => $this->filiere_id
             ]);
 
-            // Supprimer les anciennes matières
+            // Marquer les anciennes matières comme supprimées
             $ue->matieres()->update(['is_deleting' => true]);
 
             // Créer les nouvelles matières
@@ -303,8 +344,14 @@ public function store()
                 ]);
             }
 
-            $this->dispatch('update');
+            $message = 'Unité d\'enseignement mise à jour avec succès';
+            $event = 'update';
         } else {
+            if (!Auth::user()->hasPermission('ue', 'create')) {
+                $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer']);
+                return;
+            }
+
             $ue = UniteEnseignement::create([
                 'nom' => $this->nom,
                 'credit' => $this->credit,
@@ -323,13 +370,36 @@ public function store()
                 ]);
             }
 
-            $this->dispatch('added');
+            $message = 'Unité d\'enseignement créée avec succès';
+            $event = 'added';
         }
 
-        $this->reset(['nom', 'credit', 'filiere_id', 'listeMatieres', 'id']);
+        DB::commit();
+        $this->dispatch($event, ['message' => $message]);
+        $this->reset(['id', 'nom', 'credit', 'filiere_id', 'listeMatieres', 'matiere']);
         $this->changeStatus('list');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        \Log::error('Validation failed:', $e->errors());
+        DB::rollBack();
+        throw $e;
     } catch (\Exception $e) {
-        $this->dispatch('error', ['message' => 'Une erreur est survenue']);
+        \Log::error('Error in store method: ' . $e->getMessage());
+        DB::rollBack();
+        $this->dispatch('error', ['message' => 'Une erreur est survenue : ' . $e->getMessage()]);
+    }
+}
+
+public function updated($propertyName)
+{
+    $this->validateOnly($propertyName);
+    
+    // Validation spécifique pour le crédit
+    if ($propertyName === 'credit') {
+        $totalCreditsMatiere = array_sum(array_column($this->listeMatieres, 'credit'));
+        if ($totalCreditsMatiere > $this->credit) {
+            $this->addError('credit', 'Le crédit total ne peut pas être inférieur à la somme des crédits des matières (' . $totalCreditsMatiere . ')');
+        }
     }
 }
 
