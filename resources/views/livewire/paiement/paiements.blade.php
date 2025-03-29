@@ -31,12 +31,15 @@
                         <h4 class="card-title mb-0">
                             <i class="fas fa-money-bill text-primary"></i> Gestion des Paiements
                         </h4>
+                        @if(Auth::user()->hasPermission('paiements', 'create'))
                         <button class="btn btn-primary" wire:click="$set('showModal', true)">
                             <i class="fas fa-plus-circle"></i> Nouveau Paiement
                         </button>
+                        @endif
                     </div>
 
                     <!-- Filtres -->
+                    @if(Auth::user()->hasPermission('paiements', 'view'))
                     <div class="row mb-4">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -117,17 +120,20 @@
                                             @endswitch
                                         </td>
                                         <td>
+                                            @if(Auth::user()->hasPermission('paiements', 'view'))
                                             <button class="btn btn-sm btn-info" 
                                                     wire:click="showDetails({{ $paiement->id }})" 
                                                     title="Détails">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            @if($paiement->isEditable())
-                                                <button class="btn btn-sm btn-primary" 
-                                                        wire:click="startEdit({{ $paiement->id }})" 
-                                                        title="Modifier">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
+                                            @endif
+
+                                            @if(Auth::user()->hasPermission('paiements', 'edit') && $paiement->isEditable())
+                                            <button class="btn btn-sm btn-primary" 
+                                                    wire:click="startEdit({{ $paiement->id }})" 
+                                                    title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                             @endif
                                         </td>
                                     </tr>
@@ -143,6 +149,12 @@
                             </tbody>
                         </table>
                     </div>
+                    @else
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Vous n'avez pas la permission de voir les paiements
+                    </div>
+                    @endif
 
                     <!-- Pagination -->
                     <div class="mt-4">
@@ -154,12 +166,12 @@
     </div>
 
     <!-- Modal d'ajout de paiement -->
-    @if($showModal)
+    @if($showModal && Auth::user()->hasPermission('paiements', 'create'))
     @include('livewire.paiement.paiements-add')
     @endif
 
     <!-- Modal de détails -->
-    @if($showDetailModal)
+    @if($showDetailModal && Auth::user()->hasPermission('paiements', 'view'))
     @include('livewire.paiement.paiements-details')
     @endif
 </div>

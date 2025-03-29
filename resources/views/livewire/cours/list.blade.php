@@ -24,9 +24,9 @@
                         <td>{{ $c->matiere->nom }}</td>
                         <td class="text-center">
                             @if(Auth::user()->hasPermission('cours', 'edit'))
-                                <a href="#" class="btn btn-warning btn-sm rounded-pill" wire:click="edit({{ $c->id }})">
+                                <button class="btn btn-warning btn-sm rounded-pill" wire:click="edit({{ $c->id }})">
                                     <i class="fa fa-edit"></i>
-                                </a>
+                                </button>
                             @endif
 
                             @if(Auth::user()->hasPermission('cours', 'delete'))

@@ -74,21 +74,29 @@ class Cours extends Component
 
     public function updatedAcademicYear($value)
     {
+        if (!Auth::user()->hasPermission('cours', 'view')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de voir les cours']);
+            return;
+        }
+
         $this->academicYear = $value;
         $this->reset(["type", "cours", "classrooms", "teachers", "courses"]);
     }
 
     public function updatedType($value)
     {
+        if (!Auth::user()->hasPermission('cours', 'view')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de voir les cours']);
+            return;
+        }
+
         $this->type = $value;
         $this->reset(["cours", "classrooms", "teachers", "courses"]);
-
 
         if ($this->type == "classe") {
             $this->classrooms = Classe::where("campus_id", Auth::user()->campus_id)->whereHas("cours", function($query) {
                 $query->where("academic_year_id", $this->academicYear);
             })->get();
-
         } else {
             $this->teachers = User::whereHas("cours", function($query) {
                 $query->where("campus_id", Auth::user()->campus_id)->where("academic_year_id", $this->academicYear);
@@ -98,14 +106,24 @@ class Cours extends Component
 
     public function updatedCours($value)
     {
+        if (!Auth::user()->hasPermission('cours', 'view')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de voir les cours']);
+            return;
+        }
+
         if ($value) {
             if (count($this->classrooms) > 0) {
-                $this->courses = Cour::where("classe_id", $value)->where("academic_year_id", $this->academicYear)->where("is_deleting", false)->get();
+                $this->courses = Cour::where("classe_id", $value)
+                    ->where("academic_year_id", $this->academicYear)
+                    ->where("is_deleting", false)
+                    ->get();
             } elseif (count($this->teachers) > 0) {
-                $this->courses = Cour::where("professeur_id", $value)->where("academic_year_id", $this->academicYear)->where("is_deleting", false)->get();
+                $this->courses = Cour::where("professeur_id", $value)
+                    ->where("academic_year_id", $this->academicYear)
+                    ->where("is_deleting", false)
+                    ->get();
             }
         }
-        
     }
 
     public function updatedClasseId($value)
@@ -171,8 +189,10 @@ class Cours extends Component
 
     public function openModal()
     {
-        // $this->resetValidation();
-        // $this->reset();
+        if (!Auth::user()->hasPermission('cours', 'create')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer des cours']);
+            return;
+        }
         $this->isOpen = true;
     }
 
@@ -201,6 +221,16 @@ class Cours extends Component
 
     public function save()
     {
+        if ($this->id && !Auth::user()->hasPermission('cours', 'edit')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier les cours']);
+            return;
+        }
+
+        if (!$this->id && !Auth::user()->hasPermission('cours', 'create')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer des cours']);
+            return;
+        }
+
         $this->validate();
 
         try {

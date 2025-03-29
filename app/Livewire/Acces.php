@@ -25,6 +25,7 @@ class Acces extends Component
         'academic_years' => 'Années académiques',
         'absences' => 'Absences',
         'classes' => 'Classes',
+        'comptabilite' => 'Comptabilité',
         'cours' => 'Cours',
         'departements' => 'Départements',
         'etudiants' => 'Étudiants',

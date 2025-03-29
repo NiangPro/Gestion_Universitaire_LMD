@@ -44,7 +44,7 @@ class Paiements extends Component
     public function mount()
     {
         if (!Auth::user()->hasPermission('paiements', 'view')) {
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard')->with('error', 'Vous n\'avez pas la permission de voir les paiements');
         }
         $this->academic_year_id = Auth::user()->campus->currentAcademicYear()->id;
     }
@@ -117,6 +117,11 @@ class Paiements extends Component
 
     public function startEdit(Paiement $paiement)
     {
+        if (!Auth::user()->hasPermission('paiements', 'edit')) {
+            session()->flash('error', 'Vous n\'avez pas la permission de modifier les paiements');
+            return;
+        }
+
         if (!$paiement->isEditable()) {
             session()->flash('error', '❌ Ce paiement ne peut plus être modifié car il date de plus de 24 heures');
             return;
@@ -138,6 +143,11 @@ class Paiements extends Component
 
     public function updatePaiement()
     {
+        if (!Auth::user()->hasPermission('paiements', 'edit')) {
+            session()->flash('error', 'Vous n\'avez pas la permission de modifier les paiements');
+            return;
+        }
+
         if (!$this->editingPaiement || !$this->editingPaiement->isEditable()) {
             session()->flash('error', '❌ Ce paiement ne peut plus être modifié');
             return;
@@ -175,6 +185,11 @@ class Paiements extends Component
 
     public function showDetails(Paiement $paiement)
     {
+        if (!Auth::user()->hasPermission('paiements', 'view')) {
+            session()->flash('error', 'Vous n\'avez pas la permission de voir les détails des paiements');
+            return;
+        }
+        
         $this->selectedPaiement = $paiement;
         $this->showDetailModal = true;
     }
