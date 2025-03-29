@@ -29,6 +29,12 @@ class Classes extends Component
     public $sortField = 'nom';
     public $sortDirection = 'asc';
 
+    // Ajout des propriétés pour l'année académique
+    public $selectedAcademicYear = null;
+    public $etudiants = [];
+    public $currentAcademicYear = null;
+    public $academicYears = [];
+
     protected $rules = [
         'nom' => 'required|string|max:255',
         'filiere_id' => 'required|exists:filieres,id',
@@ -36,6 +42,15 @@ class Classes extends Component
         'cout_inscription' => 'nullable|numeric|min:0',
         'mensualite' => 'nullable|numeric|min:0',
     ];
+
+    public function mount()
+    {
+        // Charger les années académiques dès le début
+        $this->academicYears = \App\Models\AcademicYear::where('campus_id', Auth::user()->campus_id)
+            ->where('is_deleting', false)
+            ->orderBy('debut', 'desc')
+            ->get();
+    }
 
     public function changeStatus($status)
     {
@@ -60,6 +75,24 @@ class Classes extends Component
         }
     }
 
+    public function updatedSelectedAcademicYear($value)
+    {
+        if ($value) {
+            $this->etudiants = $this->classe->etudiants()
+                ->whereHas('inscriptions', function($query) use ($value) {
+                    $query->where('academic_year_id', $value)
+                        ->where('classe_id', $this->classe->id)
+                        ->where('status', 'en_cours');
+                })
+                ->get();
+
+            $this->currentAcademicYear = \App\Models\AcademicYear::find($value);
+        } else {
+            $this->etudiants = collect();
+            $this->currentAcademicYear = null;
+        }
+    }
+
     public function getInfo($id)
     {
         if (!Auth::user()->hasPermission('classes', 'view')) {
@@ -70,16 +103,17 @@ class Classes extends Component
         $this->status = "info";
         $this->title = "Détails de la classe";
         
-        $this->classe = Classe::with([
-            'filiere',
-            'etudiants' => function($query) {
-                $query->whereHas('inscriptions', function($q) {
-                    $q->where('status', 'en_cours')
-                      ->where('academic_year_id', session('academic_year_id'));
-                });
-            },
-            'cours'
-        ])->findOrFail($id);
+        $this->classe = Classe::with(['filiere'])->findOrFail($id);
+        
+        // Réinitialiser la sélection
+        $this->selectedAcademicYear = null;
+        $this->etudiants = collect();
+        
+        // Recharger les années académiques
+        $this->academicYears = \App\Models\AcademicYear::where('campus_id', Auth::user()->campus_id)
+            ->where('is_deleting', false)
+            ->orderBy('debut', 'desc')
+            ->get();
     }
 
     public function store()

@@ -15,13 +15,6 @@
                                 Filière: {{ $classe->filiere->nom }}
                             </p>
                         </div>
-                        @if(Auth::user()->hasPermission('classes', 'print'))
-                            <div class="ml-auto">
-                                <button onclick="window.print()" class="btn btn-primary">
-                                    <i class="fa fa-print mr-2"></i>Imprimer la liste
-                                </button>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -30,7 +23,7 @@
 
     <!-- Statistiques -->
     <div class="row">
-        <div class="col-xl-3">
+        <div class="col-xl-4">
             <div class="card">
                 <div class="card-body">
                     <div class="media align-items-center">
@@ -43,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3">
+        <div class="col-xl-4">
             <div class="card">
                 <div class="card-body">
                     <div class="media align-items-center">
@@ -56,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3">
+        <div class="col-xl-4">
             <div class="card">
                 <div class="card-body">
                     <div class="media align-items-center">
@@ -69,70 +62,81 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="media align-items-center">
-                        <div class="media-body mr-3">
-                            <h2 class="text-info">{{ number_format($classe->cout_formation) }}</h2>
-                            <span>Coût total formation</span>
-                        </div>
-                        <i class="fa fa-graduation-cap fa-2x text-info"></i>
-                    </div>
+    </div>
+
+    <!-- Sélection de l'année académique -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <label class="mb-0"><strong>Sélectionner l'année académique</strong></label>
                 </div>
+                <div class="col-md-4">
+                    <select wire:model.live="selectedAcademicYear" class="form-control">
+                        <option value="">Choisir une année académique</option>
+                        @foreach($academicYears as $year)
+                            <option value="{{ $year->id }}">
+                                {{ date('Y', strtotime($year->debut)) }} - {{ date('Y', strtotime($year->fin)) }}
+                                @if($year->encours) (En cours) @endif
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                @if($selectedAcademicYear && Auth::user()->hasPermission('classes', 'print'))
+                    <div class="col-md-2">
+                        <button onclick="window.print()" class="btn btn-primary w-100">
+                            <i class="fa fa-print mr-2"></i>Imprimer
+                        </button>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 
     <!-- Liste des étudiants -->
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Liste des étudiants</h4>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover" id="printTable">
-                    <thead>
-                        <tr>
-                            <th>N°</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                            <th>Montant</th>
-                            <th class="no-print">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($classe->etudiants as $index => $etudiant)
+    @if($selectedAcademicYear)
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">
+                    Liste des étudiants - 
+                    @if($currentAcademicYear)
+                        {{ date('Y', strtotime($currentAcademicYear->debut)) }} - {{ date('Y', strtotime($currentAcademicYear->fin)) }}
+                        @if($currentAcademicYear->encours) (En cours) @endif
+                    @endif
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="printTable">
+                        <thead>
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $etudiant->nom }}</td>
-                                <td>{{ $etudiant->prenom }}</td>
-                                <td>{{ $etudiant->email }}</td>
-                                <td>{{ $etudiant->telephone }}</td>
-                                <td>
-                                    {{ $etudiant->inscriptions->where('classe_id', $classe->id)->first()->montant ?? 'N/A' }} FCFA
-                                </td>
-                                <td class="no-print">
-                                    @if(Auth::user()->hasPermission('etudiants', 'view'))
-                                        <a href="{{ route('etudiants.show', $etudiant->id) }}" 
-                                            class="btn btn-info btn-sm">
-                                            <i class="fa fa-eye"></i>
-                                        </a>
-                                    @endif
-                                </td>
+                                <th>N°</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center">Aucun étudiant inscrit dans cette classe</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse($etudiants as $index => $etudiant)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $etudiant->nom }}</td>
+                                    <td>{{ $etudiant->prenom }}</td>
+                                    <td>{{ $etudiant->email }}</td>
+                                    <td>{{ $etudiant->telephone }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucun étudiant inscrit dans cette classe pour cette année académique</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
 
 <style>
