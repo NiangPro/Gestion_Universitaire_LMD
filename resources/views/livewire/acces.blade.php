@@ -21,7 +21,7 @@
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-text bg-light">
-                                        <i class="fas fa-search"></i>
+                                        <i class="fas fa-search text-dark"></i>
                                     </span>
                                     <input type="text" 
                                            wire:model.live="search" 
