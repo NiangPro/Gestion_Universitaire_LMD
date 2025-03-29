@@ -58,7 +58,7 @@
 
                         <!-- Affichage de l'étudiant sélectionné -->
                         @if($selectedEtudiant)
-                            <div class="mt-2 p-2 border rounded">
+                            <div class="mt-2 p-2 border rounded mb-4">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ $selectedEtudiant->nom }} {{ $selectedEtudiant->prenom }}</strong>
@@ -72,50 +72,67 @@
                                     </button>
                                 </div>
                             </div>
-                        @endif
-                        <div class="row">
-                        <!-- Type de paiement -->
-                        <div class="form-group col-md-6">
-                            <label>Type de Paiement</label>
-                            <select class="form-control" wire:model="type_paiement">
-                                <option value="">Sélectionner le type</option>
-                                <option value="inscription">Inscription</option>
-                                <option value="mensualite">Mensualité</option>
-                                <option value="complement">Complément</option>
-                            </select>
-                            @error('type_paiement') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
 
-                        <!-- Montant -->
-                        <div class="form-group col-md-6">
-                            <label>Montant</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" wire:model="montant">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">FCFA</span>
+                            <!-- Formulaire de paiement visible uniquement après sélection d'un étudiant -->
+                            <div class="row">
+                                <!-- Type de paiement -->
+                                <div class="form-group col-md-6">
+                                    <label>Type de Paiement</label>
+                                    <select class="form-control" wire:model.live="type_paiement">
+                                        <option value="">Sélectionner le type</option>
+                                        <option value="inscription">Inscription</option>
+                                        <option value="mensualite">Mensualité</option>
+                                        <option value="complement">Complément</option>
+                                    </select>
+                                    @error('type_paiement') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Montant -->
+                                <div class="form-group col-md-6">
+                                    <label>Montant</label>
+                                    <div class="input-group">
+                                        <input type="number" 
+                                               class="form-control" 
+                                               wire:model="montant" 
+                                               {{ $montantReadOnly ? 'readonly' : '' }}
+                                               style="{{ $montantReadOnly ? 'background-color: #e9ecef;' : '' }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">FCFA</span>
+                                        </div>
+                                    </div>
+                                    @if($montantReadOnly)
+                                    <small class="text-muted">
+                                        Montant fixé selon la classe de l'étudiant
+                                    </small>
+                                    @endif
+                                    @error('montant') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Mode de paiement -->
+                                <div class="form-group col-md-5">
+                                    <label>Mode de Paiement</label>
+                                    <select class="form-control" wire:model="mode_paiement">
+                                        <option value="">Sélectionner le mode</option>
+                                        <option value="espece">Espèces</option>
+                                        <option value="cheque">Chèque</option>
+                                        <option value="virement">Virement</option>
+                                        <option value="mobile_money">Mobile Money</option>
+                                    </select>
+                                    @error('mode_paiement') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Observation -->
+                                <div class="form-group col-md-7">
+                                    <label>Observation</label>
+                                    <textarea class="form-control" wire:model="observation" rows="3"></textarea>
                                 </div>
                             </div>
-                            @error('montant') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <!-- Mode de paiement -->
-                        <div class="form-group col-md-5">
-                            <label>Mode de Paiement</label>
-                            <select class="form-control" wire:model="mode_paiement">
-                                <option value="">Sélectionner le mode</option>
-                                <option value="espece">Espèces</option>
-                                <option value="cheque">Chèque</option>
-                                <option value="virement">Virement</option>
-                                <option value="mobile_money">Mobile Money</option>
-                            </select>
-                            @error('mode_paiement') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-
-                        <!-- Observation -->
-                        <div class="form-group col-md-7">
-                            <label>Observation</label>
-                            <textarea class="form-control" wire:model="observation" rows="3"></textarea>
-                        </div>
-                    </div>
+                        @else
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-info-circle"></i>
+                                Veuillez d'abord sélectionner un étudiant pour effectuer un paiement
+                            </div>
+                        @endif
                     </div>
 
                     <div class="modal-footer">

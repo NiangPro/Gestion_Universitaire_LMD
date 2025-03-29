@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Paiement;
 use App\Models\AcademicYear;
-use App\Models\Permission;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +32,7 @@ class Paiements extends Component
     public $editingPaiement = null;
     public $showDetailModal = false;
     public $selectedPaiement = null;
+    public $montantReadOnly = false;
 
     protected $rules = [
         'etudiant_id' => 'required',
@@ -68,12 +68,49 @@ class Paiements extends Component
 
     public function selectEtudiant($etudiantId)
     {
-        $this->selectedEtudiant = User::find($etudiantId);
+        $this->selectedEtudiant = User::with(['inscriptions' => function($query) {
+            $query->where('academic_year_id', $this->academic_year_id)
+                ->with('classe');
+        }])->find($etudiantId);
+        
         $this->etudiant_id = $etudiantId;
         $this->searchMatricule = $this->selectedEtudiant->matricule;
         $this->suggestions = [];
         
         session()->flash('info', '👤 Étudiant sélectionné : ' . $this->selectedEtudiant->nom . ' ' . $this->selectedEtudiant->prenom);
+    }
+
+    public function updatedTypePaiement($value)
+    {
+        if (!$this->selectedEtudiant) {
+            return;
+        }
+
+        $inscription = $this->selectedEtudiant->inscriptions
+            ->where('academic_year_id', $this->academic_year_id)
+            ->first();
+
+        if (!$inscription || !$inscription->classe) {
+            session()->flash('error', 'Aucune inscription trouvée pour cet étudiant dans l\'année académique en cours');
+            return;
+        }
+
+        $classe = $inscription->classe;
+
+        switch ($value) {
+            case 'inscription':
+                $this->montant = $classe->cout_inscription;
+                $this->montantReadOnly = true;
+                break;
+            case 'mensualite':
+                $this->montant = $classe->mensualite;
+                $this->montantReadOnly = true;
+                break;
+            default:
+                $this->montant = '';
+                $this->montantReadOnly = false;
+                break;
+        }
     }
 
     public function savePaiement()
@@ -181,6 +218,7 @@ class Paiements extends Component
         $this->type_paiement = '';
         $this->mode_paiement = '';
         $this->observation = '';
+        $this->montantReadOnly = false;
     }
 
     public function showDetails(Paiement $paiement)
