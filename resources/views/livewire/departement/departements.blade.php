@@ -2,10 +2,9 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">{{$title}}</h4>
-                        <div class="d-flex gap-2">
+                <div class="card-header row">
+                        <h4 class="col-md-8 card-title">{{$title}}</h4>
+                        <div class="col-md-4 text-right">
                             @if($status == "list")
                                 @if(Auth::user()->hasPermission('departements', 'create'))
                                     <button wire:click='changeStatus("add")' class="btn btn-primary">
@@ -13,12 +12,11 @@
                                     </button>
                                 @endif
                             @else
-                                <button wire:click='changeStatus("list")' class="btn btn-secondary">
+                                <button wire:click='changeStatus("list")' class="btn btn-warning">
                                     <i class="fa fa-arrow-left me-2"></i>Retour
                                 </button>
                             @endif
                         </div>
-                    </div>
                 </div>
 
                 <div class="card-body">
@@ -90,14 +88,14 @@
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">
                                                     @if(Auth::user()->hasPermission('departements', 'view'))
-                                                        <button 
+                                                        <button wire:click="getInfo({{ $dept->id }})" 
                                                             class="btn btn-info btn-sm">
                                                             <i class="fa fa-eye"></i>
                                                         </button>
                                                     @endif
 
                                                     @if(Auth::user()->hasPermission('departements', 'edit'))
-                                                        <button  wire:click="getInfo({{ $dept->id }})" 
+                                                        <button wire:click="edit({{ $dept->id }})" 
                                                             class="btn btn-warning btn-sm">
                                                             <i class="fa fa-edit"></i>
                                                         </button>
@@ -137,6 +135,9 @@
                             </div>
                             {{ $departements->links() }}
                         </div>
+                    
+                    @elseif($status == "info")
+                                @include('livewire.departement.info')
                     @else
                         @include('livewire.departement.add')
                     @endif

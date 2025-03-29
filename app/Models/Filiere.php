@@ -33,4 +33,9 @@ class Filiere extends Model
     public function matieres(){
         return $this->hasMany(Matiere::class);
     }
+
+    public function classes()
+    {
+        return $this->hasMany(Classe::class, 'filiere_id');
+    }
 }

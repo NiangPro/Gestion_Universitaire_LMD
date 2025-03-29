@@ -35,7 +35,8 @@ class Departements extends Component
     public $users = [];
 
     public $departementToDelete = null;
-
+    public $departement = null;
+    public $professeurs = [];
     protected $rules = [
         "nom" => "required|min:2",
         "description" => "required|min:10",
@@ -130,13 +131,36 @@ public function delete()
 
         $this->status = "info";
         $this->title = "Détails du département";
-        $dept = Departement::findOrFail($id);
+        
+        $dept = Departement::with([
+            'responsable',
+            'filieres',
+            'filieres.classes',
+            'filieres.classes.cours' => function($query) {
+                $query->where('is_deleting', false);
+            },
+            'filieres.classes.cours.professeur'
+        ])->findOrFail($id);
+        
+        // Récupérer les professeurs uniques
+        $professeurs = collect();
+        foreach ($dept->filieres as $filiere) {
+            foreach ($filiere->classes as $classe) {
+                foreach ($classe->cours as $cours) {
+                    if ($cours->professeur) {
+                        $professeurs->push($cours->professeur);
+                    }
+                }
+            }
+        }
+        
+        $this->departement = $dept;
+        $this->professeurs = $professeurs->unique('id')->values();
         $this->nom = $dept->nom;
         $this->description = $dept->description;
         $this->user_id = $dept->user_id;
         $this->id = $dept->id;
     }
-
     public function store()
     {
         $this->validate();
