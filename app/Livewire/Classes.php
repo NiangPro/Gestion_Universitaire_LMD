@@ -81,9 +81,9 @@ class Classes extends Component
             $this->etudiants = $this->classe->etudiants()
                 ->whereHas('inscriptions', function($query) use ($value) {
                     $query->where('academic_year_id', $value)
-                        ->where('classe_id', $this->classe->id)
-                        ->where('status', 'en_cours');
+                        ->where('classe_id', $this->classe->id);
                 })
+                ->orderBy('nom')
                 ->get();
 
             $this->currentAcademicYear = \App\Models\AcademicYear::find($value);
