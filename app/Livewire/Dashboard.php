@@ -37,11 +37,12 @@ class Dashboard extends Component
     public $inscriptionsRecentes = [];
     public $totalInscriptions = 0;
     public $montantTotal = 0;
+    public $coursAujourdhui = [];
 
     public function mount()
     {
         $this->user = Auth::user();
-        $this->currentAcademicYear = AcademicYear::getCurrentAcademicYear($this->user->campus_id);
+        $this->currentAcademicYear = Auth::user()->campus->currentAcademicYear();
         
         if ($this->user->estProfesseur()) {
             $this->loadProfesseurData();
@@ -49,10 +50,23 @@ class Dashboard extends Component
             if ($this->currentAcademicYear) {
                 $this->loadStatistiques();
                 $this->loadInscriptionsRecentes();
+                $this->loadCoursAujourdhui();
             }
         } else if ($this->user->estEtudiant()) {
             $this->loadEleveData();
         }
+
+        $campus = Auth::user()->campus;
+        $currentAcademicYear = $campus->currentAcademicYear();
+
+        // Calcul du nombre d'étudiants pour l'année académique en cours
+        $this->totalEtudiants = User::where('campus_id', $campus->id)
+            ->where('role', 'etudiant')
+            ->whereHas('inscriptions', function($query) use ($currentAcademicYear) {
+                $query->where('academic_year_id', $currentAcademicYear->id)
+                      ->where('status', 'en_cours');
+            })
+            ->count();
     }
 
     private function loadProfesseurData()
@@ -215,8 +229,37 @@ class Dashboard extends Component
             ->get();
     }
 
-    
+    public function loadCoursAujourdhui()
+    {
+        $campus = Auth::user()->campus;
+        $currentAcademicYear = $campus->currentAcademicYear();
+        
+        if ($currentAcademicYear) {
+            $jourSemaine = now()->format('l'); // Récupère le jour actuel en anglais (Monday, Tuesday, etc.)
+            
+            // Convertir en français
+            $joursFr = [
+                'Monday' => 'Lundi',
+                'Tuesday' => 'Mardi',
+                'Wednesday' => 'Mercredi',
+                'Thursday' => 'Jeudi',
+                'Friday' => 'Vendredi',
+                'Saturday' => 'Samedi',
+                'Sunday' => 'Dimanche'
+            ];
+            
+            $jourFr = $joursFr[$jourSemaine];
 
+            $this->coursAujourdhui = Cour::where('campus_id', $campus->id)
+                ->where('academic_year_id', $currentAcademicYear->id)
+                ->whereHas('semaine', function($query) use ($jourFr) {
+                    $query->where('jour', $jourFr);
+                })
+                ->with(['classe', 'professeur', 'matiere', 'salle', 'semaine'])
+                ->orderBy('heure_debut')
+                ->get();
+        }
+    }
 
     #[Layout("components.layouts.app")]
     public function render()
