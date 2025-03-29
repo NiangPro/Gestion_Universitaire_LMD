@@ -8,88 +8,154 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
-#[Title("Departement")]
+#[Title("Departements")]
 class Departements extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap';
+
     public $outil;
     public $status = "list";
-    public $title= "Liste des départements";
+    public $title = "Gestion des départements";
 
+    // Form fields
     public $id, $nom, $description;
 
-    protected $rules =[
-        "nom" => "required",
-        "description" => "required",
+    // Filtres et tri
+    public $search = '';
+    public $sortBy = 'nom';
+    public $sortDirection = 'asc';
+    public $perPage = 10;
+
+    // Delete confirmation
+    public $departementToDelete = null;
+
+    protected $rules = [
+        "nom" => "required|min:2",
+        "description" => "required|min:10",
     ];
 
     protected $messages = [
         "nom.required" => "Le nom est obligatoire",
+        "nom.min" => "Le nom doit contenir au moins 2 caractères",
         "description.required" => "La description est obligatoire",
+        "description.min" => "La description doit contenir au moins 10 caractères",
     ];
 
-    public function changeStatus($status){
-        $this->status = $status;
+    public function mount()
+    {
+        if (!Auth::user()->hasPermission('departements', 'view')) {
+            return redirect()->route('dashboard');
+        }
+    }
 
-        if ($status == "add") {
-            $this->title = "Formulaire d'ajout département";
-        }elseif($status == "edit"){
-            $this->title = "Formulaire d'édition département";
-        }else{
-            $this->title = "Liste des département";
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function changeStatus($status)
+    {
+        if ($status === "add" && !Auth::user()->hasPermission('departements', 'create')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer un département']);
+            return;
         }
 
-        $this->reset(["nom", "description", "id"]);
+        $this->status = $status;
+        $this->title = $status === "add" ? "Nouveau département" : 
+                      ($status === "edit" ? "Modifier le département" : "Gestion des départements");
+        $this->reset(['nom', 'description', 'id']);
     }
 
-    public function getInfo($id){
-        $this->changeStatus("info");
+    public function getInfo($id)
+    {
+        if (!Auth::user()->hasPermission('departements', 'view')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de voir les détails']);
+            return;
+        }
 
-        $d = Departement::where("id", $id)->first();
-
-        $this->nom = $d->nom;
-        $this->description = $d->description;
-        $this->id = $d->id;
+        $this->status = "info";
+        $this->title = "Détails du département";
+        $dept = Departement::findOrFail($id);
+        $this->nom = $dept->nom;
+        $this->description = $dept->description;
+        $this->id = $dept->id;
     }
 
-    public function supprimer($id){
-        $ac = Departement::where("id", $id)->first();
+    public function edit($id)
+    {
+        if (!Auth::user()->hasPermission('departements', 'edit')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+            return;
+        }
 
-        $ac->is_deleting = true;
-
-        $ac->save();
-
-        $this->outil->addHistorique("Suppression d'un département", "delete");
-
-
-        $this->dispatch("delete");
+        $this->status = "edit";
+        $this->title = "Modifier le département";
+        $dept = Departement::findOrFail($id);
+        $this->nom = $dept->nom;
+        $this->description = $dept->description;
+        $this->id = $dept->id;
     }
 
-    public function store(){
+    public function confirmDelete($id)
+    {
+        if (!Auth::user()->hasPermission('departements', 'delete')) {
+            $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de supprimer']);
+            return;
+        }
+
+        $this->departementToDelete = $id;
+        $this->dispatch('show-delete-modal');
+    }
+
+    public function delete()
+    {
+        $dept = Departement::findOrFail($this->departementToDelete);
+        $dept->is_deleting = true;
+        $dept->save();
+
+        $this->outil->addHistorique("Suppression du département : " . $dept->nom, "delete");
+        $this->dispatch('hide-delete-modal');
+        $this->dispatch('deleted');
+        $this->departementToDelete = null;
+    }
+
+    public function store()
+    {
         $this->validate();
 
         if ($this->id) {
-            $a = Departement::where("id", $this->id)->first();
+            if (!Auth::user()->hasPermission('departements', 'edit')) {
+                $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+                return;
+            }
 
-            $a->nom = $this->nom;
-            $a->description = $this->description;
+            $dept = Departement::findOrFail($this->id);
+            $dept->update([
+                "nom" => $this->nom,
+                "description" => $this->description,
+            ]);
 
-            $a->save();
+            $this->outil->addHistorique("Modification du département : " . $dept->nom, "edit");
+            $this->dispatch('updated');
+        } else {
+            if (!Auth::user()->hasPermission('departements', 'create')) {
+                $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer']);
+                return;
+            }
 
-            $this->outil->addHistorique("Mis à jour des données d'un département", "edit");
-            $this->dispatch("update");
-        }else{
-            Departement::create([
+            $dept = Departement::create([
                 "nom" => $this->nom,
                 "description" => $this->description,
                 "campus_id" => Auth::user()->campus_id
             ]);
 
-            $this->outil->addHistorique("Ajout d'un département", "add");
-    
-            $this->dispatch("added");
+            $this->outil->addHistorique("Création du département : " . $dept->nom, "add");
+            $this->dispatch('added');
         }
-
 
         $this->changeStatus("list");
     }
@@ -99,8 +165,15 @@ class Departements extends Component
     {
         $this->outil = new Outils();
 
+        $query = Departement::where("is_deleting", false)
+            ->where(function($query) {
+                $query->where('nom', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy($this->sortBy, $this->sortDirection);
+
         return view('livewire.departement.departements', [
-            "depts" => Departement::where("is_deleting", false)->orderBy("nom", "ASC")->get()
+            "departements" => $query->paginate($this->perPage)
         ]);
     }
 }
