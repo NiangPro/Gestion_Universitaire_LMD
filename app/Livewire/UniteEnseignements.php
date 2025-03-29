@@ -167,6 +167,47 @@ public $matiere = [
 ];
 
 public $listeMatieres = [];
+public $editingMatiere = false;
+public $editingMatiereIndex = null;
+
+public function editMatiere($index)
+{
+    if (!Auth::user()->hasPermission('ue', 'edit')) {
+        $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+        return;
+    }
+
+    $this->editingMatiere = true;
+    $this->editingMatiereIndex = $index;
+    $this->matiere = $this->listeMatieres[$index];
+}
+
+public function updateMatiere()
+{
+    $this->validate([
+        'matiere.nom' => 'required',
+        'matiere.credit' => 'required|numeric|min:1',
+        'matiere.coefficient' => 'required|numeric|min:1',
+        'matiere.volume_horaire' => 'numeric|min:1'
+    ]);
+
+    $this->listeMatieres[$this->editingMatiereIndex] = $this->matiere;
+
+    $this->cancelEdit();
+    $this->dispatch('success', ['message' => 'Matière modifiée avec succès']);
+}
+
+public function cancelEdit()
+{
+    $this->editingMatiere = false;
+    $this->editingMatiereIndex = null;
+    $this->matiere = [
+        'nom' => '',
+        'credit' => '',
+        'coefficient' => '',
+        'volume_horaire' => ''
+    ];
+}
 
 public function addMatiere()
 {

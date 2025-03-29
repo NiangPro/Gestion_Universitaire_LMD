@@ -43,97 +43,135 @@
     </div>
 
     <div class="col-md-6">
-        <!-- Formulaire Matière -->
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Ajouter une matière</h4>
-            </div>
-            <div class="card-body">
-                <form wire:submit.prevent="addMatiere">
-                    <div class="form-group">
-                        <label>Nom de la matière</label>
-                        <input type="text" wire:model="matiere.nom" class="form-control @error('matiere.nom') is-invalid @enderror" placeholder="Nom de la matière">
-                        @error('matiere.nom') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Crédit</label>
-                                <input type="number" wire:model="matiere.credit" class="form-control @error('matiere.credit') is-invalid @enderror" placeholder="Crédit">
-                                @error('matiere.credit') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Coefficient</label>
-                                <input type="number" wire:model="matiere.coefficient" class="form-control @error('matiere.coefficient') is-invalid @enderror" placeholder="Coefficient">
-                                @error('matiere.coefficient') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Volume horaire</label>
-                                <input type="number" wire:model="matiere.volume_horaire" class="form-control @error('matiere.volume_horaire') is-invalid @enderror" placeholder="Heures">
-                                @error('matiere.volume_horaire') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa fa-plus"></i> Ajouter la matière
-                    </button>
-                    <button type="reset" class="btn btn-warning">
-                        <i class="fa fa-refresh"></i> Annuler
-                    </button>
-                </form>
-            </div>
+    <!-- Formulaire Matière -->
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">
+                {{ $editingMatiere ? 'Modifier la matière' : 'Ajouter une matière' }}
+            </h4>
         </div>
+        <div class="card-body">
+            <form wire:submit.prevent="{{ $editingMatiere ? 'updateMatiere' : 'addMatiere' }}">
+                <div class="form-group">
+                    <label>Nom de la matière</label>
+                    <input type="text" 
+                        wire:model="matiere.nom" 
+                        class="form-control @error('matiere.nom') is-invalid @enderror" 
+                        placeholder="Nom de la matière">
+                    @error('matiere.nom') 
+                        <span class="invalid-feedback">{{ $message }}</span> 
+                    @enderror
+                </div>
 
-        <!-- Liste des matières -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h4 class="card-title">Liste des matières ({{ count($listeMatieres) }})</h4>
-            </div>
-            <div class="card-body">
-                @if(empty($listeMatieres))
-                    <div class="text-center text-muted py-3">
-                        <i class="fa fa-book fa-2x mb-2"></i>
-                        <p>Aucune matière ajoutée</p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Crédit</label>
+                            <input type="number" 
+                                wire:model="matiere.credit" 
+                                class="form-control @error('matiere.credit') is-invalid @enderror" 
+                                placeholder="Crédit">
+                            @error('matiere.credit') 
+                                <span class="invalid-feedback">{{ $message }}</span> 
+                            @enderror
+                        </div>
                     </div>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Nom</th>
-                                    <th>Crédit</th>
-                                    <th>Coefficient</th>
-                                    <th>Volume horaire</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($listeMatieres as $index => $mat)
-                                    <tr>
-                                        <td>{{ $mat['nom'] }}</td>
-                                        <td>{{ $mat['credit'] }}</td>
-                                        <td>{{ $mat['coefficient'] }}</td>
-                                        <td>{{ $mat['volume_horaire'] }}h</td>
-                                        <td>
-                                            <button wire:click="removeMatiere({{ $index }})" class="btn btn-danger btn-sm">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Coefficient</label>
+                            <input type="number" 
+                                wire:model="matiere.coefficient" 
+                                class="form-control @error('matiere.coefficient') is-invalid @enderror" 
+                                placeholder="Coefficient">
+                            @error('matiere.coefficient') 
+                                <span class="invalid-feedback">{{ $message }}</span> 
+                            @enderror
+                        </div>
                     </div>
-                @endif
-            </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Volume horaire</label>
+                            <input type="number" 
+                                wire:model="matiere.volume_horaire" 
+                                class="form-control @error('matiere.volume_horaire') is-invalid @enderror" 
+                                placeholder="Heures">
+                            @error('matiere.volume_horaire') 
+                                <span class="invalid-feedback">{{ $message }}</span> 
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn {{ $editingMatiere ? 'btn-warning' : 'btn-primary' }}">
+                        <i class="fa {{ $editingMatiere ? 'fa-save' : 'fa-plus' }}"></i>
+                        {{ $editingMatiere ? 'Modifier' : 'Ajouter' }} la matière
+                    </button>
+                    @if($editingMatiere)
+                        <button type="button" wire:click="cancelEdit" class="btn btn-secondary ml-2">
+                            <i class="fa fa-times"></i> Annuler
+                        </button>
+                    @endif
+                </div>
+            </form>
         </div>
     </div>
+
+    <!-- Liste des matières -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4 class="card-title">Liste des matières ({{ count($listeMatieres) }})</h4>
+        </div>
+        <div class="card-body">
+            @if(empty($listeMatieres))
+                <div class="text-center text-muted py-3">
+                    <i class="fa fa-book fa-2x mb-2"></i>
+                    <p>Aucune matière ajoutée</p>
+                </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Crédit</th>
+                                <th>Coefficient</th>
+                                <th>Volume horaire</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($listeMatieres as $index => $mat)
+                                <tr>
+                                    <td>{{ $mat['nom'] }}</td>
+                                    <td>{{ $mat['credit'] }}</td>
+                                    <td>{{ $mat['coefficient'] }}</td>
+                                    <td>{{ $mat['volume_horaire'] }}h</td>
+                                    <td>
+                                        @if(Auth::user()->hasPermission('ue', 'edit'))
+                                            <button wire:click="editMatiere({{ $index }})" 
+                                                class="btn btn-warning btn-sm" 
+                                                title="Modifier">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                        @endif
+                                        @if(Auth::user()->hasPermission('ue', 'delete'))
+                                            <button wire:click="removeMatiere({{ $index }})" 
+                                                class="btn btn-danger btn-sm ml-1" 
+                                                title="Supprimer">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
 </div>
 
 <script>
