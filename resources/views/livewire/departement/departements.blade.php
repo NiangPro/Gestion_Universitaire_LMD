@@ -76,7 +76,11 @@
                                                     <div>
                                                         <h6 class="mb-0">{{ $dept->nom }}</h6>
                                                         <small class="text-muted">
-                                                            {{ $dept->responsable ? $dept->responsable->name : 'Non assigné' }}
+                                                            @if($dept->responsable)
+                                                                {{ $dept->responsable->prenom }} {{ $dept->responsable->nom }}
+                                                            @else
+                                                                Non assigné
+                                                            @endif
                                                         </small>
                                                     </div>
                                                 </div>
@@ -86,14 +90,14 @@
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">
                                                     @if(Auth::user()->hasPermission('departements', 'view'))
-                                                        <button wire:click="getInfo({{ $dept->id }})" 
+                                                        <button 
                                                             class="btn btn-info btn-sm">
                                                             <i class="fa fa-eye"></i>
                                                         </button>
                                                     @endif
 
                                                     @if(Auth::user()->hasPermission('departements', 'edit'))
-                                                        <button wire:click="edit({{ $dept->id }})" 
+                                                        <button  wire:click="getInfo({{ $dept->id }})" 
                                                             class="btn btn-warning btn-sm">
                                                             <i class="fa fa-edit"></i>
                                                         </button>
@@ -123,10 +127,13 @@
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <div>
-                                <span class="text-muted">
-                                    Affichage {{ $departements->firstItem() ?? 0 }} à {{ $departements->lastItem() ?? 0 }}
-                                    sur {{ $departements->total() }} entrées
-                                </span>
+                            <small class="text-muted">
+                                @if($dept->responsable)
+                                    {{ $dept->responsable->prenom }} {{ $dept->responsable->nom }}
+                                @else
+                                    Non assigné
+                                @endif
+                            </small>
                             </div>
                             {{ $departements->links() }}
                         </div>

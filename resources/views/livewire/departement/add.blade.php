@@ -28,6 +28,22 @@
                         @enderror
                     </div>
 
+                    <div class="form-group mb-4">
+                        <label class="form-label"><strong>Assigné à</strong></label>
+                        <select 
+                            wire:model='user_id' 
+                            class="form-control @error('user_id') is-invalid @enderror"
+                            @if(!Auth::user()->hasPermission('departements', 'edit') && $id) disabled @endif>
+                            <option value="">Sélectionner un responsable</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->prenom }} {{ $user->nom }}</option>
+                            @endforeach
+                        </select>
+                        @error('user_id') 
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="form-group">
                         @if($id)
                             @if(Auth::user()->hasPermission('departements', 'edit'))

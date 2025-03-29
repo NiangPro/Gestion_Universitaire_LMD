@@ -119,6 +119,10 @@ class User extends Authenticatable
         return $this->hasMany(Cour::class, "professeur_id");
     }
 
+    public function departement(){
+        return $this->hasOne(Departement::class, "user_id");
+    }
+
     public function sentMessages()
     {
         return $this->hasMany(Message::class, 'sender_id');
