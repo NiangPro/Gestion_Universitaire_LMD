@@ -191,7 +191,7 @@ public function edit($id)
 
                 $dept = Departement::findOrFail($this->id);
                 $dept->update([
-                    "nom" => $this->nom,
+                    "nom" => strtoupper($this->nom),
                     "description" => $this->description,
                     "user_id" => $this->user_id
                 ]);
@@ -205,7 +205,7 @@ public function edit($id)
                 }
 
                 $dept = Departement::create([
-                    "nom" => $this->nom,
+                    "nom" => strtoupper($this->nom),
                     "description" => $this->description,
                     "user_id" => $this->user_id,
                     "campus_id" => Auth::user()->campus_id
