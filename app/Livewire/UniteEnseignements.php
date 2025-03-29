@@ -188,13 +188,42 @@ public function updateMatiere()
         'matiere.nom' => 'required',
         'matiere.credit' => 'required|numeric|min:1',
         'matiere.coefficient' => 'required|numeric|min:1',
-        'matiere.volume_horaire' => 'numeric|min:1'
+        'matiere.volume_horaire' => 'required|numeric|min:1'
     ]);
 
     $this->listeMatieres[$this->editingMatiereIndex] = $this->matiere;
 
     $this->cancelEdit();
     $this->dispatch('success', ['message' => 'Matière modifiée avec succès']);
+}
+
+public function edit($id)
+{
+    if (!Auth::user()->hasPermission('ue', 'edit')) {
+        $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+        return;
+    }
+
+    $this->status = "add";
+    $this->title = "Modifier l'unité d'enseignement";
+    
+    $ue = UniteEnseignement::with('matieres')->findOrFail($id);
+    
+    // Remplir les informations de l'UE
+    $this->id = $ue->id;
+    $this->nom = $ue->nom;
+    $this->credit = $ue->credit;
+    $this->filiere_id = $ue->filiere_id;
+
+    // Remplir la liste des matières
+    $this->listeMatieres = $ue->matieres->map(function($matiere) {
+        return [
+            'nom' => $matiere->nom,
+            'credit' => $matiere->credit,
+            'coefficient' => $matiere->coefficient,
+            'volume_horaire' => $matiere->volume_horaire
+        ];
+    })->toArray();
 }
 
 public function cancelEdit()
@@ -211,28 +240,15 @@ public function cancelEdit()
 
 public function addMatiere()
 {
-    // Validation de la matière
     $this->validate([
         'matiere.nom' => 'required',
         'matiere.credit' => 'required|numeric|min:1',
         'matiere.coefficient' => 'required|numeric|min:1',
-        'matiere.volume_horaire' => 'nullable|numeric|min:1'
-    ], [
-        'matiere.nom.required' => 'Le nom de la matière est requis',
-        'matiere.credit.required' => 'Le crédit est requis',
-        'matiere.credit.numeric' => 'Le crédit doit être un nombre',
-        'matiere.credit.min' => 'Le crédit doit être supérieur à 0',
-        'matiere.coefficient.required' => 'Le coefficient est requis',
-        'matiere.coefficient.numeric' => 'Le coefficient doit être un nombre',
-        'matiere.coefficient.min' => 'Le coefficient doit être supérieur à 0',
-        'matiere.volume_horaire.numeric' => 'Le volume horaire doit être un nombre',
-        'matiere.volume_horaire.min' => 'Le volume horaire doit être supérieur à 0'
+        'matiere.volume_horaire' => 'numeric|min:1'
     ]);
 
-    // Ajouter la matière à la liste
     $this->listeMatieres[] = $this->matiere;
 
-    // Réinitialiser le formulaire de matière
     $this->matiere = [
         'nom' => '',
         'credit' => '',
@@ -240,71 +256,82 @@ public function addMatiere()
         'volume_horaire' => ''
     ];
 
-    // Notification de succès
     $this->dispatch('success', ['message' => 'Matière ajoutée avec succès']);
 }
 
 public function removeMatiere($index)
 {
+    if (!Auth::user()->hasPermission('ue', 'edit')) {
+        $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de supprimer']);
+        return;
+    }
+
     unset($this->listeMatieres[$index]);
     $this->listeMatieres = array_values($this->listeMatieres);
     $this->dispatch('success', ['message' => 'Matière supprimée']);
 }
 
-    public function store()
-    {
-        $this->validate();
+public function store()
+{
+    $this->validate([
+        'nom' => 'required|string',
+        'credit' => 'required|numeric|min:1',
+        'filiere_id' => 'required',
+    ]);
 
-        try {
-            if ($this->id) {
-                $ue = UniteEnseignement::findOrFail($this->id);
-                $ue->update([
-                    'nom' => $this->nom,
-                    'credit' => $this->credit,
-                    'filiere_id' => $this->filiere_id
-                ]);
+    try {
+        if ($this->id) {
+            $ue = UniteEnseignement::findOrFail($this->id);
+            $ue->update([
+                'nom' => $this->nom,
+                'credit' => $this->credit,
+                'filiere_id' => $this->filiere_id
+            ]);
 
-                // Mettre à jour ou créer les matières
-                foreach ($this->matieres as $matiereData) {
-                    Matiere::create([
-                        'nom' => $matiereData['nom'],
-                        'credit' => $matiereData['credit'],
-                        'coefficient' => $matiereData['coefficient'],
-                        'volume_horaire' => $matiereData['volume_horaire'],
-                        'unite_enseignement_id' => $ue->id,
-                        'campus_id' => Auth::user()->campus_id
-                    ]);
-                }
+            // Supprimer les anciennes matières
+            $ue->matieres()->update(['is_deleting' => true]);
 
-                $this->dispatch('update');
-            } else {
-                $ue = UniteEnseignement::create([
-                    'nom' => $this->nom,
-                    'credit' => $this->credit,
-                    'filiere_id' => $this->filiere_id,
+            // Créer les nouvelles matières
+            foreach ($this->listeMatieres as $matiereData) {
+                Matiere::create([
+                    'nom' => $matiereData['nom'],
+                    'credit' => $matiereData['credit'],
+                    'coefficient' => $matiereData['coefficient'],
+                    'volume_horaire' => $matiereData['volume_horaire'],
+                    'unite_enseignement_id' => $ue->id,
                     'campus_id' => Auth::user()->campus_id
                 ]);
-
-                foreach ($this->matieres as $matiereData) {
-                    Matiere::create([
-                        'nom' => $matiereData['nom'],
-                        'credit' => $matiereData['credit'],
-                        'coefficient' => $matiereData['coefficient'],
-                        'volume_horaire' => $matiereData['volume_horaire'],
-                        'unite_enseignement_id' => $ue->id,
-                        'campus_id' => Auth::user()->campus_id
-                    ]);
-                }
-
-                $this->dispatch('added');
             }
 
-            $this->reset(['nom', 'credit', 'filiere_id', 'matieres', 'id']);
-            $this->changeStatus('list');
-        } catch (\Exception $e) {
-            $this->dispatch('error', ['message' => 'Une erreur est survenue']);
+            $this->dispatch('update');
+        } else {
+            $ue = UniteEnseignement::create([
+                'nom' => $this->nom,
+                'credit' => $this->credit,
+                'filiere_id' => $this->filiere_id,
+                'campus_id' => Auth::user()->campus_id
+            ]);
+
+            foreach ($this->listeMatieres as $matiereData) {
+                Matiere::create([
+                    'nom' => $matiereData['nom'],
+                    'credit' => $matiereData['credit'],
+                    'coefficient' => $matiereData['coefficient'],
+                    'volume_horaire' => $matiereData['volume_horaire'],
+                    'unite_enseignement_id' => $ue->id,
+                    'campus_id' => Auth::user()->campus_id
+                ]);
+            }
+
+            $this->dispatch('added');
         }
+
+        $this->reset(['nom', 'credit', 'filiere_id', 'listeMatieres', 'id']);
+        $this->changeStatus('list');
+    } catch (\Exception $e) {
+        $this->dispatch('error', ['message' => 'Une erreur est survenue']);
     }
+}
 
     #[Layout('components.layouts.app')]
     public function render()
