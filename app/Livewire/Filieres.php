@@ -78,6 +78,21 @@ class Filieres extends Component
         $this->outil = new Outils();
     }
 
+    public function edit($id)
+{
+    if (!Auth::user()->hasPermission('filieres', 'edit')) {
+        $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+        return;
+    }
+
+    $this->status = "add";
+    $this->title = "Modifier la filière";
+    
+    $filiere = Filiere::findOrFail($id);
+    $this->id = $filiere->id;
+    $this->nom = $filiere->nom;
+    $this->departement_id = $filiere->departement_id;
+}
 
     protected $rules =[
         "nom" => "required",
@@ -139,7 +154,7 @@ class Filieres extends Component
         if ($this->id) {
             $a = Filiere::where("id", $this->id)->first();
 
-            $a->nom = $this->nom;
+            $a->nom = strtoupper($this->nom);
             $a->departement_id = $this->departement_id;
 
             $a->save();
@@ -148,7 +163,7 @@ class Filieres extends Component
             $this->dispatch("update");
         }else{
             Filiere::create([
-                "nom" => $this->nom,
+                "nom" => strtoupper($this->nom),
                 "departement_id" => $this->departement_id,
                 "campus_id" => Auth::user()->campus_id
             ]);
@@ -165,7 +180,6 @@ class Filieres extends Component
     #[Layout("components.layouts.app")]
     public function render()
 {
-    $this->outil = new Outils();
     
     $query = Filiere::query()
         ->where("campus_id", Auth::user()->campus_id)

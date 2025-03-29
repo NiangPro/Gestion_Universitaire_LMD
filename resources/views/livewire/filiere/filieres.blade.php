@@ -119,7 +119,7 @@
                                             <div class="modal fade" id="deleteModal{{$filiere->id}}" tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
-                                                        <div class="modal-header bg-danger text-white">
+                                                        <div class="modal-header text-white">
                                                             <h5 class="modal-title">Confirmation de suppression</h5>
                                                             <button type="button" class="close text-white" data-dismiss="modal">
                                                                 <span>&times;</span>
