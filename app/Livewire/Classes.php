@@ -217,13 +217,16 @@ class Classes extends Component
             $query->where('filiere_id', $this->selectedFiliere);
         }
 
+        // Utiliser le campus de l'utilisateur connecté
+        $campus = Auth::user()->campus;
+        $currentAcademicYear = $campus->currentAcademicYear();
+
         $classes = $query
             ->orderBy($this->sortField, $this->sortDirection)
             ->with(['filiere'])
-            ->withCount(['etudiants' => function($query) {
-                $query->whereHas('inscriptions', function($q) {
-                    $q->where('status', 'en_cours')
-                      ->where('academic_year_id', session('academic_year_id'));
+            ->withCount(['etudiants' => function($query) use ($campus) {
+                $query->whereHas('inscriptions', function($q) use ($campus) {
+                    $q->whereIn('id', $campus->currentInscriptions()->pluck('id'));
                 });
             }])
             ->paginate($this->perPage);
@@ -232,7 +235,8 @@ class Classes extends Component
             'classes' => $classes,
             'filieres' => Filiere::where('campus_id', Auth::user()->campus_id)
                 ->where('is_deleting', false)
-                ->get()
+                ->get(),
+            'currentAcademicYear' => $currentAcademicYear
         ]);
     }
 }
