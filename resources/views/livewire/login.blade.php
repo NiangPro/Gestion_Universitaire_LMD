@@ -26,8 +26,9 @@
                             @enderror
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="password" 
+                        <div class="form-floating mb-3 password-field">
+                            <input 
+                                type="{{ $showPassword ? 'text' : 'password' }}"
                                 wire:model="password" 
                                 class="form-control @error('password') is-invalid @enderror" 
                                 id="password" 
@@ -35,8 +36,11 @@
                             <label for="password">
                                 <i class="fas fa-lock me-2"></i>Mot de passe
                             </label>
-                            <button type="button" class="btn password-toggle" id="togglePasswordBtn">
-                                <i class="far fa-eye"></i>
+                            <button 
+                                type="button" 
+                                class="btn password-toggle" 
+                                wire:click="togglePassword">
+                                <i class="far fa-{{ $showPassword ? 'eye-slash' : 'eye' }}"></i>
                             </button>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -125,20 +129,43 @@
         color: #757575;
     }
 
+    .password-field {
+        position: relative;
+    }
+
     .password-toggle {
         position: absolute;
         right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #757575;
-        padding: 5px;
+        top: 12px;
+        height: 30px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none !important;
+        border: none !important;
+        color: #757575 !important;
+        padding: 0 !important;
         cursor: pointer;
+        z-index: 5;
+        transition: color 0.3s ease;
     }
 
     .password-toggle:hover {
-        color: #0288d1;
+        color: #0288d1 !important;
+    }
+
+    .password-toggle:focus {
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    .password-field .form-control {
+        padding-right: 45px !important;
+    }
+
+    .password-field .form-floating > label {
+        padding-right: 45px;
     }
 
     .form-check-input:checked {
