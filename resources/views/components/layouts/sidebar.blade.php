@@ -177,7 +177,7 @@
             </li>
             @endif
 
-            <li class="nav-label">Apps</li>
+            <!-- <li class="nav-label">Apps</li> -->
             <li>
                 <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                     <i class="fa fa-cog"></i>
