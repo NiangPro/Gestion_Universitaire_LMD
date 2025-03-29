@@ -41,23 +41,46 @@
     <!--    Main Content-->
     <!-- ===============================================-->
     <main class="main" id="top">
-      <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" data-navbar-on-scroll="data-navbar-on-scroll">
-        <div class="container"><a class="navbar-brand d-flex align-items-center fw-semi-bold fs-3" href="{{route('home')}}">
-           <img class="me-3" width="100" height="50" src="{{asset('images/logo.png')}}" alt="" /> 
-           <!-- Edu<span class="" style="color:rgb(230, 149, 9);">Link</span> -->
-          </a>
-          <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-          <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
-            <ul class="navbar-nav mx-auto pt-2 pt-lg-0 font-base">
-              <li class="nav-item px-2" ><a class="nav-link fw-medium active" href="{{route('home')}}">Accueil</a></li>
-              <li class="nav-item px-2" ><a class="nav-link" href="{{route('fonctionnalite')}}">Fonctionnalités</a></li>
-               <li class="nav-item px-2"><a class="nav-link" href="{{ route('service')}}">Services </a></li>
-              <li class="nav-item px-2" ><a class="nav-link" href="{{route('contact')}}">Contact </a></li>
-            </ul>
-            <form class="ps-lg-5">
-              <a href="{{route('login')}}" class="btn btn-outline-primary order-0" >Connexion</a>
-            </form>
-          </div>
+      <nav class="navbar navbar-expand-lg fixed-top py-3 navbar-glass" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{route('home')}}">
+                <img class="me-3 navbar-logo" src="{{asset('images/logo.png')}}" alt="Logo" />
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars text-primary"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{route('home')}}">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}" href="{{route('fonctionnalite')}}">
+                            <i class="fas fa-cube me-1"></i>Fonctionnalités
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('service') ? 'active' : '' }}" href="{{ route('service')}}">
+                            <i class="fas fa-cog me-1"></i>Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{route('contact')}}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+                <div class="nav-buttons">
+                    <a href="{{route('login')}}" class="btn btn-primary rounded-pill px-4 hover-scale">
+                        <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                    </a>
+                </div>
+            </div>
         </div>
       </nav>
      {{ $slot }}
@@ -284,4 +307,116 @@
         justify-content: center;
     }
 }
+
+.navbar-glass {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+    transform: scale(1.05);
+}
+
+.navbar .nav-link {
+    color: #333;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #0288d1;
+    background: rgba(2, 136, 209, 0.1);
+}
+
+.navbar .nav-link.active {
+    color: #0288d1;
+    background: rgba(2, 136, 209, 0.1);
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 136, 209, 0.1);
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #FF8A00, #0288d1);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(2, 136, 209, 0.3);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-top: 1rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-buttons {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .navbar .nav-link {
+        padding: 0.75rem 1rem;
+        margin: 0.2rem 0;
+    }
+}
+
+/* Animation pour le scroll */
+.navbar-scrolled {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Ajout d'un effet de transition lors du scroll */
+@media (min-width: 992px) {
+    .navbar {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var navbar = document.getElementById('mainNav');
+    
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+            navbar.classList.add('navbar-scrolled');
+        } else {
+            navbar.classList.remove('navbar-scrolled');
+        }
+    });
+});
+</script>
