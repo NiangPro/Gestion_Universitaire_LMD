@@ -58,9 +58,6 @@
                                 </button>
                             @endif
                         @endif
-                        <button type="button" wire:click="changeStatus('list')" class="btn btn-secondary">
-                            <i class="fa fa-arrow-left me-2"></i>Retour
-                        </button>
                     </div>
                 </form>
             </div>

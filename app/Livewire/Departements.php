@@ -93,6 +93,23 @@ public function delete()
     }
 }
 
+public function edit($id)
+{
+    if (!Auth::user()->hasPermission('departements', 'edit')) {
+        $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
+        return;
+    }
+
+    $this->status = "add"; // On utilise le même formulaire que pour l'ajout
+    $this->title = "Modifier le département";
+    
+    $dept = Departement::findOrFail($id);
+    $this->id = $dept->id;
+    $this->nom = $dept->nom;
+    $this->description = $dept->description;
+    $this->user_id = $dept->user_id;
+}
+
     public function loadUsers()
     {
         // Récupérer uniquement les utilisateurs du même campus
