@@ -9,14 +9,75 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Title("Filières")]
 class Filieres extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap'; // Ajout du thème de pagination
+
     public $status = "list";
-    public $title= "Liste des filières";
+    public $title = "Liste des filières";
     public $outil;
     public $id, $nom, $departement_id;
+    public $filiere = null;
+    
+    // Filtres
+    public $search = '';
+    public $selectedDepartement = '';
+    public $perPage = 10;
+    public $sortField = 'nom';
+    public $sortDirection = 'asc';
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'selectedDepartement' => ['except' => ''],
+        'sortField' => ['except' => 'nom'],
+        'sortDirection' => ['except' => 'asc']
+    ];
+
+    
+    // Ajout des listeners pour les événements de mise à jour
+    protected function getListeners()
+    {
+        return [
+            'refresh' => '$refresh',
+        ];
+    }
+
+    public function updatingSearch()
+    {
+        $this->gotoPage(1);
+    }
+
+    public function updatingSelectedDepartement()
+    {
+        $this->gotoPage(1);
+    }
+
+    public function updatingPerPage()
+    {
+        $this->gotoPage(1);
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+        $this->gotoPage(1);
+    }
+
+    public function mount()
+    {
+        $this->outil = new Outils();
+    }
+
 
     protected $rules =[
         "nom" => "required",
@@ -42,14 +103,21 @@ class Filieres extends Component
         $this->reset(["nom", "departement_id", "id"]);
     }
 
-    public function getInfo($id){
+    public function getInfo($id)
+    {
         $this->changeStatus("info");
+        
+        $filiere = Filiere::with([
+            'departement',
+            'classes',
+            'uniteEnseignements',
+            'matieres'
+        ])->findOrFail($id);
 
-        $d = Filiere::where("id", $id)->first();
-
-        $this->nom = $d->nom;
-        $this->departement_id = $d->departement_id;
-        $this->id = $d->id;
+        $this->filiere = $filiere;
+        $this->nom = $filiere->nom;
+        $this->departement_id = $filiere->departement_id;
+        $this->id = $filiere->id;
     }
 
     public function supprimer($id){
@@ -96,11 +164,40 @@ class Filieres extends Component
 
     #[Layout("components.layouts.app")]
     public function render()
-    {
-        $this->outil = new Outils();
-        return view('livewire.filiere.filieres',[
-            "filieres" => Filiere::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->get(),
-            "depts" => Departement::where("campus_id", Auth::user()->campus_id)->where("is_deleting", false)->get(),
-        ]);
+{
+    $this->outil = new Outils();
+    
+    $query = Filiere::query()
+        ->where("campus_id", Auth::user()->campus_id)
+        ->where("is_deleting", false);
+
+    if ($this->search) {
+        $query->where('nom', 'like', '%' . $this->search . '%');
     }
+
+    if ($this->selectedDepartement) {
+        $query->where('departement_id', $this->selectedDepartement);
+    }
+
+    $filieres = $query
+        ->orderBy($this->sortField, $this->sortDirection)
+        ->with(['departement', 'classes', 'uniteEnseignements', 'uniteEnseignements.matieres'])
+        ->withCount(['classes', 'uniteEnseignements'])
+        ->paginate($this->perPage);
+
+    // Calculer le nombre de matières pour chaque filière
+    $filieres->getCollection()->transform(function ($filiere) {
+        $filiere->matieres_count = $filiere->uniteEnseignements->sum(function ($ue) {
+            return $ue->matieres->count();
+        });
+        return $filiere;
+    });
+
+    return view('livewire.filiere.filieres', [
+        "filieres" => $filieres,
+        "depts" => Departement::where("campus_id", Auth::user()->campus_id)
+            ->where("is_deleting", false)
+            ->get(),
+    ]);
+}
 }
