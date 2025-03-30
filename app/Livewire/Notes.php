@@ -17,6 +17,7 @@ use Livewire\Attributes\Title;
 use App\Models\UniteEnseignement;
 use App\Models\Matiere;
 use Livewire\Attributes\Reactive;
+use App\Models\Outils;
 
 #[Title("Notes")]
 class Notes extends Component
@@ -27,6 +28,7 @@ class Notes extends Component
     public $academic_year_id;
     public $classe_id;
     public $semestre_id;
+    public $outil;
 
     public $etudiant_id = null;
     public $cours_id = null;
@@ -99,6 +101,9 @@ class Notes extends Component
         // Récupérer les étudiants de la classe
         $etudiants = $this->getEtudiantsByCampus();
 
+        $this->outil = new Outils();
+        $this->outil->addHistorique("Enregistrement des notes pour la matière {$this->matiere_id} de la classe {$this->classe_id}", "add");
+
         foreach ($etudiants as $etudiant) {
             // Vérifier si une note a été saisie pour cet étudiant
             if (isset($this->notes[$etudiant->id]['note']) && !empty($this->notes[$etudiant->id]['note'])) {
@@ -138,6 +143,8 @@ class Notes extends Component
     #[On('deleteNote')]
     public function delete($noteId)
     {
+        $this->outil = new Outils();
+        $this->outil->addHistorique("Suppression d'une note de l'étudiant {$this->selectedNote->etudiant->prenom} {$this->selectedNote->etudiant->nom}", "delete");
         Note::find($noteId)->delete();
         session()->flash('message', 'Note supprimée avec succès.');
     }

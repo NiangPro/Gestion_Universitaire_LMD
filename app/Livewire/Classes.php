@@ -9,6 +9,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Outils;
 
 #[Title("Classes")]
 class Classes extends Component
@@ -21,6 +22,7 @@ class Classes extends Component
     public $title = "Liste des classes";
     public $id, $nom, $filiere_id, $cout_formation, $cout_inscription, $mensualite;
     public $classe = null;
+    public $outil;
 
     // Filtres
     public $search = '';
@@ -120,7 +122,10 @@ class Classes extends Component
     {
         $this->validate();
 
+        $this->outil = new Outils();
         if ($this->id) {
+            $this->outil->addHistorique("Modification de la classe {$this->nom}", "edit");
+
             if (!Auth::user()->hasPermission('classes', 'edit')) {
                 $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
                 return;
@@ -137,6 +142,8 @@ class Classes extends Component
 
             $this->dispatch('update', ['message' => 'Classe mise à jour avec succès']);
         } else {
+            $this->outil->addHistorique("Création de la nouvelle classe {$this->nom}", "add");
+
             if (!Auth::user()->hasPermission('classes', 'create')) {
                 $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer']);
                 return;
@@ -190,6 +197,9 @@ class Classes extends Component
             
             // Marquer comme supprimé au lieu de supprimer physiquement
             $classe->update(['is_deleting' => true]);
+
+            $this->outil = new Outils();
+            $this->outil->addHistorique("Suppression de la classe {$classe->nom}", "delete");
 
             $this->dispatch('delete', ['message' => 'Classe supprimée avec succès']);
         } catch (\Exception $e) {

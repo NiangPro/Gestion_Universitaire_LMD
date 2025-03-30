@@ -80,7 +80,6 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::get("/annees_academiques", AcademicYears::class)->name("academicyear");
     Route::get("/departements", Departements::class)->name("departement");
     Route::get("/filieres", Filieres::class)->name("filiere");
-    Route::get("/niveaux_etudes", NiveauEtudes::class)->name("niveauetude");
     Route::get("/unite_enseignement", UniteEnseignements::class)->name("uniteenseignement");
     Route::get("/classes", Classes::class)->name("classe");
     Route::get("/cours", Cours::class)->name("cours");

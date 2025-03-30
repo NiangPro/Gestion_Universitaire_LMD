@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Campus;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\Historique;
+use App\Models\Outils;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -90,8 +92,8 @@ class Register extends Component
 
         $subscription->save();
 
-        // Enregistrement de l'administrateur avec le campus_id
-        User::create([
+        // Enregistrement de l'administrateur
+        $user = User::create([
             'prenom' => $this->prenom,
             'nom' => $this->nom,
             'username' => $this->username,
@@ -102,8 +104,20 @@ class Register extends Component
             "image" => "profil.jpg",
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'campus_id' => $campus->id, // Lier l'administrateur au campus
+            'campus_id' => $campus->id,
         ]);
+
+        // Connexion automatique de l'utilisateur pour pouvoir utiliser Auth::user()
+        Auth::login($user);
+
+        // Utilisation de la fonction existante pour l'historique
+        $outils = new Outils();
+        $outils->addHistorique(
+            "Création d'un nouveau campus : {$campus->nom} avec son administrateur : {$user->prenom} {$user->nom}",
+            'info'
+        );
+
+        Auth::logout(); // Déconnexion après l'enregistrement de l'historique
 
         session()->flash('message', 'Les informations ont été enregistrées avec succès.');
         redirect(route("login"));

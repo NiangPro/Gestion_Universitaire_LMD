@@ -3,11 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Absence;
-use App\Models\AcademicYear;
-use App\Models\Campus;
 use App\Models\Cour;
-use App\Models\Cours;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;

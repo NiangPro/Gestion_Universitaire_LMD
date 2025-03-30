@@ -10,6 +10,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use App\Models\Outils;
 
 #[Title('Paiements')]
 class Paiements extends Component
@@ -33,6 +34,7 @@ class Paiements extends Component
     public $showDetailModal = false;
     public $selectedPaiement = null;
     public $montantReadOnly = false;
+    public $outil;
 
     protected $rules = [
         'etudiant_id' => 'required',
@@ -135,6 +137,9 @@ class Paiements extends Component
                 'reference' => Paiement::genererReference(),
             ]);
 
+            $this->outil = new Outils();
+            $this->outil->addHistorique("Nouveau paiement de {$this->montant} FCFA pour l'étudiant {$this->selectedEtudiant->prenom} {$this->selectedEtudiant->nom}", "add");
+
             session()->flash('success', '✅ Nouveau paiement enregistré avec succès (Référence: ' . $paiement->reference . ')');
             $this->resetForm();
         } catch (\Exception $e) {
@@ -200,6 +205,9 @@ class Paiements extends Component
                 'mode_paiement' => $this->mode_paiement,
                 'observation' => $this->observation
             ]);
+
+            $this->outil = new Outils();
+            $this->outil->addHistorique("Modification du paiement {$reference} pour l'étudiant {$this->selectedEtudiant->prenom} {$this->selectedEtudiant->nom}", "edit");
 
             session()->flash('success', '✅ Le paiement ' . $reference . ' a été modifié avec succès');
             $this->resetForm();
