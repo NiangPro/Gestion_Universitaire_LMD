@@ -42,7 +42,20 @@ class Dashboard extends Component
     public function mount()
     {
         $this->user = Auth::user();
-        $this->currentAcademicYear = Auth::user()->campus->currentAcademicYear();
+        $campus = Auth::user()->campus;
+        
+        if (!$this->user->estSuperAdmin()) {
+            $currentAcademicYear = $campus->currentAcademicYear();
+            $this->currentAcademicYear = Auth::user()->campus->currentAcademicYear();
+            // Calcul du nombre d'étudiants pour l'année académique en cours
+            $this->totalEtudiants = User::where('campus_id', $campus->id)
+            ->where('role', 'etudiant')
+            ->whereHas('inscriptions', function($query) use ($currentAcademicYear) {
+                $query->where('academic_year_id', $currentAcademicYear->id)
+                    ->where('status', 'en_cours');
+            })
+            ->count();
+        }
         
         if ($this->user->estProfesseur()) {
             $this->loadProfesseurData();
@@ -56,17 +69,9 @@ class Dashboard extends Component
             $this->loadEleveData();
         }
 
-        $campus = Auth::user()->campus;
-        $currentAcademicYear = $campus->currentAcademicYear();
+       
 
-        // Calcul du nombre d'étudiants pour l'année académique en cours
-        $this->totalEtudiants = User::where('campus_id', $campus->id)
-            ->where('role', 'etudiant')
-            ->whereHas('inscriptions', function($query) use ($currentAcademicYear) {
-                $query->where('academic_year_id', $currentAcademicYear->id)
-                      ->where('status', 'en_cours');
-            })
-            ->count();
+        
     }
 
     private function loadProfesseurData()

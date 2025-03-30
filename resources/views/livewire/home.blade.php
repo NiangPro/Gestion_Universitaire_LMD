@@ -1,7 +1,7 @@
 <div>
     <!-- Hero Section améliorée -->
     <section class="hero-section position-relative overflow-hidden bg-gradient-primary text-white">
-        <div class="container position-relative py-5" style="z-index: 2;">
+        <div class="container position-relative" style="z-index: 2;">
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
                     <div class="animate-left">

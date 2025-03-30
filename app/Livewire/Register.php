@@ -18,6 +18,7 @@ class Register extends Component
     public $idpack;
     public $prenom, $nom, $username, $adresse, $tel, $sexe, $email, $password, $password_confirmation;
     public $nomc, $emailc, $telc, $adressec;
+    public $showPassword = false;
 
     protected $rules = [
         'prenom' => 'required|string|max:255',
@@ -121,5 +122,10 @@ class Register extends Component
         if (Auth::user()) {
             redirect(route("dashboard"));
         }
+    }
+
+    public function togglePassword()
+    {
+        $this->showPassword = !$this->showPassword;
     }
 }

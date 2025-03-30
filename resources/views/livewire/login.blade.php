@@ -188,7 +188,7 @@
     .login-btn {
         height: 50px;
         border-radius: 10px;
-        background: linear-gradient(135deg, #1a237e, #0288d1);
+        background: linear-gradient(135deg, #FF8A00, #0288d1);
         border: none;
         font-weight: 500;
         transition: all 0.3s ease;

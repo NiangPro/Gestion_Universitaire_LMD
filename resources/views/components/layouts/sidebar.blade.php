@@ -12,7 +12,7 @@
             </li>
 
             @if(Auth()->user()->estSuperAdmin())
-            <li class="nav-label text-white">Gestion Etablissements</li>
+            <!-- <li class="nav-label text-white">Gestion Etablissements</li> -->
             <li>
                 <a href="{{route('pack')}}" aria-expanded="false">
                     <i class="fa fa-server"></i>
@@ -153,8 +153,8 @@
 
                 <li>
                     <a href="{{route('acces')}}" aria-expanded="false">
-                        <i class="fa fa-times-circle text-danger"></i>
-                        <span class="nav-text">Accès</span>
+                        <i class="fa fa-key text-danger"></i>
+                        <span class="nav-text">Permissions</span>
                     </a>
                 </li>
             @endif

@@ -86,6 +86,7 @@ class User extends Authenticatable
         'email',
         'tel',
         'sexe',
+        'image',
         'date_naissance',
         'lieu_naissance',
         'nationalite',
