@@ -169,12 +169,28 @@ class Classes extends Component
         }
     }
 
+    public function getCalculatedCoutFormationProperty()
+    {
+        if (!$this->mensualite || !$this->duree || !$this->type_periode) {
+            return 0;
+        }
+
+        $inscription = $this->cout_inscription ?: 0;
+        $mensualite = $this->mensualite ?: 0;
+        $duree = $this->duree;
+
+        if ($this->type_periode === 'mois') {
+            return ($mensualite * $duree) + $inscription;
+        } else {
+            return ($mensualite * 9 * $duree) + $inscription;
+        }
+    }
+
     public function store()
     {
         $this->validate();
-        
-        // Calculer le coût final avant l'enregistrement
-        $this->calculateCoutFormation();
+
+        $this->cout_formation = $this->calculated_cout_formation;
 
         $this->outil = new Outils();
         if ($this->id) {

@@ -21,8 +21,8 @@ class Paiements extends Component
     public $showModal = false;
     public $academic_year_id;
     public $matricule;
-    public $montant;
-    public $type_paiement;
+    public $montant = null;
+    public $type_paiement = '';
     public $mode_paiement;
     public $observation;
     public $etudiant_id;
@@ -43,12 +43,25 @@ class Paiements extends Component
         'mode_paiement' => 'required',
     ];
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
+    protected $queryString = ['type_paiement', 'montant'];
+
+    public function hydrate()
+    {
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
     public function mount()
     {
         if (!Auth::user()->hasPermission('paiements', 'view')) {
             return redirect()->route('dashboard')->with('error', 'Vous n\'avez pas la permission de voir les paiements');
         }
         $this->academic_year_id = Auth::user()->campus->currentAcademicYear()->id;
+        $this->montant = null;
+        $this->type_paiement = '';
+        $this->montantReadOnly = false;
     }
 
     public function updatedSearchMatricule()
@@ -79,6 +92,12 @@ class Paiements extends Component
         $this->searchMatricule = $this->selectedEtudiant->matricule;
         $this->suggestions = [];
         
+        $this->montant = '';
+        $this->type_paiement = '';
+        $this->mode_paiement = '';
+        $this->observation = '';
+        $this->montantReadOnly = false;
+        
         session()->flash('info', '👤 Étudiant sélectionné : ' . $this->selectedEtudiant->nom . ' ' . $this->selectedEtudiant->prenom);
     }
 
@@ -92,26 +111,42 @@ class Paiements extends Component
             ->where('academic_year_id', $this->academic_year_id)
             ->first();
 
-        if (!$inscription || !$inscription->classe) {
+        if (!$inscription) {
             session()->flash('error', 'Aucune inscription trouvée pour cet étudiant dans l\'année académique en cours');
             return;
         }
 
         $classe = $inscription->classe;
 
+        if (!$classe) {
+            session()->flash('error', 'Aucune classe associée à l\'inscription');
+            return;
+        }
+
         switch ($value) {
             case 'inscription':
-                $this->montant = $classe->cout_inscription;
                 $this->montantReadOnly = true;
+                $this->montant = $classe->cout_inscription;
                 break;
             case 'mensualite':
-                $this->montant = $classe->mensualite;
                 $this->montantReadOnly = true;
+                $this->montant = $classe->mensualite;
                 break;
             default:
-                $this->montant = '';
                 $this->montantReadOnly = false;
+                $this->montant = null;
                 break;
+        }
+
+        // Forcer la mise à jour de la vue
+        $this->dispatch('refresh');
+    }
+
+    // Ajoutons une méthode pour surveiller les changements de montant
+    public function updatedMontant($value)
+    {
+        if ($this->type_paiement === 'complement') {
+            $this->montantReadOnly = false;
         }
     }
 
@@ -243,6 +278,11 @@ class Paiements extends Component
     #[Layout('components.layouts.app')]
     public function render()
     {
+        // Ajoutez ceci temporairement pour déboguer
+        info('Current montant: ' . $this->montant);
+        info('Current type: ' . $this->type_paiement);
+        info('ReadOnly: ' . ($this->montantReadOnly ? 'true' : 'false'));
+
         $paiements = Paiement::with(['user', 'academicYear'])
             ->where('campus_id', Auth::user()->campus_id)
             ->when($this->academic_year_id, function($query) {
@@ -262,5 +302,11 @@ class Paiements extends Component
                               ->orderBy('created_at', 'desc')
                               ->get()
         ]);
+    }
+
+    // Ajoutez cette méthode pour gérer l'événement de rafraîchissement
+    protected function getListeners()
+    {
+        return ['refresh' => '$refresh'];
     }
 }

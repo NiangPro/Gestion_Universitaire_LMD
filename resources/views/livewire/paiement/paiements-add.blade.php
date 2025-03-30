@@ -78,7 +78,7 @@
                                 <!-- Type de paiement -->
                                 <div class="form-group col-md-6">
                                     <label>Type de Paiement</label>
-                                    <select class="form-control" wire:model.live="type_paiement">
+                                    <select class="form-control" wire:model.change="type_paiement">
                                         <option value="">Sélectionner le type</option>
                                         <option value="inscription">Inscription</option>
                                         <option value="mensualite">Mensualité</option>
@@ -92,10 +92,10 @@
                                     <label>Montant</label>
                                     <div class="input-group">
                                         <input type="number" 
-                                               class="form-control" 
+                                               class="form-control @error('montant') is-invalid @enderror" 
                                                wire:model="montant" 
-                                               {{ $montantReadOnly ? 'readonly' : '' }}
-                                               style="{{ $montantReadOnly ? 'background-color: #e9ecef;' : '' }}">
+                                               value="{{ $montant }}"
+                                               {{ $montantReadOnly ? 'readonly' : '' }}>
                                         <div class="input-group-append">
                                             <span class="input-group-text">FCFA</span>
                                         </div>

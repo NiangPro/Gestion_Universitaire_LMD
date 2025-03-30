@@ -32,7 +32,7 @@
 
                             <div class="form-group">
                                 <label><strong>Type de période</strong></label>
-                                <select wire:model.defer='type_periode' 
+                                <select wire:model.live='type_periode' 
                                     class="form-control @error('type_periode') is-invalid @enderror">
                                     <option value="">Sélectionner le type</option>
                                     <option value="annee">Année</option>
@@ -44,7 +44,7 @@
                             <div class="form-group">
                                 <label><strong>Durée</strong></label>
                                 <input type="number" 
-                                    wire:model.defer='duree' 
+                                    wire:model.live='duree' 
                                     class="form-control @error('duree') is-invalid @enderror" 
                                     min="1"
                                     placeholder="Durée">
@@ -81,13 +81,22 @@
 
                             <div class="form-group">
                                 <label><strong>Coût total de la formation</strong></label>
-                                <input type="number" 
-                                    wire:model='cout_formation' 
-                                    class="form-control" 
-                                    readonly
-                                    placeholder="Calculé automatiquement">
+                                <div class="input-group">
+                                    <input type="text" 
+                                        class="form-control" 
+                                        readonly
+                                        value="{{ number_format($this->calculated_cout_formation, 0, ',', ' ') }}"
+                                        placeholder="Calculé automatiquement">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">FCFA</span>
+                                    </div>
+                                </div>
                                 <small class="text-muted">
-                                    Ce montant est calculé automatiquement en fonction de la durée, du type de période et de la mensualité
+                                    @if($type_periode === 'annee')
+                                        Calcul : ({{ number_format($mensualite ?: 0) }} × 9 mois × {{ $duree ?: 0 }} années) + {{ number_format($cout_inscription ?: 0) }} FCFA d'inscription
+                                    @else
+                                        Calcul : ({{ number_format($mensualite ?: 0) }} × {{ $duree ?: 0 }} mois) + {{ number_format($cout_inscription ?: 0) }} FCFA d'inscription
+                                    @endif
                                 </small>
                             </div>
                         </div>
