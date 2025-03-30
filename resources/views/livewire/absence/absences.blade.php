@@ -6,9 +6,11 @@
     <div class="card shadow-sm">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
             <h5 class="mb-0 font-weight-bold text-primary">Gestion des Absences</h5>
-            <button type="button"  wire:click="showAddAbsenceModal" class="btn btn-primary">
+            @if(Auth::user()->hasPermission('absences', 'create'))
+            <button type="button" wire:click="showAddAbsenceModal" class="btn btn-primary">
                 <i class="fas fa-plus-circle me-2"></i>Nouvelle Absence
             </button>
+            @endif
         </div>
         <div class="card-body">
             <div class="row mb-4">
@@ -62,7 +64,9 @@
                             <th>Date</th>
                             <th>Justifié</th>
                             <th>Motif</th>
+                            @if(Auth::user()->hasPermission('absences', 'edit') || Auth::user()->hasPermission('absences', 'delete'))
                             <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="text-center">
@@ -81,16 +85,23 @@
                             
                             <td>{{ $absence->justifie ? 'Oui' : 'Non' }}</td>
                             <td>{{ $absence->motif }}</td>
+                            @if(Auth::user()->hasPermission('absences', 'edit') || Auth::user()->hasPermission('absences', 'delete'))
                             <td>
                                 <div class="d-flex gap-2 justify-content-center">
-                                    <button class="btn btn-sm btn-info" title="Éditer">
+                                    @if(Auth::user()->hasPermission('absences', 'edit'))
+                                    <button wire:click="edit({{ $absence->id }})" class="btn btn-sm btn-info" title="Éditer">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-danger" title="Supprimer">
+                                    @endif
+
+                                    @if(Auth::user()->hasPermission('absences', 'delete'))
+                                    <button wire:click="delete({{ $absence->id }})" class="btn btn-sm btn-danger" title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>
