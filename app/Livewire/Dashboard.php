@@ -44,9 +44,14 @@ class Dashboard extends Component
         $this->user = Auth::user();
         $campus = Auth::user()->campus;
         
+        // Vérifie si l'utilisateur n'est pas superadmin et qu'il n'y a pas d'année académique active
+        if (!$this->user->estSuperAdmin() && !$campus->currentAcademicYear()) {
+            return;
+        }
+
         if (!$this->user->estSuperAdmin()) {
             $currentAcademicYear = $campus->currentAcademicYear();
-            $this->currentAcademicYear = Auth::user()->campus->currentAcademicYear();
+            $this->currentAcademicYear = $currentAcademicYear;
             // Calcul du nombre d'étudiants pour l'année académique en cours
             $this->totalEtudiants = User::where('campus_id', $campus->id)
             ->where('role', 'etudiant')

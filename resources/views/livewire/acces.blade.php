@@ -11,7 +11,7 @@
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" wire:model.live="isRoleMode" id="modeSwitch">
                             <label class="form-check-label" for="modeSwitch">
-                                Mode {{ $isRoleMode ? 'Rôles' : 'Utilisateurs' }}
+                                Mode {{ $isRoleMode ?'Utilisateurs'  : 'Rôles' }}
                             </label>
                         </div>
                     </div>

@@ -174,6 +174,7 @@ class Acces extends Component
         }
 
         session()->flash('success', 'Permissions du rôle mises à jour avec succès');
+        return redirect()->route('acces');
     }
 
     public function savePermissions()
@@ -199,6 +200,7 @@ class Acces extends Component
         }
 
         session()->flash('success', 'Permissions mises à jour avec succès');
+        return redirect()->route('acces');
     }
 
     #[Layout('components.layouts.app')]

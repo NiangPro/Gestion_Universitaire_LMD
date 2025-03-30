@@ -70,29 +70,26 @@ class AcademicYears extends Component
     }
 
     public function activer($id){
-
-        foreach ( AcademicYear::get() as $ay) {
+        foreach (AcademicYear::get() as $ay) {
             $ay->encours = false;
             $ay->save();
         }
 
         $ac = AcademicYear::where("id", $id)->first();
-
         $ac->encours = true;
-
         $ac->save();
 
         $this->dispatch("actif");
+        return redirect()->route('academicyear');
     }
 
     public function desactiver($id){
         $ac = AcademicYear::where("id", $id)->first();
-
         $ac->encours = false;
-
         $ac->save();
 
         $this->dispatch("desactif");
+        return redirect()->route('academicyear');
     }
 
     public function store(){

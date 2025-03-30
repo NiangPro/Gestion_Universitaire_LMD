@@ -1,6 +1,6 @@
 <div>
     <div class="container-fluid py-4">
-        @if($currentAcademicYear)
+        @if(Auth::user()->campus->currentAcademicYear())
         <!-- En-tête -->
         <div class="row mb-4">
             <div class="col-12">
@@ -278,9 +278,43 @@
             </div>
         </div>
 
-        @else 
-            <div class="alert alert-warning">
-                <strong>Veuillez d'abord <a href="{{ route('academicyear')}}">ajouter et activer une année académique</a> pour voir les autres fonctionnalités</strong>
+        @else
+            <div class="alert">
+                <h4 class="alert-heading text-center mb-4">Aucune année académique active</h4>
+                <p class="mb-3">Pour activer une année académique, veuillez suivre ces étapes :</p>
+                <ol class="list-group list-group-numbered mb-4">
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>1.</strong> Cliquez sur le menu <strong>"Permissions"</strong> dans la barre latérale
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>2.</strong> Sélectionnez <strong>"Mode Rôle"</strong>
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>3.</strong> Dans la section <strong>"Administrateur"</strong>, localisez la ligne "Années Académiques"
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>4.</strong> Cochez les cases suivantes :
+                        <ul class="mt-2">
+                            <li>✓ Voir</li>
+                            <li>✓ Modifier</li>
+                            <li>✓ Supprimer</li>
+                        </ul>
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                    <strong>5.</strong> Cliquer sur le bouton enregistrer
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>6.</strong> Le menu "Années Académiques" sera alors accessible dans la barre latérale
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>7.</strong> Vous pourrez ensuite ajouter et activer une année académique
+                    </li>
+                </ol>
+                <div class="text-center">
+                    <a href="{{ route('acces') }}" class="btn btn-warning">
+                        <i class="fa fa-key me-2"></i>Aller aux Permissions
+                    </a>
+                </div>
             </div>
         @endif
     </div>

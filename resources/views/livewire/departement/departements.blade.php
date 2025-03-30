@@ -113,7 +113,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="4" class="text-center py-4">
-                                                <img src="{{ asset('images/empty.svg') }}" 
+                                                <img src="{{ asset('images/empty.png') }}" 
                                                     style="max-width: 200px" class="mb-3">
                                                 <p>Aucun département trouvé</p>
                                             </td>
@@ -125,13 +125,14 @@
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <div>
-                            <small class="text-muted">
-                                @if($dept->responsable)
-                                    {{ $dept->responsable->prenom }} {{ $dept->responsable->nom }}
-                                @else
-                                    Non assigné
-                                @endif
-                            </small>
+                                {{-- Supprimer ou modifier cette partie qui cause l'erreur --}}
+                                {{-- <small class="text-muted">
+                                    @if($dept->responsable)
+                                        {{ $dept->responsable->prenom }} {{ $dept->responsable->nom }}
+                                    @else
+                                        Non assigné
+                                    @endif
+                                </small> --}}
                             </div>
                             {{ $departements->links() }}
                         </div>

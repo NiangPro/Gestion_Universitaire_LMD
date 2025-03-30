@@ -107,6 +107,38 @@ class Register extends Component
             'campus_id' => $campus->id,
         ]);
 
+        // Définition des modules pour les permissions
+        $modules = [
+            'academic_years', 'absences', 'classes', 'comptabilite', 
+            'cours', 'departements', 'etudiants', 'filieres', 
+            'messages', 'notes', 'paiements', 'professeurs', 
+            'rapports', 'retards', 'ue'
+        ];
+
+        // Attribution des permissions pour chaque module
+        foreach ($modules as $module) {
+            \App\Models\Permission::create([
+                'user_id' => $user->id,
+                'campus_id' => $campus->id,
+                'module' => $module,
+                'can_view' => true,
+                'can_create' => true,
+                'can_edit' => true,
+                'can_delete' => false // Pas de permission de suppression
+            ]);
+
+            // Créer également les permissions au niveau du rôle
+            \App\Models\Permission::create([
+                'role' => 'admin',
+                'campus_id' => $campus->id,
+                'module' => $module,
+                'can_view' => true,
+                'can_create' => true,
+                'can_edit' => true,
+                'can_delete' => false // Pas de permission de suppression
+            ]);
+        }
+
         // Connexion automatique de l'utilisateur pour pouvoir utiliser Auth::user()
         Auth::login($user);
 
@@ -120,7 +152,7 @@ class Register extends Component
         Auth::logout(); // Déconnexion après l'enregistrement de l'historique
 
         session()->flash('message', 'Les informations ont été enregistrées avec succès.');
-        redirect(route("login"));
+        return redirect()->route("login");
     }
 
     #[Layout("components.layouts.home")]
