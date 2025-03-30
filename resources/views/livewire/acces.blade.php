@@ -130,18 +130,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $moduleIcons = [
+                                            'users' => 'users',
+                                            'paiements' => 'money-bill',
+                                            'inscriptions' => 'user-graduate',
+                                            'classes' => 'chalkboard-teacher',
+                                            'cours' => 'book',
+                                            'notes' => 'star',
+                                            'absences' => 'calendar-times',
+                                            'personnel' => 'users-cog',
+                                            'professeurs' => 'chalkboard-teacher',
+                                            'surveillants' => 'user-shield',
+                                            'parents' => 'user-friends',
+                                            'configuration' => 'cogs',
+                                            'historiques' => 'history',
+                                            'academic_years' => 'calendar',
+                                            'comptabilite' => 'calculator',
+                                            'departements' => 'building',
+                                            'etudiants' => 'user-graduate',
+                                            'filieres' => 'sitemap',
+                                            'messages' => 'envelope',
+                                            'retards' => 'clock',
+                                            'ue' => 'book-open'
+                                        ];
+                                    @endphp
+
                                     @foreach($modules as $module => $label)
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <i class="fas fa-{{ $module === 'users' ? 'users' : 
-                                                                      ($module === 'paiements' ? 'money-bill' : 
-                                                                      ($module === 'inscriptions' ? 'user-graduate' : 
-                                                                      ($module === 'classes' ? 'chalkboard-teacher' : 
-                                                                      ($module === 'cours' ? 'book' : 
-                                                                      ($module === 'notes' ? 'star' : 
-                                                                      ($module === 'absences' ? 'calendar-times' : 
-                                                                      'envelope')))))) }} text-primary me-2"></i>
+                                                    <i class="fas fa-{{ $moduleIcons[$module] ?? 'circle' }} text-primary mr-2"></i>
                                                     {{ $label }}
                                                 </div>
                                             </td>

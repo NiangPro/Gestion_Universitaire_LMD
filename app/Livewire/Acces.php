@@ -33,10 +33,15 @@ class Acces extends Component
         'messages' => 'Messages',
         'notes' => 'Notes',
         'paiements' => 'Paiements',
+        'personnel' => 'Personnel',
         'professeurs' => 'Professeurs',
+        'surveillants' => 'Surveillants',
+        'parents' => 'Parents',
         'rapports' => 'Rapports',
         'retards' => 'Retards',
-        'ue' => 'Unités d\'enseignement'
+        'ue' => 'Unités d\'enseignement',
+        'configuration' => 'Configuration',
+        'historiques' => 'Historiques'
     ];
 
     public $roles = [

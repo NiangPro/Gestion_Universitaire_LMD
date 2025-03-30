@@ -20,7 +20,7 @@ class Classes extends Component
 
     public $status = "list";
     public $title = "Liste des classes";
-    public $id, $nom, $filiere_id, $cout_formation, $cout_inscription, $mensualite;
+    public $id, $nom, $filiere_id, $cout_formation, $cout_inscription, $mensualite, $type_periode, $duree;
     public $classe = null;
     public $outil;
 
@@ -40,9 +40,20 @@ class Classes extends Component
     protected $rules = [
         'nom' => 'required|string|max:255',
         'filiere_id' => 'required|exists:filieres,id',
-        'cout_formation' => 'nullable|numeric|min:0',
         'cout_inscription' => 'nullable|numeric|min:0',
         'mensualite' => 'nullable|numeric|min:0',
+        'type_periode' => 'required|in:annee,mois',
+        'duree' => 'required|integer|min:1',
+    ];
+
+    protected $messages = [
+        'nom.required' => 'Le nom est obligatoire',
+        'filiere_id.required' => 'La filière est obligatoire',
+        'type_periode.required' => 'Le type de période est obligatoire',
+        'type_periode.in' => 'Le type de période doit être année ou mois',
+        'duree.required' => 'La durée est obligatoire',
+        'duree.integer' => 'La durée doit être un nombre entier',
+        'duree.min' => 'La durée minimum est de 1',
     ];
 
     public function mount()
@@ -65,7 +76,7 @@ class Classes extends Component
         switch ($status) {
             case 'add':
                 $this->title = "Ajouter une classe";
-                $this->reset(['id', 'nom', 'filiere_id', 'cout_formation', 'cout_inscription', 'mensualite']);
+                $this->reset(['id', 'nom', 'filiere_id', 'cout_formation', 'cout_inscription', 'mensualite', 'type_periode', 'duree']);
                 break;
             case 'list':
                 $this->title = "Liste des classes";
@@ -118,14 +129,55 @@ class Classes extends Component
             ->get();
     }
 
+    public function updatedTypePeriode()
+    {
+        $this->calculateCoutFormation();
+    }
+
+    public function updatedDuree()
+    {
+        $this->calculateCoutFormation();
+    }
+
+    public function updatedMensualite()
+    {
+        $this->calculateCoutFormation();
+    }
+
+    public function updatedCoutInscription()
+    {
+        $this->calculateCoutFormation();
+    }
+
+    protected function calculateCoutFormation()
+    {
+        if (!$this->mensualite || !$this->duree || !$this->type_periode) {
+            $this->cout_formation = 0;
+            return;
+        }
+
+        $inscription = $this->cout_inscription ?: 0;
+        $mensualite = $this->mensualite;
+        $duree = $this->duree;
+
+        if ($this->type_periode === 'mois') {
+            // Si la période est en mois, calcul direct
+            $this->cout_formation = ($mensualite * $duree) + $inscription;
+        } else {
+            // Si la période est en années, multiplier par 9 mois (période scolaire standard)
+            $this->cout_formation = ($mensualite * 9 * $duree) + $inscription;
+        }
+    }
+
     public function store()
     {
         $this->validate();
+        
+        // Calculer le coût final avant l'enregistrement
+        $this->calculateCoutFormation();
 
         $this->outil = new Outils();
         if ($this->id) {
-            $this->outil->addHistorique("Modification de la classe {$this->nom}", "edit");
-
             if (!Auth::user()->hasPermission('classes', 'edit')) {
                 $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de modifier']);
                 return;
@@ -137,13 +189,14 @@ class Classes extends Component
                 'filiere_id' => $this->filiere_id,
                 'cout_formation' => $this->cout_formation,
                 'cout_inscription' => $this->cout_inscription,
-                'mensualite' => $this->mensualite
+                'mensualite' => $this->mensualite,
+                'type_periode' => $this->type_periode,
+                'duree' => $this->duree
             ]);
 
-            $this->dispatch('update', ['message' => 'Classe mise à jour avec succès']);
+            $this->outil->addHistorique("Modification de la classe {$this->nom}", "edit");
+            $this->dispatch('updated');
         } else {
-            $this->outil->addHistorique("Création de la nouvelle classe {$this->nom}", "add");
-
             if (!Auth::user()->hasPermission('classes', 'create')) {
                 $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer']);
                 return;
@@ -155,10 +208,13 @@ class Classes extends Component
                 'cout_formation' => $this->cout_formation,
                 'cout_inscription' => $this->cout_inscription,
                 'mensualite' => $this->mensualite,
+                'type_periode' => $this->type_periode,
+                'duree' => $this->duree,
                 'campus_id' => Auth::user()->campus_id
             ]);
 
-            $this->dispatch('added', ['message' => 'Classe ajoutée avec succès']);
+            $this->outil->addHistorique("Création de la nouvelle classe {$this->nom}", "add");
+            $this->dispatch('added');
         }
 
         $this->changeStatus('list');
@@ -176,13 +232,14 @@ class Classes extends Component
         
         $classe = Classe::findOrFail($id);
         
-        // Remplir les informations de la classe
         $this->id = $classe->id;
         $this->nom = $classe->nom;
         $this->filiere_id = $classe->filiere_id;
         $this->cout_formation = $classe->cout_formation;
         $this->cout_inscription = $classe->cout_inscription;
         $this->mensualite = $classe->mensualite;
+        $this->type_periode = $classe->type_periode;
+        $this->duree = $classe->duree;
     }
 
     public function supprimer($id)

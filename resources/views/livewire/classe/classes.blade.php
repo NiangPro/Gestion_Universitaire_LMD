@@ -61,6 +61,7 @@
                                     @endif
                                 </th>
                                 <th>Filière</th>
+                                <th>Durée</th>
                                 <th>Effectif</th>
                                 <th>Frais</th>
                                 <th class="text-center">Actions</th>
@@ -77,6 +78,11 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-info">
+                                            {{ $classe->duree_formattee }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-success">
                                             {{ $classe->etudiants_count }} étudiants
                                         </span>
                                     </td>

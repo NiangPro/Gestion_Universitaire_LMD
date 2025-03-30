@@ -15,6 +15,8 @@ class Classe extends Model
         "nom",
         "filiere_id",
         "campus_id",
+        "type_periode",
+        "duree",
         "academic_year_id",
         "cout_formation",
         "cout_inscription",
@@ -42,5 +44,14 @@ class Classe extends Model
         return $this->belongsToMany(User::class, 'inscriptions', 'classe_id', 'user_id')
             ->withPivot(['academic_year_id', 'montant', 'restant', 'status'])
             ->withTimestamps();
+    }
+
+    public function getDureeFormatteeAttribute()
+    {
+        if ($this->type_periode === 'annee') {
+            return $this->duree . ' ' . ($this->duree > 1 ? 'années' : 'année');
+        } else {
+            return $this->duree . ' ' . ($this->duree > 1 ? 'mois' : 'mois');
+        }
     }
 }

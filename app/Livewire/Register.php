@@ -112,11 +112,13 @@ class Register extends Component
             'academic_years', 'absences', 'classes', 'comptabilite', 
             'cours', 'departements', 'etudiants', 'filieres', 
             'messages', 'notes', 'paiements', 'professeurs', 
-            'rapports', 'retards', 'ue'
+            'rapports', 'retards', 'ue', 'personnel', 'surveillants',
+            'parents', 'configuration', 'historiques'
         ];
 
         // Attribution des permissions pour chaque module
         foreach ($modules as $module) {
+            // Permissions pour l'utilisateur
             \App\Models\Permission::create([
                 'user_id' => $user->id,
                 'campus_id' => $campus->id,
@@ -127,7 +129,7 @@ class Register extends Component
                 'can_delete' => false // Pas de permission de suppression
             ]);
 
-            // Créer également les permissions au niveau du rôle
+            // Permissions pour le rôle admin
             \App\Models\Permission::create([
                 'role' => 'admin',
                 'campus_id' => $campus->id,

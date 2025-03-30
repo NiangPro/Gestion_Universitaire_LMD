@@ -284,35 +284,28 @@
                 <p class="mb-3">Pour activer une année académique, veuillez suivre ces étapes :</p>
                 <ol class="list-group list-group-numbered mb-4">
                     <li class="list-group-item border-0 bg-transparent">
-                        <strong>1.</strong> Cliquez sur le menu <strong>"Permissions"</strong> dans la barre latérale
+                        <strong>1.</strong> Cliquez sur le menu <strong>"Années Académiques"</strong> dans la barre latérale
                     </li>
                     <li class="list-group-item border-0 bg-transparent">
-                        <strong>2.</strong> Sélectionnez <strong>"Mode Rôle"</strong>
+                        <strong>2.</strong> Cliquez sur le bouton <strong>"Nouvelle Année"</strong>
                     </li>
                     <li class="list-group-item border-0 bg-transparent">
-                        <strong>3.</strong> Dans la section <strong>"Administrateur"</strong>, localisez la ligne "Années Académiques"
-                    </li>
-                    <li class="list-group-item border-0 bg-transparent">
-                        <strong>4.</strong> Cochez les cases suivantes :
+                        <strong>3.</strong> Remplissez le formulaire avec :
                         <ul class="mt-2">
-                            <li>✓ Voir</li>
-                            <li>✓ Modifier</li>
-                            <li>✓ Supprimer</li>
+                            <li>• La date de début</li>
+                            <li>• La date de fin</li>
                         </ul>
                     </li>
                     <li class="list-group-item border-0 bg-transparent">
-                    <strong>5.</strong> Cliquer sur le bouton enregistrer
+                        <strong>4.</strong> Cliquez sur <strong>"Enregistrer"</strong>
                     </li>
                     <li class="list-group-item border-0 bg-transparent">
-                        <strong>6.</strong> Le menu "Années Académiques" sera alors accessible dans la barre latérale
-                    </li>
-                    <li class="list-group-item border-0 bg-transparent">
-                        <strong>7.</strong> Vous pourrez ensuite ajouter et activer une année académique
+                        <strong>5.</strong> Une fois créée, cliquez sur le bouton <strong>"Activer"</strong> pour rendre l'année académique active
                     </li>
                 </ol>
                 <div class="text-center">
-                    <a href="{{ route('acces') }}" class="btn btn-warning">
-                        <i class="fa fa-key me-2"></i>Aller aux Permissions
+                    <a href="{{ route('academicyear') }}" class="btn btn-primary">
+                        <i class="fa fa-calendar me-2"></i>Gérer les Années Académiques
                     </a>
                 </div>
             </div>

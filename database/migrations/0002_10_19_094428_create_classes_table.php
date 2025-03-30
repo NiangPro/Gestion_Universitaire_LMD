@@ -15,9 +15,11 @@ return new class extends Migration
             $table->bigIncrements("id"); 
             $table->string("nom"); 
             $table->unsignedBigInteger('filiere_id')->nullable();
-            $table->unsignedBigInteger('cout_formation')->nullable();
-            $table->unsignedBigInteger('cout_inscription')->nullable();
-            $table->unsignedBigInteger('mensualite')->nullable();
+            $table->unsignedBigInteger('cout_formation')->default(0);
+            $table->unsignedBigInteger('cout_inscription')->default(0);
+            $table->unsignedBigInteger('mensualite')->default(0);
+            $table->string('type_periode')->default("annee"); // annee, mois
+            $table->unsignedInteger('duree')->default(0); // annee, mois
             $table->foreign('filiere_id')->references("id")->on("filieres")->onDelete("cascade");
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");

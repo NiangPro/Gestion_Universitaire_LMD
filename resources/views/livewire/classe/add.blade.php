@@ -29,6 +29,27 @@
                                 </select>
                                 @error('filiere_id') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
+
+                            <div class="form-group">
+                                <label><strong>Type de période</strong></label>
+                                <select wire:model.defer='type_periode' 
+                                    class="form-control @error('type_periode') is-invalid @enderror">
+                                    <option value="">Sélectionner le type</option>
+                                    <option value="annee">Année</option>
+                                    <option value="mois">Mois</option>
+                                </select>
+                                @error('type_periode') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label><strong>Durée</strong></label>
+                                <input type="number" 
+                                    wire:model.defer='duree' 
+                                    class="form-control @error('duree') is-invalid @enderror" 
+                                    min="1"
+                                    placeholder="Durée">
+                                @error('duree') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -43,7 +64,7 @@
                             <div class="form-group">
                                 <label><strong>Frais d'inscription</strong></label>
                                 <input type="number" 
-                                    wire:model.defer='cout_inscription' 
+                                    wire:model.live='cout_inscription' 
                                     class="form-control @error('cout_inscription') is-invalid @enderror" 
                                     placeholder="Montant des frais d'inscription">
                                 @error('cout_inscription') <span class="invalid-feedback">{{ $message }}</span> @enderror
@@ -52,7 +73,7 @@
                             <div class="form-group">
                                 <label><strong>Mensualité</strong></label>
                                 <input type="number" 
-                                    wire:model.defer='mensualite' 
+                                    wire:model.live='mensualite' 
                                     class="form-control @error('mensualite') is-invalid @enderror" 
                                     placeholder="Montant de la mensualité">
                                 @error('mensualite') <span class="invalid-feedback">{{ $message }}</span> @enderror
@@ -61,10 +82,13 @@
                             <div class="form-group">
                                 <label><strong>Coût total de la formation</strong></label>
                                 <input type="number" 
-                                    wire:model.defer='cout_formation' 
-                                    class="form-control @error('cout_formation') is-invalid @enderror" 
-                                    placeholder="Coût total de la formation">
-                                @error('cout_formation') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                    wire:model='cout_formation' 
+                                    class="form-control" 
+                                    readonly
+                                    placeholder="Calculé automatiquement">
+                                <small class="text-muted">
+                                    Ce montant est calculé automatiquement en fonction de la durée, du type de période et de la mensualité
+                                </small>
                             </div>
                         </div>
                     </div>
