@@ -127,7 +127,7 @@ class UniteEnseignements extends Component
             $ue->matieres()->update(['is_deleting' => true]);
 
             $this->outil = new Outils();
-            $this->outil->addHistorique("Suppression de l'unité d'enseignement {$ue->nom}", "delete");
+            $this->outil->addHistorique("Suppression de l'unité d'enseignement {$ue->nom} et ses matières associées", "delete");
 
             $this->dispatch('delete', ['message' => 'Unité d\'enseignement supprimée avec succès']);
         } catch (\Exception $e) {
@@ -351,7 +351,7 @@ class UniteEnseignements extends Component
                 $event = 'update';
 
                 $this->outil = new Outils();
-                $this->outil->addHistorique("Modification du pack {$this->nom}", "edit");
+                $this->outil->addHistorique("Modification de l'unité d'enseignement {$this->nom}", "edit");
             } else {
                 if (!Auth::user()->hasPermission('ue', 'create')) {
                     $this->dispatch('error', ['message' => 'Vous n\'avez pas la permission de créer']);
@@ -380,7 +380,7 @@ class UniteEnseignements extends Component
                 $event = 'added';
 
                 $this->outil = new Outils();
-                $this->outil->addHistorique("Création du nouveau pack {$this->nom}", "add");
+                $this->outil->addHistorique("Création de l'unité d'enseignement {$this->nom}", "add");
             }
 
             DB::commit();

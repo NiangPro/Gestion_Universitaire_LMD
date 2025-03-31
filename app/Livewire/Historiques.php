@@ -73,7 +73,8 @@ class Historiques extends Component
             $query->where('campus_id', auth()->user()->campus_id);
         }
 
-        return $query->when($this->search, function($query) {
+        // Ajout des relations et filtres
+        $query->when($this->search, function($query) {
                 $query->where(function($q) {
                     $q->where('description', 'like', '%' . $this->search . '%')
                       ->orWhereHas('user', function($q) {
@@ -90,8 +91,17 @@ class Historiques extends Component
             })
             ->when($this->dateFin, function($query) {
                 $query->whereDate('created_at', '<=', $this->dateFin);
-            })
-            ->with(['user', 'campus'])
+            });
+
+        // Log pour déboguer
+        \Log::info('SQL Query:', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+            'user_role' => auth()->user()->role,
+            'campus_id' => auth()->user()->campus_id
+        ]);
+
+        return $query->with(['user', 'campus'])
             ->latest()
             ->paginate($this->perPage);
     }
