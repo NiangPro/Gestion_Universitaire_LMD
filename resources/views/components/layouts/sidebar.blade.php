@@ -159,13 +159,22 @@
                 </li>
             @endif
 
-            @if(Auth()->user()->estSuperAdmin() || (Auth()->user()->estAdmin() && Auth::user()->hasPermission('historiques', 'view')))
-            <li>
-                <a href="{{route('historique')}}" aria-expanded="false">
-                    <i class="fa fa-history"></i>
-                    <span class="nav-text">Historiques</span>
-                </a>
-            </li>
+            @if(Auth()->user()->estSuperAdmin())
+                <li>
+                    <a href="{{route('historique')}}" aria-expanded="false">
+                        <i class="fa fa-history"></i>
+                        <span class="nav-text">Historique Système</span>
+                        <!-- <span class="badge badge-info">Abonnements & Campus</span> -->
+                    </a>
+                </li>
+            @elseif(Auth()->user()->role === 'admin')
+                <li>
+                    <a href="{{route('historique')}}" aria-expanded="false">
+                        <i class="fa fa-history"></i>
+                        <span class="nav-text">Historique Campus</span>
+                        <!-- <span class="badge badge-primary">{{ Auth()->user()->campus->nom }}</span> -->
+                    </a>
+                </li>
             @endif
 
             @if(Auth::user()->hasPermission('messages', 'view'))
