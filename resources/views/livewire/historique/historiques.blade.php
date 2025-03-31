@@ -1,19 +1,15 @@
 <div>
-    <div class="card">
+    <div class="card" wire:key="historique-card">
         <div class="row card-header">
-                    <h3 class="card-title col-md-6">
-                        <i class="fas fa-history mr-2"></i>
-                        @if(Auth::user()->estSuperAdmin())
-                            Historique des abonnements et campus
-                        @else
-                            Historique de {{ Auth::user()->campus->nom }}
-                        @endif
-                    </h3>
-                <div class="col-md-6 text-right">
-                    <button onclick="window.print()" class="btn btn-primary">
-                        <i class="fas fa-print mr-2"></i>Imprimer
-                    </button>
-                </div>
+            <h3 class="card-title col-md-6">
+                <i class="fas fa-history mr-2"></i>
+                Historique des abonnements et campus
+            </h3>
+            <div class="col-md-6 text-right">
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print mr-2"></i>Imprimer
+                </button>
+            </div>
         </div>
         
         <div class="card-body">
@@ -67,83 +63,70 @@
             </div>
 
             <!-- Table -->
-                <div class="table-responsive">
+            <div class="table-responsive">
                 <table class="table table-hover table-striped">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Description</th>
-                                @if(Auth::user()->estSuperAdmin())
-                                    <th>Campus</th>
-                                @endif
-                                <th>Date</th>
-                                <th>Détails</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @forelse($historiques as $historique)
-                            <tr>
-                                <td>
-                                    @if($historique->table === 'subscriptions')
-                                        @if($historique->type === 'add')
-                                            <span class="badge badge-success">Nouvel abonnement</span>
-                                        @elseif($historique->type === 'edit')
-                                            <span class="badge badge-info">Renouvellement</span>
-                                        @elseif($historique->type === 'delete')
-                                            <span class="badge badge-danger">Résiliation</span>
-                                        @endif
-                                    @elseif($historique->table === 'campuses')
-                                        @if($historique->type === 'add')
-                                            <span class="badge badge-primary">Nouveau campus</span>
-                                        @elseif($historique->type === 'edit')
-                                            <span class="badge badge-warning">Modification campus</span>
-                                        @endif
-                                    @elseif($historique->table === 'packs')
-                                        <span class="badge badge-secondary">Changement de formule</span>
-                                    @else
-                                        @if($historique->user->role === 'superadmin')
-                                            <span class="badge badge-dark">Action SuperAdmin</span>
-                                        @elseif($historique->user_id === Auth::id())
-                                            <span class="badge badge-info">Mon action</span>
-                                        @endif
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Campus</th>
+                            <th>Date</th>
+                            <th>Détails</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($historiques as $historique)
+                        <tr>
+                            <td>
+                                @if($historique->table === 'subscriptions')
+                                    @if($historique->type === 'add')
+                                        <span class="badge badge-success">Nouvel abonnement</span>
+                                    @elseif($historique->type === 'edit')
+                                        <span class="badge badge-info">Renouvellement</span>
+                                    @elseif($historique->type === 'delete')
+                                        <span class="badge badge-danger">Résiliation</span>
                                     @endif
-                                </td>
-                                <td>{{ $historique->description }}</td>
-                                @if(Auth::user()->estSuperAdmin())
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge badge-{{ $historique->user->role === 'superadmin' ? 'dark' : 'info' }} mr-2">
-                                                {{ $historique->user->role === 'superadmin' ? 'SuperAdmin' : $historique->campus->nom }}
-                                            </span>
-                                            @if($historique->user_id === Auth::id())
-                                                <span class="badge badge-success">Moi</span>
-                                            @endif
-                                        </div>
-                                        <small class="text-muted">{{ $historique->user->prenom }} {{ $historique->user->nom }}</small>
-                                    </td>
+                                @elseif($historique->table === 'campuses')
+                                    @if($historique->type === 'add')
+                                        <span class="badge badge-primary">Nouveau campus</span>
+                                    @elseif($historique->type === 'edit')
+                                        <span class="badge badge-warning">Modification campus</span>
+                                    @endif
+                                @elseif($historique->table === 'packs')
+                                    <span class="badge badge-secondary">Changement de formule</span>
                                 @endif
-                                <td>
-                                    <div>{{ $historique->created_at->format('d/m/Y') }}</div>
-                                    <small class="text-muted">{{ $historique->created_at->format('H:i:s') }}</small>
-                                </td>
-                                <td>
-                                    <button wire:click="showDetails({{ $historique->id }})" 
-                                            class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ Auth::user()->estSuperAdmin() ? '5' : '4' }}" class="text-center py-4">
-                                    <img src="{{ asset('images/empty.png') }}" alt="Aucune donnée" 
-                                         style="width: 200px; height: 200px;">
-                                    <p class="text-muted">Aucun historique trouvé</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                        </tbody>
-                    </table>
+                            </td>
+                            <td>{{ $historique->description }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge badge-{{ $historique->user->role === 'superadmin' ? 'dark' : 'info' }} mr-2">
+                                        {{ $historique->user->role === 'superadmin' ? 'SuperAdmin' : $historique->campus->nom }}
+                                    </span>
+                                </div>
+                                <small class="text-muted">{{ $historique->user->prenom }} {{ $historique->user->nom }}</small>
+                            </td>
+                            <td>
+                                <div>{{ $historique->created_at->format('d/m/Y') }}</div>
+                                <small class="text-muted">{{ $historique->created_at->format('H:i:s') }}</small>
+                            </td>
+                            <td>
+                                <button wire:click="showDetails({{ $historique->id }})" 
+                                        class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <img src="{{ asset('images/empty.png') }}" alt="Aucune donnée" 
+                                     style="width: 200px; height: 200px;">
+                                <p class="text-muted">Aucun historique trouvé</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                </table>
             </div>
 
             <!-- Pagination -->
@@ -155,9 +138,9 @@
                 <div>
                     {{ $historiques->links() }}
                 </div>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Modal Détails -->
     @if($showModal)
