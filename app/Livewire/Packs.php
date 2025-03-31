@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Activation;
 use App\Models\Pack;
+use App\Models\Outils;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -20,6 +21,7 @@ class Packs extends Component
     public $couleur;
     public $text;
     public $id;
+    public $outil;
 
     protected $rules = [
         'nom' => 'required|string|max:255',
@@ -53,6 +55,14 @@ class Packs extends Component
 
         $pack->save();
 
+        // Ajouter l'historique
+        $this->outil->addHistorique(
+            "Suppression du pack {$pack->nom}",
+            "delete",
+            "packs",
+            $pack->id
+        );
+
         $this->dispatch("deletePack");
     }
 
@@ -72,26 +82,33 @@ class Packs extends Component
 
     public function store()
     {
-        // Valider les données
         $this->validate();
+        
         if ($this->id) {
             $p = Pack::where("id", $this->id)->first();
             
             if ($p) {
+                $oldNom = $p->nom;
                 $p->nom = $this->nom;
                 $p->annuel = $this->annuel;
                 $p->mensuel = $this->mensuel;
                 $p->couleur = $this->couleur;
                 $p->limite = $this->limite;
                 $p->text = $this->text;
-
                 $p->save();
+
+                // Ajouter l'historique
+                $this->outil->addHistorique(
+                    "Modification du pack {$oldNom} en {$this->nom}",
+                    "edit",
+                    "packs",
+                    $p->id
+                );
+
                 $this->dispatch("updateSuccessful");
             }
-        }else{
-
-            // Enregistrer les données dans la base de données
-            Pack::create([
+        } else {
+            $pack = Pack::create([
                 'nom' => $this->nom,
                 'limite' => $this->limite,
                 'mensuel' => $this->mensuel,
@@ -99,10 +116,17 @@ class Packs extends Component
                 'couleur' => $this->couleur,
                 'text' => $this->text
             ]);
+
+            // Ajouter l'historique
+            $this->outil->addHistorique(
+                "Création du nouveau pack {$this->nom}",
+                "add",
+                "packs",
+                $pack->id
+            );
+
             $this->dispatch("addSuccessful");
         }
-
-        // Réinitialiser les champs du formulaire
 
         $this->status = "list";
     }
@@ -126,6 +150,6 @@ class Packs extends Component
     }
 
     public function mount(){
-        // $this->deleteItem = Activation::where("nom", "packs")->first()->status;
+        $this->outil = new Outils();
     }
 }
