@@ -5,8 +5,6 @@ namespace App\Livewire;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-use App\Mail\ContactFormMail;
-use Illuminate\Support\Facades\Mail;
 
 #[Title("Contact")]
 class Contact extends Component
