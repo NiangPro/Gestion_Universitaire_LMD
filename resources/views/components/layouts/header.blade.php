@@ -115,12 +115,13 @@
                             <livewire:logout />
                         </div>
                     </li>
+                    
                 </ul>
             </div>
         </nav>
     </div>
 </div>
-
+<!-- 
 @section('css')
 <style>
 .dropdown-menu {
@@ -224,4 +225,4 @@ $(document).ready(function() {
     });
 });
 </script>
-@endpush
+@endpush -->

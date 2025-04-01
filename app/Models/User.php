@@ -116,8 +116,9 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function cours(){
-        return $this->hasMany(Cour::class, "professeur_id");
+    public function cours()
+    {
+        return $this->hasMany(Cour::class, 'professeur_id');
     }
 
     public function departement(){
@@ -251,5 +252,18 @@ class User extends Authenticatable
         if (!$permission) return false;
         
         return $permission->{"can_$action"};
+    }
+
+    public function notes()
+    {
+        return $this->hasManyThrough(
+            Note::class,
+            Cour::class,
+            'professeur_id',
+            'cours_id',
+            'id',
+            'id'
+        )->select('notes.*')
+        ->join('cours', 'cours.id', '=', 'notes.cours_id');
     }
 }

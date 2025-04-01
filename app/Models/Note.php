@@ -31,7 +31,7 @@ class Note extends Model
 
     public function academicYear()
     {
-        return $this->belongsTo(AcademicYear::class);
+        return $this->belongsTo(AcademicYear::class, 'academic_year_id');
     }
 
     public function semestre()
@@ -49,4 +49,5 @@ class Note extends Model
         return $this->belongsTo(Coefficient::class);
     }
 
+   
 }

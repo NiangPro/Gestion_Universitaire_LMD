@@ -239,7 +239,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('service') ? 'active' : '' }}" href="{{ route('service')}}">
-                            <i class="fas fa-cog me-1"></i>Services
+                            <i class="fas fa-cog me-1"></i>Tarifs
                         </a>
                     </li>
                     <li class="nav-item">
