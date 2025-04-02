@@ -29,6 +29,7 @@ class Acces extends Component
         'cours' => 'Cours',
         'departements' => 'Départements',
         'etudiants' => 'Étudiants',
+        'evaluations' => 'Évaluations',
         'filieres' => 'Filières',
         'messages' => 'Messages',
         'notes' => 'Notes',

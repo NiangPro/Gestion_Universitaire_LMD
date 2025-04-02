@@ -112,6 +112,9 @@
                             @if(Auth::user()->hasPermission('notes', 'view'))
                             <li><a href="{{route('note')}}">Notes</a></li>
                             @endif
+                            @if(Auth::user()->hasPermission('evaluations', 'view'))
+                            <li><a href="{{route('evaluation')}}">Evaluations</a></li>
+                            @endif
                             @if(Auth::user()->hasPermission('absences', 'view'))
                             <li><a href="{{route('absence')}}">Absences</a></li>
                             @endif

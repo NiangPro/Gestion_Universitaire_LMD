@@ -2,16 +2,16 @@
     {{-- The Master doesn't talk, he acts. --}}
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title">Gestion des Notes</h3>
+            <h3 class="card-title">Gestion des Évaluations</h3>
             <div>
-                @if(!$showModal)
-            <button type="button" class="btn btn-primary" wire:click="$set('showModal', true)">
-                        <i class="fas fa-plus"></i> Ajouter des notes
+                @if(!$showModal && Auth::user()->hasPermission('evaluations', 'create'))
+                    <button type="button" class="btn btn-primary" wire:click="$set('showModal', true)">
+                        <i class="fas fa-plus"></i> Nouvelle évaluation
                     </button>
                 @else
                     <button type="button" class="btn btn-warning" wire:click="$set('showModal', false)">
                         <i class="fas fa-list"></i> Voir la liste
-            </button>
+                    </button>
                 @endif
             </div>
         </div>
@@ -145,12 +145,21 @@
                             <td>{{ $note->type_evaluation }}</td>
                             <td>{{ $note->coefficient->valeur }}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary btn-sm rounded-pill" wire:click="edit({{ $note->id }})">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-warning btn-sm rounded-pill" wire:click="confirmDelete({{ $note->id }})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="btn-group">
+                                    @if(Auth::user()->hasPermission('evaluations', 'edit'))
+                                        <button class="btn btn-sm btn-primary" wire:click="edit({{ $note->id }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    @endif
+                                    
+                                    @if(Auth::user()->hasPermission('evaluations', 'delete'))
+                                        <button class="btn btn-sm btn-danger" 
+                                                wire:click="confirmDelete({{ $note->id }})"
+                                                onclick="confirm('Êtes-vous sûr ?') || event.stopImmediatePropagation()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                         @empty

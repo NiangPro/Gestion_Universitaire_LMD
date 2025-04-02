@@ -110,10 +110,11 @@ class Register extends Component
         // Définition des modules pour les permissions
         $modules = [
             'academic_years', 'absences', 'classes', 'comptabilite', 
-            'cours', 'departements', 'etudiants', 'filieres', 
-            'messages', 'notes', 'paiements', 'professeurs', 
-            'rapports', 'retards', 'ue', 'personnel', 'surveillants',
-            'parents', 'configuration', 'historiques'
+            'cours', 'departements', 'etudiants', 'evaluations',
+            'filieres', 'messages', 'notes', 'paiements', 
+            'professeurs', 'rapports', 'retards', 'ue', 
+            'personnel', 'surveillants', 'parents', 
+            'configuration', 'historiques'
         ];
 
         // Attribution des permissions pour chaque module
