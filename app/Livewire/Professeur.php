@@ -44,6 +44,8 @@ class Professeur extends Component
     public $showDeleteModal = false;
     public $professorToDelete = null;
 
+    public $notesData = [];
+
     protected $rules = [
         'prenom' => 'required|string|max:255',
         'nom' => 'required|string|max:255',
@@ -98,17 +100,33 @@ class Professeur extends Component
             }
         ])->findOrFail($id);
 
-        // Calculer les statistiques spécifiques au professeur
+        // Préparer les données des notes
+        $this->notesData = collect();
+        foreach($this->selectedProfesseur->cours->groupBy('matiere_id') as $matiere_id => $cours) {
+            $matiere = $cours->first()->matiere;
+            $notes = Note::where('matiere_id', $matiere_id)
+                ->where('academic_year_id', $currentAcademicYearId)
+                ->get();
+            
+            $this->notesData->push([
+                'matiere' => $matiere->nom,
+                'classes' => $cours->pluck('classe.nom')->unique()->implode(', '),
+                'types_evaluation' => $notes->pluck('type_evaluation')->unique()->implode(', '),
+                'nombre_notes' => $notes->count(),
+                'moyenne' => $notes->avg('note')
+            ]);
+        }
+
+        // Statistiques globales
         $this->stats = [
             'total_cours' => Cour::where('professeur_id', $id)
                                 ->where('academic_year_id', $currentAcademicYearId)
                                 ->count(),
-            'total_notes' => Note::whereHas('matiere', function($query) use ($id, $currentAcademicYearId) {
-                                $query->whereIn('id', function($subquery) use ($id) {
-                                    $subquery->select('matiere_id')
-                                            ->from('cours')
-                                            ->where('professeur_id', $id);
-                                });
+            'total_notes' => Note::whereIn('matiere_id', function($query) use ($id, $currentAcademicYearId) {
+                                $query->select('matiere_id')
+                                      ->from('cours')
+                                      ->where('professeur_id', $id)
+                                      ->where('academic_year_id', $currentAcademicYearId);
                             })
                             ->where('academic_year_id', $currentAcademicYearId)
                             ->count(),

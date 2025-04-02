@@ -1,3 +1,7 @@
+@php
+    use App\Models\Note;
+@endphp
+
 <div class="container-fluid">
     <div class="row page-titles mx-0">
         <div class="col-sm-6">
@@ -147,30 +151,28 @@
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th>Cours</th>
+                                                    <th>Matière</th>
                                                     <th>Classe</th>
+                                                    <th>Type d'évaluation</th>
                                                     <th>Notes saisies</th>
-                                                    <th>Moyenne classe</th>
+                                                    <th>Moyenne</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @forelse($selectedProfesseur->cours as $cours)
-                                                @php
-                                                    $notesCount = $cours->notes->count();
-                                                    $notesAvg = $notesCount > 0 ? $cours->notes->avg('note') : 0;
-                                                @endphp
-                                                <tr>
-                                                    <td>{{ optional($cours->matiere)->nom ?? 'N/A' }}</td>
-                                                    <td>{{ optional($cours->classe)->nom ?? 'N/A' }}</td>
-                                                    <td>{{ $notesCount }}</td>
-                                                    <td>{{ number_format($notesAvg, 2) }}</td>
-                                                </tr>
+                                                @forelse($notesData as $noteData)
+                                                    <tr>
+                                                        <td>{{ $noteData['matiere'] }}</td>
+                                                        <td>{{ $noteData['classes'] }}</td>
+                                                        <td>{{ $noteData['types_evaluation'] }}</td>
+                                                        <td>{{ $noteData['nombre_notes'] }}</td>
+                                                        <td>{{ number_format($noteData['moyenne'] ?? 0, 2) }}</td>
+                                                    </tr>
                                                 @empty
-                                                <tr>
-                                                    <td colspan="4" class="text-center">
-                                                        Aucune note saisie pour cette année académique
-                                                    </td>
-                                                </tr>
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">
+                                                            Aucune note saisie pour cette année académique
+                                                        </td>
+                                                    </tr>
                                                 @endforelse
                                             </tbody>
                                         </table>

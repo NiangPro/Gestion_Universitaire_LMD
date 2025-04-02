@@ -22,17 +22,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                <div class="card-header">
-                        <h4 class="card-title">{{ $title }}</h4>
-                        <div class="d-flex">
-                            <div class="input-group w-50">
+                <div class="card-header row">
+                        <h4 class="card-title col-md-8">{{ $title }}</h4>
+                            <div class="input-group col-md-4">
                                 <input type="text" class="form-control" wire:model.live="search" 
                                        placeholder="Rechercher...">
                                 <div class="input-group-append">
                                     <span class="input-group-text"><i class="fa fa-search"></i></span>
                                 </div>
                             </div>
-                        </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -56,7 +54,7 @@
                                     @forelse($professeurs as $prof)
                                     <tr>
                                         <td class="text-center">
-                                            <img src="{{ asset('storage/'.$prof->image) }}" 
+                                            <img src="{{ asset('storage/images/'.$prof->image) }}" 
                                                  class="rounded-circle" width="35" alt="photo">
                                         </td>
                                         <td>

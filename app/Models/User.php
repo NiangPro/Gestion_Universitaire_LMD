@@ -260,10 +260,19 @@ class User extends Authenticatable
             Note::class,
             Cour::class,
             'professeur_id',
-            'cours_id',
+            'matiere_id',
             'id',
-            'id'
+            'matiere_id'
         )->select('notes.*')
-        ->join('cours', 'cours.id', '=', 'notes.cours_id');
+        ->join('cours', 'cours.matiere_id', '=', 'notes.matiere_id')
+        ->where('cours.academic_year_id', function($query) {
+            $query->select('id')
+                  ->from('academic_years')
+                  ->whereIn('id', function($subquery) {
+                      $subquery->select('academic_year_id')
+                              ->from('cours')
+                              ->where('professeur_id', $this->id);
+                  });
+        });
     }
 }
