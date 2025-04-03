@@ -16,7 +16,6 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Models\UniteEnseignement;
 use App\Models\Matiere;
-use Livewire\Attributes\Reactive;
 use App\Models\Outils;
 
 #[Title("Notes")]
@@ -33,7 +32,6 @@ class Notes extends Component
     public $etudiant_id = null;
     public $cours_id = null;
     public $note = null;
-    public $coefficient_id = null;
     public $matiere_id = null;
     public $observation;
     public $showModal = false;
@@ -54,7 +52,6 @@ class Notes extends Component
         'etudiant_id' => 'required',
         'cours_id' => 'required',
         'note' => 'required|numeric|min:0|max:20',
-        'coefficient_id' => 'required',
         'matiere_id' => 'required',
         'semestre_id' => 'required'
     ];
@@ -83,51 +80,24 @@ class Notes extends Component
         $this->etudiant_id = $note->etudiant_id;
         $this->cours_id = $note->cours_id;
         $this->note = $note->note;
-        $this->coefficient_id = $note->coefficient_id;
         $this->observation = $note->observation;
         $this->semestre_id = $note->semestre_id;
     }
 
     public function sauvegarderNote()
     {
-        // Validation
-        $this->validate([
-            'classe_id' => 'required',
-            'ue_id' => 'required',
-            'matiere_id' => 'required',
-            'semestre_id' => 'required',
-        ]);
-
-        // Récupérer les étudiants de la classe
-        $etudiants = $this->getEtudiantsByCampus();
-
-        $this->outil = new Outils();
-        $this->outil->addHistorique("Enregistrement des notes pour la matière {$this->matiere_id} de la classe {$this->classe_id}", "add");
-
-        foreach ($etudiants as $etudiant) {
-            // Vérifier si une note a été saisie pour cet étudiant
-            if (isset($this->notes[$etudiant->id]['note']) && !empty($this->notes[$etudiant->id]['note'])) {
-                try {
+        foreach ($this->notes as $etudiantId => $noteData) {
             Note::create([
-                        'etudiant_id' => $etudiant->id,
-                        'matiere_id' => $this->matiere_id,
-                        'note' => $this->notes[$etudiant->id]['note'],
-                        'coefficient_id' => $this->notes[$etudiant->id]['coefficient_id'] ?? null,
-                        'type_evaluation' => $this->notes[$etudiant->id]['type_evaluation'] ?? 'CC',
-                        'observation' => $this->notes[$etudiant->id]['observation'] ?? null,
-                        'semestre_id' => $this->semestre_id,
-                        'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
-                        'campus_id' => Auth::user()->campus_id
-                    ]);
-                } catch (\Exception $e) {
-                    session()->flash('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
-                    return;
-                }
-            }
+                'etudiant_id' => $etudiantId,
+                'matiere_id' => $this->matiere_id,
+                'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
+                'type_evaluation' => $noteData['type_evaluation'],
+                'note' => $noteData['note'],
+                'observation' => $noteData['observation'] ?? null,
+                'semestre_id' => $this->semestre_id,
+                'campus_id' => auth()->user()->campus_id
+            ]);
         }
-
-        $this->reset(['notes', 'showModal', 'classe_id', 'ue_id', 'matiere_id', 'semestre_id']);
-        session()->flash('message', 'Notes enregistrées avec succès');
     }
 
     public function confirmDelete($noteId)
@@ -264,7 +234,7 @@ class Notes extends Component
         }
 
         $notesQuery = Note::query()
-            ->with(['etudiant', 'matiere', 'coefficient', 'semestre'])
+            ->with(['etudiant', 'matiere', 'semestre'])
             ->where('campus_id', Auth::user()->campus_id);
 
         if ($this->academic_year_id) {
@@ -303,7 +273,6 @@ class Notes extends Component
             'cours' => Cour::where('campus_id', Auth::user()->campus_id)
                           ->where('is_deleting', 0)
                           ->get(),
-            'coefficients' => Auth::user()->campus->coefficients
         ]);
     }
 
@@ -314,7 +283,6 @@ class Notes extends Component
             'matiere.uniteEnseignement',
             'academicYear',
             'semestre',
-            'coefficient'
         ])->find($noteId);
         
         $this->showDetailsModal = true;

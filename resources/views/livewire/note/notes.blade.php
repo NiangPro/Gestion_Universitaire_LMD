@@ -126,24 +126,22 @@
                 @include('livewire.note.add-note')
             @else
                 <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Étudiant</th>
-                        <th>Matière</th>
-                        <th>Note</th>
-                        <th>Type</th>
-                        <th>Coefficient</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
+                    <thead>
+                        <tr>
+                            <th>Étudiant</th>
+                            <th>Matière</th>
+                            <th>Note</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         @forelse($notesList as $note)
                         <tr>
                             <td>{{ $note->etudiant->nom }} {{ $note->etudiant->prenom }}</td>
                             <td>{{ $note->matiere->nom }}</td>
                             <td>{{ $note->note }}/20</td>
                             <td>{{ $note->type_evaluation }}</td>
-                            <td>{{ $note->coefficient->valeur }}</td>
                             <td>
                                 <div class="btn-group">
                                     @if(Auth::user()->hasPermission('evaluations', 'edit'))
@@ -164,15 +162,15 @@
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">Aucune note trouvée</td>
+                                <td colspan="5" class="text-center">Aucune note trouvée</td>
                             </tr>
                         @endforelse
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
 
-            <div class="mt-3">
-                {{ $notesList->links() }}
-            </div>
+                <div class="mt-3">
+                    {{ $notesList->links() }}
+                </div>
             @endif
         </div>
     </div>

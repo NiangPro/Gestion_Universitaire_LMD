@@ -23,7 +23,7 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>N°</th>
+                    <th>Matricule</th>
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Email</th>
@@ -33,7 +33,7 @@
             <tbody>
                 @foreach($etudiants as $index => $etudiant)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $etudiant->matricule }}</td>
                         <td>{{ $etudiant->nom }}</td>
                         <td>{{ $etudiant->prenom }}</td>
                         <td>{{ $etudiant->email }}</td>
@@ -150,7 +150,7 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>N°</th>
+                                <th>Matricule</th>
                                 <th>Nom</th>
                                 <th>Prénom</th>
                                 <th>Email</th>
@@ -160,7 +160,7 @@
                         <tbody>
                             @forelse($etudiants as $index => $etudiant)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $etudiant->matricule }}</td>
                                     <td>{{ $etudiant->nom }}</td>
                                     <td>{{ $etudiant->prenom }}</td>
                                     <td>{{ $etudiant->email }}</td>
@@ -188,7 +188,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>N°</th>
+                        <th>Matricule</th>
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Email</th>
@@ -198,7 +198,7 @@
                 <tbody>
                     @forelse($etudiants as $index => $etudiant)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $etudiant->matricule }}</td>
                             <td>{{ $etudiant->nom }}</td>
                             <td>{{ $etudiant->prenom }}</td>
                             <td>{{ $etudiant->email }}</td>

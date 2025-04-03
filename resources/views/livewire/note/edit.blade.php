@@ -42,16 +42,6 @@
                                                    step="0.25">
                         </div>
 
-                        <!-- Coefficient -->
-                        <div class="col-md-6 mb-3">
-                            <select wire:model="coefficient_id" class="form-control">
-                                <option value="">Sélectionner un coefficient</option>
-                                                @foreach($coefficients as $coef)
-                                                    <option value="{{ $coef->id }}">{{ $coef->valeur }}</option>
-                                                @endforeach
-                                            </select>
-                        </div>
-
                         <!-- Type d'évaluation -->
                         <div class="col-md-6 mb-3">
                             <select wire:model="type_evaluation" class="form-control">
