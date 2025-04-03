@@ -20,6 +20,12 @@ return new class extends Migration
             $table->boolean('can_delete')->default(false);
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('role')->nullable();
+            $table->unsignedBigInteger('campus_id')->nullable();
+            $table->foreign('campus_id')->references('id')->on('campuses')->onDelete('cascade');
+            
+            // Index pour la recherche par rôle
+            $table->index(['role', 'campus_id']);
             $table->timestamps();
         });
     }

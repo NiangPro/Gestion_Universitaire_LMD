@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Classe;
-use App\Models\Coefficient;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Matiere;
@@ -50,10 +49,6 @@ class Configurations extends Component
         "idsalle" => null
     ];
 
-    public $coef = [
-        "valeur" => "",
-        "idcoef" => null
-    ];
 
     public $semestre = [
         "nom" => "",
@@ -71,7 +66,6 @@ class Configurations extends Component
         "salle.nom.required" => "Le nom est requis",
         "ue.nom.required" => "Le nom est requis",
         "ue.credit.required" => "Le crédit est requis",
-        "coef.valeur.required" => "La valeur est requise",
         "ue.disciplines.required" => "Les disciplines sont requises",
         "semestre.ordre.required" => "L'ordre est requis",
         "semestre.ordre.unique" => "L'ordre doit être unique",
@@ -277,41 +271,7 @@ class Configurations extends Component
 
 
 
-    public function supprimerCoefficient($id){
-        $coef = Coefficient::where("id", $id)->first();
-
-        $coef->is_deleting = true;
-
-        $coef->save();
-
-        $this->dispatch("deleted");
-    }
-
-    public function getCoefficient($id){
-        $coef = Coefficient::where("id", $id)->first();
-
-        $this->coef["idcoef"] = $coef->id;
-        $this->coef["valeur"] = $coef->valeur;
-    }
-
-    public function storeCoefficient(){
-        $this->validate(["coef.valeur" => "required"]);
-
-        if ($this->coef["idcoef"]) {
-            $coef = Coefficient::where("id", $this->coef["idcoef"])->first();
-
-            $coef->valeur = strtoupper($this->coef["valeur"]);
-
-            $coef->save();
-
-            $this->dispatch("updated");
-        }else{
-            Coefficient::create(["valeur" => strtoupper($this->coef["valeur"]), "campus_id" => Auth::user()->campus_id]);
-            $this->dispatch("added");
-        }
-        
-        $this->reset(["coef"]);
-    }
+   
 
     public function supprimerFiliere($id){
         $filiere = Filiere::where("id", $id)->first();
@@ -397,7 +357,6 @@ class Configurations extends Component
             "filieres" => Filiere::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "departements" => Departement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "ues" => UniteEnseignement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
-            "coefs" => Coefficient::where("is_deleting", false)->orderBy("valeur", "ASC")->get(),
             "salles" => Salle::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "semestres" => Semestre::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
         ]);

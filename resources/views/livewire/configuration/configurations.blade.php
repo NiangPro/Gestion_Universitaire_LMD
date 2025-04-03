@@ -6,7 +6,6 @@
                @include("livewire.configuration.departement")
 
                 @include("livewire.configuration.classe")
-                @include("livewire.configuration.coefficient")
 
                 @include("livewire.configuration.salle")
                 

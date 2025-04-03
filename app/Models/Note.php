@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Note extends Model
 {
@@ -15,7 +14,6 @@ class Note extends Model
         'note',
         'observation',
         'campus_id',
-        'coefficient_id',
         'semestre_id'
     ];
 
@@ -43,11 +41,5 @@ class Note extends Model
     {
         return $this->belongsTo(Campus::class);
     }
-
-    public function coefficient()
-    {
-        return $this->belongsTo(Coefficient::class);
-    }
-
    
 }
