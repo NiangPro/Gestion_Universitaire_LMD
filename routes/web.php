@@ -42,6 +42,7 @@ use App\Livewire\Paiements;
 use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
+use App\Livewire\EditNote;
 
 // Routes publiques
 Route::group([], function () {
@@ -119,5 +120,7 @@ Route::prefix('subscription/payment')->name('subscription.payment.')->group(func
 if (app()->environment('local')) {
     Route::get('/security-test', [App\Http\Controllers\SecurityTestController::class, 'testSecurity']);
 }
+
+Route::get('/notes/edit/{id}', EditNote::class)->name('notes.edit');
 
 

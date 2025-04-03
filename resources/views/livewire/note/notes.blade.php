@@ -151,17 +151,82 @@
             </div>
 
             @if($showModal)
-                @if(!empty($classe_id) && !empty($ue_id) && !empty($matiere_id) && !empty($type_evaluation) && !empty($semestre_id))
-                    <div class="mt-4">
-                        <div class="alert alert-info">
-                            <strong>Saisie des notes pour :</strong><br>
-                            Classe: {{ $classes->where('id', $classe_id)->first()->nom }}<br>
-                            Matière: {{ $matieres->where('id', $matiere_id)->first()->nom }}<br>
-                            Type: {{ $type_evaluation }}<br>
-                            Semestre: {{ $semestres->where('id', $semestre_id)->first()->nom }}
+                @if($isEditing && $currentNote)
+                    <!-- Formulaire d'édition -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h4>Modifier la note</h4>
                         </div>
-                        @include('livewire.note.add-note')
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <strong>Modification de la note</strong><br>
+                                Étudiant : {{ $currentNote->etudiant->prenom }} {{ $currentNote->etudiant->nom }}<br>
+                                Matière : {{ $currentNote->matiere->nom }}
+                            </div>
+
+                            <form wire:submit.prevent="updateNote">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Type d'évaluation</label>
+                                            <select wire:model="editNote.type_evaluation" class="form-control">
+                                                <option value="CC">Contrôle Continu</option>
+                                                <option value="TP">Travaux Pratiques</option>
+                                                <option value="Examen">Examen</option>
+                                            </select>
+                                            @error('editNote.type_evaluation') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Note /20</label>
+                                            <input type="number" wire:model="editNote.valeur" class="form-control" 
+                                                   step="0.01" min="0" max="20">
+                                            @error('editNote.valeur') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Semestre</label>
+                                            <select wire:model="editNote.semestre_id" class="form-control">
+                                                <option value="">Sélectionner le semestre</option>
+                                                @foreach($semestres as $semestre)
+                                                    <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('editNote.semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <label>Observation</label>
+                                    <textarea wire:model="editNote.observation" class="form-control" rows="3"></textarea>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                    <button type="button" class="btn btn-secondary" wire:click="resetEdit">Annuler</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                @else
+                    <!-- Formulaire d'ajout existant -->
+                    @if(!empty($classe_id) && !empty($ue_id) && !empty($matiere_id) && !empty($type_evaluation) && !empty($semestre_id))
+                        <div class="mt-4">
+                            <div class="alert alert-info">
+                                <strong>Saisie des notes pour :</strong><br>
+                                Classe: {{ $classes->where('id', $classe_id)->first()->nom }}<br>
+                                Matière: {{ $matieres->where('id', $matiere_id)->first()->nom }}<br>
+                                Type: {{ $type_evaluation }}<br>
+                                Semestre: {{ $semestres->where('id', $semestre_id)->first()->nom }}
+                            </div>
+                            @include('livewire.note.add-note')
+                        </div>
+                    @endif
                 @endif
             @else
                 <table class="table table-bordered table-striped">

@@ -47,6 +47,9 @@ class Notes extends Component
     public $uniteEnseignements = [];
     public $matieres = [];
     public $type_evaluation = null;
+    public $currentNote;
+    public $editNoteId;
+    public $editNote = [];
 
     protected $rules = [
         'classe_id' => 'required',
@@ -74,15 +77,22 @@ class Notes extends Component
     public function edit($noteId)
     {
         $this->isEditing = true;
-        $this->noteId = $noteId;
+        $this->editNoteId = $noteId;
         $this->showModal = true;
         
-        $note = Note::find($noteId);
-        $this->etudiant_id = $note->etudiant_id;
-        $this->cours_id = $note->cours_id;
-        $this->note = $note->note;
-        $this->observation = $note->observation;
-        $this->semestre_id = $note->semestre_id;
+        $note = Note::with(['etudiant', 'matiere'])->find($noteId);
+        $this->currentNote = $note;
+        
+        $this->editNote = [
+            'valeur' => $note->note,
+            'type_evaluation' => $note->type_evaluation,
+            'semestre_id' => $note->semestre_id,
+            'observation' => $note->observation
+        ];
+        
+        $this->classe_id = $note->etudiant->classe_id;
+        $this->matiere_id = $note->matiere_id;
+        $this->loadMatieres();
     }
 
     public function sauvegarderNote()
@@ -354,5 +364,19 @@ class Notes extends Component
     {
         $this->showDetailsModal = false;
         $this->selectedNote = null;
+    }
+
+    public function resetEdit()
+    {
+        $this->isEditing = false;
+        $this->editNoteId = null;
+        $this->currentNote = null;
+        $this->editNote = [
+            'valeur' => '',
+            'type_evaluation' => '',
+            'semestre_id' => '',
+            'observation' => ''
+        ];
+        $this->showModal = false;
     }
 }
