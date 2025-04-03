@@ -5,7 +5,6 @@
                 <tr>
                     <th>Étudiant</th>
                     <th>Note (/20)</th>
-                    <th>Type</th>
                     <th>Observation</th>
                 </tr>
             </thead>
@@ -25,15 +24,6 @@
                                    min="0" 
                                    max="20" 
                                    step="0.25">
-                        </td>
-                        <td>
-                            <select class="form-control form-control-sm" 
-                                    wire:model="notes.{{ $etudiant->id }}.type_evaluation">
-                                <option value="">Sélectionner le type</option>
-                                <option value="CC">Contrôle Continu</option>
-                                <option value="TP">Travaux Pratiques</option>
-                                <option value="Examen">Examen</option>
-                            </select>
                         </td>
                         <td>
                             <input type="text" 

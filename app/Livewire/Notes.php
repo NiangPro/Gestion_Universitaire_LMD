@@ -46,6 +46,7 @@ class Notes extends Component
     public $ue_id = null;
     public $uniteEnseignements = [];
     public $matieres = [];
+    public $type_evaluation = null;
 
     protected $rules = [
         'classe_id' => 'required',
@@ -86,16 +87,63 @@ class Notes extends Component
 
     public function sauvegarderNote()
     {
-        foreach ($this->notes as $etudiantId => $noteData) {
-            Note::create([
-                'etudiant_id' => $etudiantId,
-                'matiere_id' => $this->matiere_id,
-                'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
-                'type_evaluation' => $noteData['type_evaluation'],
-                'note' => $noteData['note'],
-                'observation' => $noteData['observation'] ?? null,
-                'semestre_id' => $this->semestre_id,
-                'campus_id' => auth()->user()->campus_id
+        try {
+            // Validation
+            $this->validate([
+                'classe_id' => 'required',
+                'matiere_id' => 'required',
+                'type_evaluation' => 'required',
+                'semestre_id' => 'required',
+            ]);
+
+            foreach ($this->notes as $etudiantId => $noteData) {
+                // Validation de chaque note
+                if (!isset($noteData['note']) || $noteData['note'] < 0 || $noteData['note'] > 20) {
+                    continue; // Sauter les notes invalides
+                }
+
+                Note::create([
+                    'etudiant_id' => $etudiantId,
+                    'matiere_id' => $this->matiere_id,
+                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                    'type_evaluation' => $this->type_evaluation,
+                    'note' => $noteData['note'],
+                    'observation' => $noteData['observation'] ?? null,
+                    'semestre_id' => $this->semestre_id,
+                    'campus_id' => Auth::user()->campus_id
+                ]);
+            }
+
+            // Ajouter à l'historique
+            $this->outil = new Outils();
+            $this->outil->addHistorique(
+                "Ajout des notes en {$this->type_evaluation} pour la matière ID: {$this->matiere_id}, Semestre ID: {$this->semestre_id}",
+                "create"
+            );
+
+            // Réinitialiser les variables
+            $this->reset([
+                'notes',
+                'type_evaluation',
+                'semestre_id',
+                'matiere_id',
+                'ue_id',
+                'showModal'
+            ]);
+
+            // Message de succès
+            session()->flash('success', 'Les notes ont été enregistrées avec succès.');
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Les notes ont été enregistrées avec succès.'
+            ]);
+
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            session()->flash('error', 'Une erreur est survenue lors de l\'enregistrement des notes.');
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Une erreur est survenue lors de l\'enregistrement des notes.'
             ]);
         }
     }
@@ -217,6 +265,20 @@ class Notes extends Component
                 ->get();
         } else {
             $this->matieres = collect();
+        }
+    }
+
+    public function updatedTypeEvaluation($value)
+    {
+        $this->semestre_id = null;
+        $this->dispatch('refresh-component');
+    }
+
+    public function updatedSemestreId()
+    {
+        if ($this->semestre_id) {
+            $this->loadEtudiants();
+            $this->showModal = true;
         }
     }
 

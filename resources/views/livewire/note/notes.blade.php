@@ -17,15 +17,21 @@
         </div>
         
         <div class="card-body">
-            @if (session()->has('message'))
-                <div class="alert alert-success">
-                    {{ session('message') }}
+            @if (session()->has('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             @endif
 
             @if (session()->has('error'))
-                <div class="alert alert-danger">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             @endif
 
@@ -48,7 +54,7 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <select wire:model.live="classe_id" class="form-control">
+                    <select wire:model.live="classe_id" class="form-control" wire:change="loadEtudiants">
                         <option value="">Sélectionner une classe</option>
                         @foreach($classes as $classe)
                             <option value="{{ $classe->id }}">
@@ -70,49 +76,71 @@
             
             @else
                 <!-- Filtres pour l'ajout de notes -->
-                <div class="row mb-3">
-                    <div class="col-md-3 mb-3">
-                        <select wire:model="classe_id" class="form-control" wire:change="loadEtudiants">
-                            <option value="">Sélectionner une classe</option>
-                            @foreach($classes as $classe)
-                                <option value="{{ $classe->id }}">
-                                    {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('classe_id') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
-                    @if($classe_id)
-                    <div class="col-md-3 mb-3">
-                        <select wire:model="ue_id" class="form-control" wire:change="loadMatieres">
-                            <option value="">Sélectionner une UE</option>
-                            @foreach($uniteEnseignements as $ue)
-                                <option value="{{ $ue->id }}">{{ $ue->nom }}</option>
-                            @endforeach
-                        </select>
-                        @error('ue_id') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
+                                        <div class="row mb-3">
+                                            <!-- Classe -->
+                                            <div class="col-md-12 mb-3">
+                                                <select wire:model.live="classe_id" class="form-control" wire:change="loadEtudiants">
+                                                    <option value="">1. Sélectionner une classe</option>
+                                                    @foreach($classes as $classe)
+                                                        <option value="{{ $classe->id }}">
+                                                            {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('classe_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+
+                                            <!-- UE (visible uniquement si classe sélectionnée) -->
+                                            @if(!empty($classe_id))
+                                                <div class="col-md-12 mb-3">
+                                                    <select wire:model.live="ue_id" class="form-control" wire:change="loadMatieres">
+                                                        <option value="">2. Sélectionner une UE</option>
+                                                        @foreach($uniteEnseignements as $ue)
+                                                            <option value="{{ $ue->id }}">{{ $ue->nom }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('ue_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                                </div>
+                                            @endif
+
+                                            <!-- Matière (visible uniquement si UE sélectionnée) -->
+                                            @if(!empty($ue_id))
+                                                <div class="col-md-12 mb-3">
+                                                    <select wire:model.live="matiere_id" class="form-control">
+                                                        <option value="">3. Sélectionner une matière</option>
+                                                        @foreach($matieres as $matiere)
+                                                            <option value="{{ $matiere->id }}">{{ $matiere->nom }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('matiere_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                                </div>
+                                            @endif
+
+                                            <!-- Type d'évaluation (visible uniquement si matière sélectionnée) -->
+                                            @if(!empty($matiere_id))
+                                                <div class="col-md-12 mb-3">
+                                                    <select wire:model.live="type_evaluation" class="form-control">
+                                                        <option value="">4. Sélectionner le type d'évaluation</option>
+                                                        <option value="CC">Contrôle Continu</option>
+                                                        <option value="TP">Travaux Pratiques</option>
+                                                        <option value="Examen">Examen</option>
+                                                    </select>
+                                                    @error('type_evaluation') <span class="text-danger">{{ $message }}</span> @enderror
+                                                </div>
+                                            @endif
+
+                    <!-- Semestre (visible uniquement si type d'évaluation sélectionné) -->
+                    @if(!empty($matiere_id) && !empty($type_evaluation))
+                        <div class="col-md-12 mb-3">
+                            <select wire:model.live="semestre_id" class="form-control">
+                                <option value="">5. Sélectionner le semestre</option>
+                                @foreach($semestres as $semestre)
+                                    <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                                @endforeach
+                            </select>
+                            @error('semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
                     @endif
-                    @if($ue_id)
-                    <div class="col-md-3 mb-3">
-                        <select wire:model="matiere_id" class="form-control">
-                            <option value="">Sélectionner une matière</option>
-                            @foreach($matieres as $matiere)
-                                <option value="{{ $matiere->id }}">{{ $matiere->nom }}</option>
-                            @endforeach
-                        </select>
-                        @error('matiere_id') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
-                    @endif
-                    <div class="col-md-3 mb-3">
-                        <select wire:model="semestre_id" class="form-control">
-                            <option value="">Sélectionner le semestre</option>
-                            @foreach($semestres as $semestre)
-                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                            @endforeach
-                        </select>
-                        @error('semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
                 </div>
             @endif
             <!-- Indicateur de chargement -->
@@ -123,7 +151,18 @@
             </div>
 
             @if($showModal)
-                @include('livewire.note.add-note')
+                @if(!empty($classe_id) && !empty($ue_id) && !empty($matiere_id) && !empty($type_evaluation) && !empty($semestre_id))
+                    <div class="mt-4">
+                        <div class="alert alert-info">
+                            <strong>Saisie des notes pour :</strong><br>
+                            Classe: {{ $classes->where('id', $classe_id)->first()->nom }}<br>
+                            Matière: {{ $matieres->where('id', $matiere_id)->first()->nom }}<br>
+                            Type: {{ $type_evaluation }}<br>
+                            Semestre: {{ $semestres->where('id', $semestre_id)->first()->nom }}
+                        </div>
+                        @include('livewire.note.add-note')
+                    </div>
+                @endif
             @else
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -138,11 +177,16 @@
                     <tbody>
                         @forelse($notesList as $note)
                         <tr>
-                            <td>{{ $note->etudiant->nom }} {{ $note->etudiant->prenom }}</td>
+                            <td>
+                                <h6 class="mb-0">{{ $note->etudiant->prenom }} {{ $note->etudiant->nom }}</h6>
+                                <small class="text-muted">
+                                    {{ $note->etudiant->matricule }}
+                                </small>
+                            </td>
                             <td>{{ $note->matiere->nom }}</td>
                             <td>{{ $note->note }}/20</td>
                             <td>{{ $note->type_evaluation }}</td>
-                            <td>
+                            <td class="text-center">
                                 <div class="btn-group">
                                     @if(Auth::user()->hasPermission('evaluations', 'edit'))
                                         <button class="btn btn-sm btn-primary" wire:click="edit({{ $note->id }})">

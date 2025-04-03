@@ -14,7 +14,8 @@ class Note extends Model
         'note',
         'observation',
         'campus_id',
-        'semestre_id'
+        'semestre_id',
+        'valeur'
     ];
 
     public function matiere()
