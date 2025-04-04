@@ -250,6 +250,7 @@ class Notes extends Component
             }
         }
         $this->loadEtudiants();
+        $this->resetPage();
     }
 
     public function loadMatieres()
@@ -290,6 +291,7 @@ class Notes extends Component
             $this->loadEtudiants();
             $this->showModal = true;
         }
+        $this->resetPage();
     }
 
     #[Layout("components.layouts.app")]
