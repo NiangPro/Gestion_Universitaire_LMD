@@ -74,8 +74,8 @@
             </div>
 
             <div class="mt-4">
-                <button wire:click="updateNote" class="btn btn-primary">Enregistrer les modifications</button>
-                <a href="{{ route('notes') }}" class="btn btn-secondary">Retour</a>
+                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                <button type="button" class="btn btn-secondary" wire:click="resetEdit">Retour</button>
             </div>
         </div>
     </div>

@@ -49,7 +49,12 @@ class Notes extends Component
     public $type_evaluation = null;
     public $currentNote;
     public $editNoteId;
-    public $editNote = [];
+    public $editNote = [
+        'valeur' => '',
+        'type_evaluation' => '',
+        'semestre_id' => '',
+        'observation' => ''
+    ];
 
     protected $rules = [
         'classe_id' => 'required',
@@ -314,6 +319,51 @@ class Notes extends Component
         $this->resetPage();
     }
 
+    public function updateNote()
+    {
+        $this->validate([
+            'editNote.valeur' => 'required|numeric|between:0,20',
+            'editNote.type_evaluation' => 'required',
+            'editNote.semestre_id' => 'required'
+        ]);
+
+        try {
+            $note = Note::find($this->editNoteId);
+            $note->update([
+                'note' => $this->editNote['valeur'],
+                'type_evaluation' => $this->editNote['type_evaluation'],
+                'semestre_id' => $this->editNote['semestre_id'],
+                'observation' => $this->editNote['observation'] ?? null
+            ]);
+
+            // Ajouter à l'historique
+            $outil = new Outils();
+            $outil->addHistorique(
+                "Modification de la note de l'étudiant {$note->etudiant->prenom} {$note->etudiant->nom}",
+                "update"
+            );
+
+            session()->flash('success', 'Note modifiée avec succès');
+            $this->resetEdit();
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erreur lors de la modification de la note');
+        }
+    }
+
+    public function resetEdit()
+    {
+        $this->isEditing = false;
+        $this->editNoteId = null;
+        $this->editNote = [
+            'valeur' => '',
+            'type_evaluation' => '',
+            'semestre_id' => '',
+            'observation' => ''
+        ];
+        $this->showModal = false;
+    }
+
     #[Layout("components.layouts.app")]
     public function render()
     {
@@ -386,19 +436,5 @@ class Notes extends Component
     {
         $this->showDetailsModal = false;
         $this->selectedNote = null;
-    }
-
-    public function resetEdit()
-    {
-        $this->isEditing = false;
-        $this->editNoteId = null;
-        $this->currentNote = null;
-        $this->editNote = [
-            'valeur' => '',
-            'type_evaluation' => '',
-            'semestre_id' => '',
-            'observation' => ''
-        ];
-        $this->showModal = false;
     }
 }

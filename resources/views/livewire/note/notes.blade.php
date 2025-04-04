@@ -85,7 +85,7 @@
             </div>
 
             
-            @else
+            @elseif(!$isEditing)
                 <!-- Filtres pour l'ajout de notes -->
                                         <div class="row mb-3">
                                             <!-- Classe -->
