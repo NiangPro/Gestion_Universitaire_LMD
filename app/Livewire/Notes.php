@@ -47,7 +47,7 @@ class Notes extends Component
     public $uniteEnseignements = [];
     public $matieres = [];
     public $type_evaluation = null;
-    public $currentNote;
+    public $currentNote = null;
     public $editNoteId;
     public $editNote = [
         'valeur' => '',
@@ -55,6 +55,8 @@ class Notes extends Component
         'semestre_id' => '',
         'observation' => ''
     ];
+    public $showDeleteModal = false;
+    public $noteToDelete = null;
 
     protected $rules = [
         'classe_id' => 'required',
@@ -185,21 +187,36 @@ class Notes extends Component
 
     public function confirmDelete($noteId)
     {
-        $this->dispatch('swal:confirm', [
-            'type' => 'warning',
-            'title' => 'Êtes-vous sûr?',
-            'text' => 'Cette note sera supprimée définitivement.',
-            'id' => $noteId
-        ]);
+        $this->noteToDelete = Note::with([
+            'etudiant.inscriptions.classe', 
+            'matiere', 
+            'semestre'
+        ])->find($noteId);
+        
+        $this->dispatch('showDeleteModal');
     }
 
-    #[On('deleteNote')]
     public function delete($noteId)
     {
-        $this->outil = new Outils();
-        $this->outil->addHistorique("Suppression d'une note de l'étudiant {$this->selectedNote->etudiant->prenom} {$this->selectedNote->etudiant->nom}", "delete");
-        Note::find($noteId)->delete();
-        session()->flash('message', 'Note supprimée avec succès.');
+        try {
+            $note = Note::find($noteId);
+            $etudiantInfo = "{$note->etudiant->prenom} {$note->etudiant->nom}";
+            
+            $note->delete();
+
+            // Ajouter à l'historique
+            $outil = new Outils();
+            $outil->addHistorique("Suppression de la note de l'étudiant {$etudiantInfo}", "delete");
+
+            session()->flash('success', 'La note a été supprimée avec succès.');
+            
+            $this->showDeleteModal = false;
+            $this->currentNote = null;
+            $this->dispatch('hide-delete-modal');
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Une erreur est survenue lors de la suppression.');
+        }
     }
 
     public function resetFilters()
@@ -436,5 +453,11 @@ class Notes extends Component
     {
         $this->showDetailsModal = false;
         $this->selectedNote = null;
+    }
+
+    #[On('resetModal')]
+    public function resetDeleteData()
+    {
+        $this->noteToDelete = null;
     }
 }

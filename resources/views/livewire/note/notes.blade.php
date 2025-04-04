@@ -87,45 +87,45 @@
             
             @elseif(!$isEditing)
                 <!-- Filtres pour l'ajout de notes -->
-                                        <div class="row mb-3">
+                <div class="row mb-3">
                                             <!-- Classe -->
                                             <div class="col-md-12 mb-3">
                                                 <select wire:model.live="classe_id" class="form-control" wire:change="loadEtudiants">
                                                     <option value="">1. Sélectionner une classe</option>
-                                                    @foreach($classes as $classe)
-                                                        <option value="{{ $classe->id }}">
-                                                            {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('classe_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                            </div>
+                            @foreach($classes as $classe)
+                                <option value="{{ $classe->id }}">
+                                    {{ $classe->nom }} - {{ strtolower($classe->filiere->nom) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('classe_id') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
 
                                             <!-- UE (visible uniquement si classe sélectionnée) -->
                                             @if(!empty($classe_id))
                                                 <div class="col-md-12 mb-3">
                                                     <select wire:model.live="ue_id" class="form-control" wire:change="loadMatieres">
                                                         <option value="">2. Sélectionner une UE</option>
-                                                        @foreach($uniteEnseignements as $ue)
-                                                            <option value="{{ $ue->id }}">{{ $ue->nom }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('ue_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                                </div>
-                                            @endif
+                            @foreach($uniteEnseignements as $ue)
+                                <option value="{{ $ue->id }}">{{ $ue->nom }}</option>
+                            @endforeach
+                        </select>
+                        @error('ue_id') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    @endif
 
                                             <!-- Matière (visible uniquement si UE sélectionnée) -->
                                             @if(!empty($ue_id))
                                                 <div class="col-md-12 mb-3">
                                                     <select wire:model.live="matiere_id" class="form-control">
                                                         <option value="">3. Sélectionner une matière</option>
-                                                        @foreach($matieres as $matiere)
-                                                            <option value="{{ $matiere->id }}">{{ $matiere->nom }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('matiere_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                                </div>
-                                            @endif
+                            @foreach($matieres as $matiere)
+                                <option value="{{ $matiere->id }}">{{ $matiere->nom }}</option>
+                            @endforeach
+                        </select>
+                        @error('matiere_id') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    @endif
 
                                             <!-- Type d'évaluation (visible uniquement si matière sélectionnée) -->
                                             @if(!empty($matiere_id))
@@ -145,12 +145,12 @@
                         <div class="col-md-12 mb-3">
                             <select wire:model.live="semestre_id" class="form-control">
                                 <option value="">5. Sélectionner le semestre</option>
-                                @foreach($semestres as $semestre)
-                                    <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                                @endforeach
-                            </select>
-                            @error('semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
+                            @foreach($semestres as $semestre)
+                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                            @endforeach
+                        </select>
+                        @error('semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
                     @endif
                 </div>
             @endif
@@ -235,22 +235,22 @@
                                 Type: {{ $type_evaluation }}<br>
                                 Semestre: {{ $semestres->where('id', $semestre_id)->first()->nom }}
                             </div>
-                            @include('livewire.note.add-note')
+                @include('livewire.note.add-note')
                         </div>
                     @endif
                 @endif
             @else
                 <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Étudiant</th>
-                            <th>Matière</th>
-                            <th>Note</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <thead>
+                    <tr>
+                        <th>Étudiant</th>
+                        <th>Matière</th>
+                        <th>Note</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
                         @forelse($notesList as $note)
                         <tr>
                             <td>
@@ -271,9 +271,7 @@
                                     @endif
                                     
                                     @if(Auth::user()->hasPermission('evaluations', 'delete'))
-                                        <button class="btn btn-sm btn-danger" 
-                                                wire:click="confirmDelete({{ $note->id }})"
-                                                onclick="confirm('Êtes-vous sûr ?') || event.stopImmediatePropagation()">
+                                        <button class="btn btn-sm btn-danger" wire:click="confirmDelete({{ $note->id }})">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     @endif
@@ -285,8 +283,8 @@
                                 <td colspan="5" class="text-center">Aucune note trouvée</td>
                             </tr>
                         @endforelse
-                    </tbody>
-                </table>
+                </tbody>
+            </table>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
@@ -324,25 +322,87 @@
             @endif
         </div>
     </div>
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Confirmation de suppression
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if($noteToDelete)
+                        <div class="alert alert-info mb-3">
+                            <h6 class="font-weight-bold">Détails de la note :</h6>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tr>
+                                    <td width="120"><strong>Étudiant :</strong></td>
+                                    <td>{{ $noteToDelete->etudiant->prenom }} {{ $noteToDelete->etudiant->nom }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Matricule :</strong></td>
+                                    <td>{{ $noteToDelete->etudiant->matricule }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Classe :</strong></td>
+                                    <td>
+                                        @if($noteToDelete->etudiant->inscriptions->first())
+                                            {{ $noteToDelete->etudiant->inscriptions->first()->classe->nom }}
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Matière :</strong></td>
+                                    <td>{{ $noteToDelete->matiere->nom }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Note :</strong></td>
+                                    <td>{{ $noteToDelete->note }}/20</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Type :</strong></td>
+                                    <td>{{ $noteToDelete->type_evaluation }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Semestre :</strong></td>
+                                    <td>{{ $noteToDelete->semestre->nom }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="alert alert-danger mb-0">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible !
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Annuler
+                    </button>
+                    <button type="button" class="btn btn-danger" wire:click="deleteNote">
+                        <i class="fas fa-trash mr-1"></i> Confirmer la suppression
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
 <script>
-    window.addEventListener('swal:confirm', event => {
-        Swal.fire({
-            title: event.detail.title,
-            text: event.detail.text,
-            icon: event.detail.type,
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Oui, supprimer!',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Livewire.dispatch('deleteNote', { noteId: event.detail.id });
-            }
-        })
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('showDeleteModal', () => {
+            $('#deleteModal').modal('show');
+        });
+
+        Livewire.on('hideDeleteModal', () => {
+            $('#deleteModal').modal('hide');
+        });
     });
 </script>
 @endpush
