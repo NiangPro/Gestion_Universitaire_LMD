@@ -68,6 +68,26 @@ class Notes extends Component
         }
     }
 
+    public function changeStatut($statut)
+    {
+        if($statut == 'list'){
+            $this->showModal = false;
+        }else{
+            $this->showModal = true;
+        }
+
+         // Réinitialiser les variables
+         $this->reset([
+            'notes',
+            'type_evaluation',
+            'semestre_id',
+            'matiere_id',
+            'isEditing',
+            'currentNote',
+            'ue_id'
+        ]);
+    }
+
     public function updatedAcademicYearId()
     {
         $this->classe_id = null;
@@ -76,9 +96,9 @@ class Notes extends Component
 
     public function edit($noteId)
     {
+        $this->changeStatut('edit');
         $this->isEditing = true;
         $this->editNoteId = $noteId;
-        $this->showModal = true;
         
         $note = Note::with(['etudiant', 'matiere'])->find($noteId);
         $this->currentNote = $note;

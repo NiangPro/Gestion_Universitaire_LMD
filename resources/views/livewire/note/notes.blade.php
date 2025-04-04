@@ -5,11 +5,11 @@
             <h3 class="card-title">Gestion des Évaluations</h3>
             <div>
                 @if(!$showModal && Auth::user()->hasPermission('evaluations', 'create'))
-                    <button type="button" class="btn btn-primary" wire:click="$set('showModal', true)">
+                    <button type="button" class="btn btn-primary" wire:click="changeStatut('add')">
                         <i class="fas fa-plus"></i> Nouvelle évaluation
                     </button>
                 @else
-                    <button type="button" class="btn btn-warning" wire:click="$set('showModal', false)">
+                    <button type="button" class="btn btn-warning" wire:click="changeStatut('list')">
                         <i class="fas fa-list"></i> Voir la liste
                     </button>
                 @endif
@@ -69,6 +69,17 @@
                         @foreach($semestres as $semestre)
                             <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
                         @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <select wire:model.live="perPage" class="form-control">
+                        <option value="10">10 par page</option>
+                        <option value="25">25 par page</option>
+                        <option value="50">50 par page</option>
+                        <option value="100">100 par page</option>
                     </select>
                 </div>
             </div>
@@ -141,6 +152,7 @@
                             @error('semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                     @endif
+                </div>
             @endif
             <!-- Indicateur de chargement -->
             <div wire:loading class="text-center my-2">
@@ -149,23 +161,85 @@
                 </div>
             </div>
 
-            <div wire:loading.delay class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Chargement...</span>
-                </div>
-            </div>
+            @if($showModal)
+                @if($isEditing && $currentNote)
+                    <!-- Formulaire d'édition -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h4>Modifier la note</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <strong>Modification de la note</strong><br>
+                                Étudiant : {{ $currentNote->etudiant->prenom }} {{ $currentNote->etudiant->nom }}<br>
+                                Matière : {{ $currentNote->matiere->nom }}
+                            </div>
 
-            <div wire:loading.delay.class="opacity-50">
-                <div class="row mb-3">
-                    <div class="col-md-2">
-                        <select wire:model.live="perPage" class="form-control">
-                            <option value="10">10 par page</option>
-                            <option value="25">25 par page</option>
-                            <option value="50">50 par page</option>
-                            <option value="100">100 par page</option>
-                        </select>
+                            <form wire:submit.prevent="updateNote">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Type d'évaluation</label>
+                                            <select wire:model="editNote.type_evaluation" class="form-control">
+                                                <option value="CC">Contrôle Continu</option>
+                                                <option value="TP">Travaux Pratiques</option>
+                                                <option value="Examen">Examen</option>
+                                            </select>
+                                            @error('editNote.type_evaluation') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Note /20</label>
+                                            <input type="number" wire:model="editNote.valeur" class="form-control" 
+                                                   step="0.01" min="0" max="20">
+                                            @error('editNote.valeur') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Semestre</label>
+                                            <select wire:model="editNote.semestre_id" class="form-control">
+                                                <option value="">Sélectionner le semestre</option>
+                                                @foreach($semestres as $semestre)
+                                                    <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('editNote.semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <label>Observation</label>
+                                    <textarea wire:model="editNote.observation" class="form-control" rows="3"></textarea>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                    <button type="button" class="btn btn-secondary" wire:click="resetEdit">Annuler</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                @else
+                    <!-- Formulaire d'ajout existant -->
+                    @if(!empty($classe_id) && !empty($ue_id) && !empty($matiere_id) && !empty($type_evaluation) && !empty($semestre_id))
+                        <div class="mt-4">
+                            <div class="alert alert-info">
+                                <strong>Saisie des notes pour :</strong><br>
+                                Classe: {{ $classes->where('id', $classe_id)->first()->nom }}<br>
+                                Matière: {{ $matieres->where('id', $matiere_id)->first()->nom }}<br>
+                                Type: {{ $type_evaluation }}<br>
+                                Semestre: {{ $semestres->where('id', $semestre_id)->first()->nom }}
+                            </div>
+                            @include('livewire.note.add-note')
+                        </div>
+                    @endif
+                @endif
+            @else
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -213,67 +287,41 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>
-                    Affichage de {{ $notesList->firstItem() ?? 0 }} à {{ $notesList->lastItem() ?? 0 }} sur {{ $notesList->total() }} notes
-                </div>
-                <div>
-                    @if ($notesList->hasPages())
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination mb-0">
-                                {{-- Lien Previous --}}
-                                <li class="page-item {{ $notesList->onFirstPage() ? 'disabled' : '' }}">
-                                    <button class="page-link" wire:click="previousPage" wire:loading.attr="disabled">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </button>
-                                </li>
-
-                                {{-- Première page --}}
-                                @if($notesList->currentPage() > 3)
-                                    <li class="page-item">
-                                        <button class="page-link" wire:click="gotoPage(1)">1</button>
-                                    </li>
-                                    @if($notesList->currentPage() > 4)
-                                        <li class="page-item disabled">
-                                            <span class="page-link">...</span>
-                                        </li>
-                                    @endif
-                                @endif
-
-                                {{-- Pages autour de la page courante --}}
-                                @foreach (range(max(1, $notesList->currentPage() - 2), min($notesList->lastPage(), $notesList->currentPage() + 2)) as $page)
-                                    <li class="page-item {{ $page == $notesList->currentPage() ? 'active' : '' }}">
-                                        <button class="page-link" wire:click="gotoPage({{ $page }})">{{ $page }}</button>
-                                    </li>
-                                @endforeach
-
-                                {{-- Dernière page --}}
-                                @if($notesList->currentPage() < $notesList->lastPage() - 2)
-                                    @if($notesList->currentPage() < $notesList->lastPage() - 3)
-                                        <li class="page-item disabled">
-                                            <span class="page-link">...</span>
-                                        </li>
-                                    @endif
-                                    <li class="page-item">
-                                        <button class="page-link" wire:click="gotoPage({{ $notesList->lastPage() }})">
-                                            {{ $notesList->lastPage() }}
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        Affichage de {{ $notesList->firstItem() ?? 0 }} à {{ $notesList->lastItem() ?? 0 }} sur {{ $notesList->total() }} notes
+                    </div>
+                    <div>
+                        @if ($notesList->hasPages())
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination mb-0">
+                                    {{-- Lien Previous --}}
+                                    <li class="page-item {{ $notesList->onFirstPage() ? 'disabled' : '' }}">
+                                        <button class="page-link" wire:click="previousPage" wire:loading.attr="disabled" rel="prev">
+                                            <i class="fas fa-chevron-left"></i>
                                         </button>
                                     </li>
-                                @endif
 
-                                {{-- Lien Next --}}
-                                <li class="page-item {{ !$notesList->hasMorePages() ? 'disabled' : '' }}">
-                                    <button class="page-link" wire:click="nextPage" wire:loading.attr="disabled">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
-                    @endif
+                                    {{-- Numéros de pages --}}
+                                    @foreach ($notesList->getUrlRange(1, $notesList->lastPage()) as $page => $url)
+                                        <li class="page-item {{ $page == $notesList->currentPage() ? 'active' : '' }}">
+                                            <button class="page-link" wire:click="gotoPage({{ $page }})">{{ $page }}</button>
+                                        </li>
+                                    @endforeach
+
+                                    {{-- Lien Next --}}
+                                    <li class="page-item {{ !$notesList->hasMorePages() ? 'disabled' : '' }}">
+                                        <button class="page-link" wire:click="nextPage" wire:loading.attr="disabled" rel="next">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>
