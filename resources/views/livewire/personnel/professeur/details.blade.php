@@ -19,7 +19,7 @@
 
     <!-- Statistiques -->
     <div class="row">
-        <div class="col-xl-3 col-lg-6 col-sm-6">
+        <div class="col-xl-4 col-lg-4 col-sm-6">
             <div class="widget-stat card">
                 <div class="card-body p-4">
                     <div class="media ai-icon">
@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-sm-6">
+        <div class="col-xl-4 col-lg-4 col-sm-6">
             <div class="widget-stat card">
                 <div class="card-body p-4">
                     <div class="media ai-icon">
@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-sm-6">
+        <div class="col-xl-4 col-lg-4 col-sm-6">
             <div class="widget-stat card">
                 <div class="card-body p-4">
                     <div class="media ai-icon">
@@ -72,7 +72,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('storage/'.$selectedProfesseur->image) }}" 
+                        <img src="{{ asset('storage/images/'.$selectedProfesseur->image) }}" 
                              class="rounded-circle mb-3" width="100" alt="photo">
                         <h4>{{ $selectedProfesseur->prenom }} {{ $selectedProfesseur->nom }}</h4>
                         <p class="text-muted">{{ $selectedProfesseur->specialite }}</p>

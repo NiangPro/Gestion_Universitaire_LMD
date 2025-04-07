@@ -109,9 +109,7 @@ class Campus extends Model
         return $this->activeSubscription() !== null;
     }
 
-    public function coefficients(){
-        return $this->hasMany(Coefficient::class);
-    }
+  
 
     public function absences()
     {
