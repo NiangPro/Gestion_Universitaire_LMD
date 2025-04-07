@@ -37,7 +37,7 @@
     </div>
 
     <div class="text-right mt-3">
-        <button type="button" class="btn btn-secondary" wire:click="$set('showModal', false)">Annuler</button>
+        <button type="button" class="btn btn-warning" wire:click="$set('showModal', false)">Annuler</button>
         <button type="submit" class="btn btn-primary">Enregistrer les notes</button>
     </div>
 </form>

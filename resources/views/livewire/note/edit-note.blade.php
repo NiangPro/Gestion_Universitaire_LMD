@@ -75,7 +75,7 @@
 
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                <button type="button" class="btn btn-secondary" wire:click="resetEdit">Retour</button>
+                <button type="button" class="btn btn-warning" wire:click="resetEdit">Retour</button>
             </div>
         </div>
     </div>

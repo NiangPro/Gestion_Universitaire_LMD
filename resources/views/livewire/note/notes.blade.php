@@ -89,7 +89,7 @@
                 <!-- Filtres pour l'ajout de notes -->
                 <div class="row mb-3">
                                             <!-- Classe -->
-                                            <div class="col-md-12 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <select wire:model.live="classe_id" class="form-control" wire:change="loadEtudiants">
                                                     <option value="">1. Sélectionner une classe</option>
                             @foreach($classes as $classe)
@@ -103,7 +103,7 @@
 
                                             <!-- UE (visible uniquement si classe sélectionnée) -->
                                             @if(!empty($classe_id))
-                                                <div class="col-md-12 mb-3">
+                                                <div class="col-md-6 mb-3">
                                                     <select wire:model.live="ue_id" class="form-control" wire:change="loadMatieres">
                                                         <option value="">2. Sélectionner une UE</option>
                             @foreach($uniteEnseignements as $ue)
@@ -116,7 +116,7 @@
 
                                             <!-- Matière (visible uniquement si UE sélectionnée) -->
                                             @if(!empty($ue_id))
-                                                <div class="col-md-12 mb-3">
+                                                <div class="col-md-4 mb-3">
                                                     <select wire:model.live="matiere_id" class="form-control">
                                                         <option value="">3. Sélectionner une matière</option>
                             @foreach($matieres as $matiere)
@@ -129,7 +129,7 @@
 
                                             <!-- Type d'évaluation (visible uniquement si matière sélectionnée) -->
                                             @if(!empty($matiere_id))
-                                                <div class="col-md-12 mb-3">
+                                                <div class="col-md-4 mb-3">
                                                     <select wire:model.live="type_evaluation" class="form-control">
                                                         <option value="">4. Sélectionner le type d'évaluation</option>
                                                         <option value="CC">Contrôle Continu</option>
@@ -142,7 +142,7 @@
 
                     <!-- Semestre (visible uniquement si type d'évaluation sélectionné) -->
                     @if(!empty($matiere_id) && !empty($type_evaluation))
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-4 mb-3">
                             <select wire:model.live="semestre_id" class="form-control">
                                 <option value="">5. Sélectionner le semestre</option>
                             @foreach($semestres as $semestre)
