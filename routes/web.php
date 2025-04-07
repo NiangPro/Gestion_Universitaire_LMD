@@ -21,7 +21,6 @@ use App\Livewire\Historiques;
 use App\Livewire\Home;
 use App\Livewire\Login;
 use App\Livewire\Messages;
-use App\Livewire\NiveauEtudes;
 use App\Livewire\Nonacces;
 use App\Livewire\Packs;
 use App\Livewire\Parents;
@@ -34,11 +33,16 @@ use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
 use App\Livewire\Absences;
+use App\Livewire\Acces;
 use App\Livewire\Contact;
+use App\Livewire\Evaluations;
 use App\Livewire\Fonctionnalite;
 use App\Livewire\Notes;
+use App\Livewire\Paiements;
+use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
+use App\Livewire\EditNote;
 
 // Routes publiques
 Route::group([], function () {
@@ -77,16 +81,19 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::get("/annees_academiques", AcademicYears::class)->name("academicyear");
     Route::get("/departements", Departements::class)->name("departement");
     Route::get("/filieres", Filieres::class)->name("filiere");
-    Route::get("/niveaux_etudes", NiveauEtudes::class)->name("niveauetude");
     Route::get("/unite_enseignement", UniteEnseignements::class)->name("uniteenseignement");
     Route::get("/classes", Classes::class)->name("classe");
     Route::get("/cours", Cours::class)->name("cours");
     Route::get("/configurations", Configurations::class)->name("configuration");
     Route::get("/emplois_du_temps", EmploisDuTemps::class)->name("emploisdutemps");
     Route::get("/notes", Notes::class)->name("note");
+    Route::get("/evaluations", Evaluations::class)->name("evaluation");
     Route::get("/absences", Absences::class)->name("absence");
     Route::get("/retards", Retards::class)->name("retard");
     Route::get("/abonnements", Abonnement::class)->name("abonnement");
+    Route::get("/paiements", Paiements::class)->name("paiement");
+    Route::get("/rapports", RapportPaiement::class)->name("rapport");
+    Route::get("/acces", Acces::class)->name("acces");
 });
 
 // Routes communes Super Admin et Admin
@@ -113,5 +120,7 @@ Route::prefix('subscription/payment')->name('subscription.payment.')->group(func
 if (app()->environment('local')) {
     Route::get('/security-test', [App\Http\Controllers\SecurityTestController::class, 'testSecurity']);
 }
+
+Route::get('/notes/edit/{id}', EditNote::class)->name('notes.edit');
 
 

@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Campus;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\Historique;
+use App\Models\Outils;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +20,7 @@ class Register extends Component
     public $idpack;
     public $prenom, $nom, $username, $adresse, $tel, $sexe, $email, $password, $password_confirmation;
     public $nomc, $emailc, $telc, $adressec;
+    public $showPassword = false;
 
     protected $rules = [
         'prenom' => 'required|string|max:255',
@@ -89,8 +92,8 @@ class Register extends Component
 
         $subscription->save();
 
-        // Enregistrement de l'administrateur avec le campus_id
-        User::create([
+        // Enregistrement de l'administrateur
+        $user = User::create([
             'prenom' => $this->prenom,
             'nom' => $this->nom,
             'username' => $this->username,
@@ -101,11 +104,58 @@ class Register extends Component
             "image" => "profil.jpg",
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'campus_id' => $campus->id, // Lier l'administrateur au campus
+            'campus_id' => $campus->id,
         ]);
 
+        // Définition des modules pour les permissions
+        $modules = [
+            'academic_years', 'absences', 'classes', 'comptabilite', 
+            'cours', 'departements', 'etudiants', 'evaluations',
+            'filieres', 'messages', 'notes', 'paiements', 
+            'professeurs', 'rapports', 'retards', 'ue', 
+            'personnel', 'surveillants', 'parents', 
+            'configuration', 'historiques'
+        ];
+
+        // Attribution des permissions pour chaque module
+        foreach ($modules as $module) {
+            // Permissions pour l'utilisateur
+            \App\Models\Permission::create([
+                'user_id' => $user->id,
+                'campus_id' => $campus->id,
+                'module' => $module,
+                'can_view' => true,
+                'can_create' => true,
+                'can_edit' => true,
+                'can_delete' => false // Pas de permission de suppression
+            ]);
+
+            // Permissions pour le rôle admin
+            \App\Models\Permission::create([
+                'role' => 'admin',
+                'campus_id' => $campus->id,
+                'module' => $module,
+                'can_view' => true,
+                'can_create' => true,
+                'can_edit' => true,
+                'can_delete' => false // Pas de permission de suppression
+            ]);
+        }
+
+        // Connexion automatique de l'utilisateur pour pouvoir utiliser Auth::user()
+        Auth::login($user);
+
+        // Utilisation de la fonction existante pour l'historique
+        $outils = new Outils();
+        $outils->addHistorique(
+            "Création d'un nouveau campus : {$campus->nom} avec son administrateur : {$user->prenom} {$user->nom}",
+            'info'
+        );
+
+        Auth::logout(); // Déconnexion après l'enregistrement de l'historique
+
         session()->flash('message', 'Les informations ont été enregistrées avec succès.');
-        redirect(route("login"));
+        return redirect()->route("login");
     }
 
     #[Layout("components.layouts.home")]
@@ -121,5 +171,10 @@ class Register extends Component
         if (Auth::user()) {
             redirect(route("dashboard"));
         }
+    }
+
+    public function togglePassword()
+    {
+        $this->showPassword = !$this->showPassword;
     }
 }

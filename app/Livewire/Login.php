@@ -17,6 +17,7 @@ class Login extends Component
 {
     public $outils;
     public $remember = false;
+    public $showPassword = false;
 
     #[Rule('required', message:"Email est obligatoire")]
     #[Rule('string')]
@@ -103,6 +104,11 @@ class Login extends Component
         }
 
         return redirect("/tableau_de_bord");
+    }
+
+    public function togglePassword()
+    {
+        $this->showPassword = !$this->showPassword;
     }
 
     public function mount()

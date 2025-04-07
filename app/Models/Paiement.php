@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Paiement extends Model
 {
+    use HasFactory;
+
     protected $table = "paiements";
 
     protected $fillable = [
@@ -16,6 +18,10 @@ class Paiement extends Model
         "montant",
         "user_id",
         "campus_id",
+        "academic_year_id",
+        "date_paiement",
+        "reference",
+        "observation",
     ];
 
     public function user()
@@ -27,5 +33,24 @@ class Paiement extends Model
     {
         return $this->belongsTo(Campus::class, "campus_id");
     }
-    use HasFactory;
+
+    public function etudiant()
+    {
+        return $this->user->where("role", "etudiant")->first();
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, "academic_year_id");
+    }
+
+    public static function genererReference()
+    {
+        return "P" . str_pad(self::count() + 1, 6, "0", STR_PAD_LEFT);
+    }
+
+    public function isEditable()
+    {
+        return $this->created_at->addDay()->greaterThan(now());
+    }
 }

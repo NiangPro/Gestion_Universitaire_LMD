@@ -67,10 +67,7 @@ class Campus extends Model
         return $this->hasMany(Filiere::class);
     }
 
-    public function niveauxEtudes()
-    {
-        return $this->hasMany(NiveauEtude::class);
-    }
+    
 
     public function uniteEnseignements()
     {

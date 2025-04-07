@@ -6,7 +6,6 @@
                @include("livewire.configuration.departement")
 
                 @include("livewire.configuration.classe")
-                @include("livewire.configuration.coefficient")
 
                 @include("livewire.configuration.salle")
                 
@@ -162,29 +161,29 @@
         });
 
         // Gestion des notifications
-        window.addEventListener('added', event => {
-            iziToast.success({
-                title: 'Configurations',
-                message: 'Ajout avec succes',
-                position: 'topRight'
-            });
+    window.addEventListener('added', event => {
+        iziToast.success({
+            title: 'Configurations',
+            message: 'Ajout avec succes',
+            position: 'topRight'
         });
+    });
 
-        window.addEventListener('updated', event => {
-            iziToast.success({
-                title: 'Configurations',
-                message: 'Mis à jour avec succes',
-                position: 'topRight'
-            });
+    window.addEventListener('updated', event => {
+        iziToast.success({
+            title: 'Configurations',
+            message: 'Mis à jour avec succes',
+            position: 'topRight'
         });
+    });
 
-        window.addEventListener('deleted', event => {
-            iziToast.success({
-                title: 'Configurations',
-                message: 'Suppression avec succes',
-                position: 'topRight'
-            });
-            $('.modalId').modal('hide');
+    window.addEventListener('deleted', event => {
+        iziToast.success({
+            title: 'Configurations',
+            message: 'Suppression avec succes',
+            position: 'topRight'
+        });
+        $('.modalId').modal('hide');
         });
     });
 </script>

@@ -16,7 +16,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Models\UniteEnseignement;
 use App\Models\Matiere;
-use Livewire\Attributes\Reactive;
+use App\Models\Outils;
 
 #[Title("Notes")]
 class Notes extends Component
@@ -27,11 +27,11 @@ class Notes extends Component
     public $academic_year_id;
     public $classe_id;
     public $semestre_id;
+    public $outil;
 
     public $etudiant_id = null;
     public $cours_id = null;
     public $note = null;
-    public $coefficient_id = null;
     public $matiere_id = null;
     public $observation;
     public $showModal = false;
@@ -46,13 +46,23 @@ class Notes extends Component
     public $ue_id = null;
     public $uniteEnseignements = [];
     public $matieres = [];
+    public $type_evaluation = null;
+    public $currentNote = null;
+    public $editNoteId;
+    public $editNote = [
+        'valeur' => '',
+        'type_evaluation' => '',
+        'semestre_id' => '',
+        'observation' => ''
+    ];
+    public $showDeleteModal = false;
+    public $noteToDelete = null;
 
     protected $rules = [
         'classe_id' => 'required',
         'etudiant_id' => 'required',
         'cours_id' => 'required',
         'note' => 'required|numeric|min:0|max:20',
-        'coefficient_id' => 'required',
         'matiere_id' => 'required',
         'semestre_id' => 'required'
     ];
@@ -65,6 +75,26 @@ class Notes extends Component
         }
     }
 
+    public function changeStatut($statut)
+    {
+        if($statut == 'list'){
+            $this->showModal = false;
+        }else{
+            $this->showModal = true;
+        }
+
+         // Réinitialiser les variables
+         $this->reset([
+            'notes',
+            'type_evaluation',
+            'semestre_id',
+            'matiere_id',
+            'isEditing',
+            'currentNote',
+            'ue_id'
+        ]);
+    }
+
     public function updatedAcademicYearId()
     {
         $this->classe_id = null;
@@ -73,73 +103,120 @@ class Notes extends Component
 
     public function edit($noteId)
     {
+        $this->changeStatut('edit');
         $this->isEditing = true;
-        $this->noteId = $noteId;
-        $this->showModal = true;
+        $this->editNoteId = $noteId;
         
-        $note = Note::find($noteId);
-        $this->etudiant_id = $note->etudiant_id;
-        $this->cours_id = $note->cours_id;
-        $this->note = $note->note;
-        $this->coefficient_id = $note->coefficient_id;
-        $this->observation = $note->observation;
-        $this->semestre_id = $note->semestre_id;
+        $note = Note::with(['etudiant', 'matiere'])->find($noteId);
+        $this->currentNote = $note;
+        
+        $this->editNote = [
+            'valeur' => $note->note,
+            'type_evaluation' => $note->type_evaluation,
+            'semestre_id' => $note->semestre_id,
+            'observation' => $note->observation
+        ];
+        
+        $this->classe_id = $note->etudiant->classe_id;
+        $this->matiere_id = $note->matiere_id;
+        $this->loadMatieres();
     }
 
     public function sauvegarderNote()
     {
-        // Validation
-        $this->validate([
-            'classe_id' => 'required',
-            'ue_id' => 'required',
-            'matiere_id' => 'required',
-            'semestre_id' => 'required',
-        ]);
+        try {
+            // Validation
+            $this->validate([
+                'classe_id' => 'required',
+                'matiere_id' => 'required',
+                'type_evaluation' => 'required',
+                'semestre_id' => 'required',
+            ]);
 
-        // Récupérer les étudiants de la classe
-        $etudiants = $this->getEtudiantsByCampus();
-
-        foreach ($etudiants as $etudiant) {
-            // Vérifier si une note a été saisie pour cet étudiant
-            if (isset($this->notes[$etudiant->id]['note']) && !empty($this->notes[$etudiant->id]['note'])) {
-                try {
-            Note::create([
-                        'etudiant_id' => $etudiant->id,
-                        'matiere_id' => $this->matiere_id,
-                        'note' => $this->notes[$etudiant->id]['note'],
-                        'coefficient_id' => $this->notes[$etudiant->id]['coefficient_id'] ?? null,
-                        'type_evaluation' => $this->notes[$etudiant->id]['type_evaluation'] ?? 'CC',
-                        'observation' => $this->notes[$etudiant->id]['observation'] ?? null,
-                        'semestre_id' => $this->semestre_id,
-                        'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
-                        'campus_id' => Auth::user()->campus_id
-                    ]);
-                } catch (\Exception $e) {
-                    session()->flash('error', 'Erreur lors de l\'enregistrement: ' . $e->getMessage());
-                    return;
+            foreach ($this->notes as $etudiantId => $noteData) {
+                // Validation de chaque note
+                if (!isset($noteData['note']) || $noteData['note'] < 0 || $noteData['note'] > 20) {
+                    continue; // Sauter les notes invalides
                 }
-            }
-        }
 
-        $this->reset(['notes', 'showModal', 'classe_id', 'ue_id', 'matiere_id', 'semestre_id']);
-        session()->flash('message', 'Notes enregistrées avec succès');
+                Note::create([
+                    'etudiant_id' => $etudiantId,
+                    'matiere_id' => $this->matiere_id,
+                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                    'type_evaluation' => $this->type_evaluation,
+                    'note' => $noteData['note'],
+                    'observation' => $noteData['observation'] ?? null,
+                    'semestre_id' => $this->semestre_id,
+                    'campus_id' => Auth::user()->campus_id
+                ]);
+            }
+
+            // Ajouter à l'historique
+            $this->outil = new Outils();
+            $this->outil->addHistorique(
+                "Ajout des notes en {$this->type_evaluation} pour la matière ID: {$this->matiere_id}, Semestre ID: {$this->semestre_id}",
+                "create"
+            );
+
+            // Réinitialiser les variables
+            $this->reset([
+                'notes',
+                'type_evaluation',
+                'semestre_id',
+                'matiere_id',
+                'ue_id',
+                'showModal'
+            ]);
+
+            // Message de succès
+            session()->flash('success', 'Les notes ont été enregistrées avec succès.');
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Les notes ont été enregistrées avec succès.'
+            ]);
+
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            session()->flash('error', 'Une erreur est survenue lors de l\'enregistrement des notes.');
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Une erreur est survenue lors de l\'enregistrement des notes.'
+            ]);
+        }
     }
 
     public function confirmDelete($noteId)
     {
-        $this->dispatch('swal:confirm', [
-            'type' => 'warning',
-            'title' => 'Êtes-vous sûr?',
-            'text' => 'Cette note sera supprimée définitivement.',
-            'id' => $noteId
-        ]);
+        $this->noteToDelete = Note::with([
+            'etudiant.inscriptions.classe', 
+            'matiere', 
+            'semestre'
+        ])->find($noteId);
+        
+        $this->dispatch('showDeleteModal');
     }
 
-    #[On('deleteNote')]
     public function delete($noteId)
     {
-        Note::find($noteId)->delete();
-        session()->flash('message', 'Note supprimée avec succès.');
+        try {
+            $note = Note::find($noteId);
+            $etudiantInfo = "{$note->etudiant->prenom} {$note->etudiant->nom}";
+            
+            $note->delete();
+
+            // Ajouter à l'historique
+            $outil = new Outils();
+            $outil->addHistorique("Suppression de la note de l'étudiant {$etudiantInfo}", "delete");
+
+            session()->flash('success', 'La note a été supprimée avec succès.');
+            
+            $this->showDeleteModal = false;
+            $this->currentNote = null;
+            $this->dispatch('hide-delete-modal');
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Une erreur est survenue lors de la suppression.');
+        }
     }
 
     public function resetFilters()
@@ -215,6 +292,7 @@ class Notes extends Component
             }
         }
         $this->loadEtudiants();
+        $this->resetPage();
     }
 
     public function loadMatieres()
@@ -243,6 +321,66 @@ class Notes extends Component
         }
     }
 
+    public function updatedTypeEvaluation($value)
+    {
+        $this->semestre_id = null;
+        $this->dispatch('refresh-component');
+    }
+
+    public function updatedSemestreId()
+    {
+        if ($this->semestre_id) {
+            $this->loadEtudiants();
+            $this->showModal = true;
+        }
+        $this->resetPage();
+    }
+
+    public function updateNote()
+    {
+        $this->validate([
+            'editNote.valeur' => 'required|numeric|between:0,20',
+            'editNote.type_evaluation' => 'required',
+            'editNote.semestre_id' => 'required'
+        ]);
+
+        try {
+            $note = Note::find($this->editNoteId);
+            $note->update([
+                'note' => $this->editNote['valeur'],
+                'type_evaluation' => $this->editNote['type_evaluation'],
+                'semestre_id' => $this->editNote['semestre_id'],
+                'observation' => $this->editNote['observation'] ?? null
+            ]);
+
+            // Ajouter à l'historique
+            $outil = new Outils();
+            $outil->addHistorique(
+                "Modification de la note de l'étudiant {$note->etudiant->prenom} {$note->etudiant->nom}",
+                "update"
+            );
+
+            session()->flash('success', 'Note modifiée avec succès');
+            $this->resetEdit();
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erreur lors de la modification de la note');
+        }
+    }
+
+    public function resetEdit()
+    {
+        $this->isEditing = false;
+        $this->editNoteId = null;
+        $this->editNote = [
+            'valeur' => '',
+            'type_evaluation' => '',
+            'semestre_id' => '',
+            'observation' => ''
+        ];
+        $this->showModal = false;
+    }
+
     #[Layout("components.layouts.app")]
     public function render()
     {
@@ -257,7 +395,7 @@ class Notes extends Component
         }
 
         $notesQuery = Note::query()
-            ->with(['etudiant', 'matiere', 'coefficient', 'semestre'])
+            ->with(['etudiant', 'matiere', 'semestre'])
             ->where('campus_id', Auth::user()->campus_id);
 
         if ($this->academic_year_id) {
@@ -296,7 +434,6 @@ class Notes extends Component
             'cours' => Cour::where('campus_id', Auth::user()->campus_id)
                           ->where('is_deleting', 0)
                           ->get(),
-            'coefficients' => Auth::user()->campus->coefficients
         ]);
     }
 
@@ -307,7 +444,6 @@ class Notes extends Component
             'matiere.uniteEnseignement',
             'academicYear',
             'semestre',
-            'coefficient'
         ])->find($noteId);
         
         $this->showDetailsModal = true;
@@ -317,5 +453,11 @@ class Notes extends Component
     {
         $this->showDetailsModal = false;
         $this->selectedNote = null;
+    }
+
+    #[On('resetModal')]
+    public function resetDeleteData()
+    {
+        $this->noteToDelete = null;
     }
 }

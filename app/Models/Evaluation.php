@@ -2,61 +2,55 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Evaluation extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'titre',
-        'type', // 'devoir', 'examen', 'controle', etc.
-        'date',
-        'heure_debut',
-        'heure_fin',
-        'coefficient',
-        'cours_id',
-        'campus_id',
-        'academic_year_id',
-        'created_by',
-        'status', // 'planifie', 'en_cours', 'termine'
         'description',
-        'salle_id'
+        'date_evaluation',
+        'heure_debut',
+        'duree',
+        'type_evaluation_id',
+        'matiere_id',
+        'academic_year_id',
+        'campus_id',
+        'statut'
     ];
 
     protected $casts = [
-        'date' => 'datetime',
-        'coefficient' => 'float'
+        'date_evaluation' => 'date',
+        'heure_debut' => 'datetime',
+        'duree' => 'integer'
     ];
 
-    public function cours()
+    public function typeEvaluation()
     {
-        return $this->belongsTo(Cour::class, 'cours_id');
+        return $this->belongsTo(TypeEvaluation::class);
     }
+
+    public function matiere()
+    {
+        return $this->belongsTo(Matiere::class);
+    }
+
 
     public function campus()
     {
         return $this->belongsTo(Campus::class);
     }
 
-    public function academicYear()
+    public function classes(): BelongsToMany
     {
-        return $this->belongsTo(AcademicYear::class);
+        return $this->belongsToMany(Classe::class, 'evaluation_classe')
+                    ->withTimestamps();
     }
 
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
+    public function academicYear(){
+        return $this->belongsTo(AcademicYear::class, "academic_year_id");
     }
 
-    public function salle()
-    {
-        return $this->belongsTo(Salle::class);
-    }
-
-    public function notes()
-    {
-        return $this->hasMany(Note::class);
-    }
+    // ... autres relations existantes ...
 }

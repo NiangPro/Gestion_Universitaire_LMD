@@ -2,151 +2,357 @@
 
 namespace App\Livewire;
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\Campus;
-use App\Models\Outils;
 use App\Models\User;
+use App\Models\Classe;
+use App\Models\Cour;
+use App\Models\Note;
+use App\Models\Outils;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Component;
+use Illuminate\Validation\Rule;
 
-#[Title("Professeurs")]
+#[Title("Gestion des Professeurs")]
 class Professeur extends Component
 {
+    use WithPagination, WithFileUploads;
+    protected $paginationTheme = 'bootstrap';
+
     public $status = "list";
+    public $title = "Liste des professeurs";
     public $outil;
-    public $prenom, $nom, $username, $adresse, $tel, $sexe, $email, $password, $password_confirmation;
-    public $id;
+    public $selectedProfesseur;
+    
+    // Propriétés du formulaire
+    public $id, $prenom, $nom, $username, $adresse, $tel, $sexe, $email;
+    public $photo;
+    public $specialite;
+    public $disponibilites = [];
+    public $cours_assignes = [];
+
+    // Filtres
+    public $search = '';
+    public $specialiteFilter = '';
+    public $disponibiliteFilter = '';
+    public $perPage = 10;
+    public $sortField = 'nom';
+    public $sortDirection = 'asc';
+
+    public $showDeleteModal = false;
+    public $professorToDelete = null;
+
+    public $notesData = [];
 
     protected $rules = [
         'prenom' => 'required|string|max:255',
         'nom' => 'required|string|max:255',
-        'username' => 'required|string|max:255|unique:users,username',
+        'username' => 'required|string|max:255',
         'adresse' => 'required|string|max:255',
-        'tel' => ['required', 'unique:users,tel', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
+        'tel' => ['required', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
         'sexe' => 'required|in:Homme,Femme',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'nullable',
+        'email' => 'required|email',
+        'specialite' => 'required|string',
+        'disponibilites' => 'required|array|min:1',
+        'photo' => 'nullable|image|max:1024'
     ];
 
-    public function messages(){
-        return [
-            'prenom.required' => 'Le prénom est obligatoire.',
-            'nom.required' => 'Le nom est obligatoire.',
-            'username.required' => "Le nom d'utilisateur est obligatoire.",
-            'username.unique' => "Ce nom d'utilisateur existe déjà.",
-            'adresse.required' => "L'adresse est obligatoire.",
-            'tel.required' => 'Le numéro de téléphone est obligatoire.',
-            'tel.regex' => 'Le numéro de téléphone doit être un numéro valide au Sénégal.',
-            'sexe.required' => 'Le sexe est obligatoire.',
-            'email.required' => "L'adresse e-mail est obligatoire.",
-            'email.unique' => "Cette adresse e-mail existe déjà.",
+    public function mount()
+    {
+        $this->outil = new Outils();
+    }
+
+    public function updatedPhoto()
+    {
+        $this->validate([
+            'photo' => 'image|max:1024'
+        ]);
+    }
+
+    public function changeStatus($status, $id = null)
+    {
+        if (!Auth::user()->hasPermission('professeurs', $status === 'add' ? 'create' : 'view')) {
+            $this->dispatch('error', ['message' => 'Permission non accordée']);
+            return;
+        }
+
+        $this->status = $status;
+        
+        if ($status === 'details' && $id) {
+            $this->loadProfesseurDetails($id);
+            $this->title = "Détails du professeur";
+        } else {
+            $this->title = $status === "add" ? "Ajouter un professeur" : "Liste des professeurs";
+            $this->resetForm();
+        }
+    }
+
+    public function loadProfesseurDetails($id)
+    {
+        $currentAcademicYearId = Auth::user()->campus->currentAcademicYear()->id;
+        
+        $this->selectedProfesseur = User::with([
+            'cours' => function($query) use ($currentAcademicYearId) {
+                $query->where('cours.academic_year_id', $currentAcademicYearId)
+                      ->with(['matiere', 'classe']);
+            }
+        ])->findOrFail($id);
+
+        // Préparer les données des notes
+        $this->notesData = collect();
+        foreach($this->selectedProfesseur->cours->groupBy('matiere_id') as $matiere_id => $cours) {
+            $matiere = $cours->first()->matiere;
+            $notes = Note::where('matiere_id', $matiere_id)
+                ->where('academic_year_id', $currentAcademicYearId)
+                ->get();
+            
+            $this->notesData->push([
+                'matiere' => $matiere->nom,
+                'classes' => $cours->pluck('classe.nom')->unique()->implode(', '),
+                'types_evaluation' => $notes->pluck('type_evaluation')->unique()->implode(', '),
+                'nombre_notes' => $notes->count(),
+                'moyenne' => $notes->avg('note')
+            ]);
+        }
+
+        // Statistiques globales
+        $this->stats = [
+            'total_cours' => Cour::where('professeur_id', $id)
+                                ->where('academic_year_id', $currentAcademicYearId)
+                                ->count(),
+            'total_notes' => Note::whereIn('matiere_id', function($query) use ($id, $currentAcademicYearId) {
+                                $query->select('matiere_id')
+                                      ->from('cours')
+                                      ->where('professeur_id', $id)
+                                      ->where('academic_year_id', $currentAcademicYearId);
+                            })
+                            ->where('academic_year_id', $currentAcademicYearId)
+                            ->count(),
+            'total_classes' => Cour::where('professeur_id', $id)
+                                  ->where('academic_year_id', $currentAcademicYearId)
+                                  ->distinct('classe_id')
+                                  ->count()
         ];
     }
 
-    public function delete($id){
-        $p = User::where("id", $id)->first();
-        $p->is_deleting = true;
-
-        $p->save();
-
-        $this->outil->addHistorique("Suppression d'un professeur", "delete");
-
-        $this->dispatch("deleteCampus");
+    public function confirmDelete($id)
+    {
+        $this->professorToDelete = User::find($id);
+        $this->showDeleteModal = true;
     }
 
-    public function getProf($id){
-        $p = User::where("id", $id)->first();
-        $this->id = $p->id;
+    public function cancelDelete()
+    {
+        $this->professorToDelete = null;
+        $this->showDeleteModal = false;
+    }
 
-        $this->prenom = $p->prenom;
-        $this->nom = $p->nom;
-        $this->username = $p->username;
-        $this->adresse = $p->adresse;
-        $this->tel = $p->tel;
-        $this->sexe = $p->sexe;
-        $this->email = $p->email;
+    public function delete()
+    {
+        if (!Auth::user()->hasPermission('professeurs', 'delete')) {
+            $this->dispatch('error', ['message' => 'Permission non accordée']);
+            return;
+        }
 
-        $this->status="edit";
+        try {
+            $professor = $this->professorToDelete;
+            
+            // Enregistrer l'historique avant la suppression
+            $this->outil->addHistorique(
+                "Suppression du professeur {$professor->prenom} {$professor->nom}",
+                'delete',
+                'users',
+                $professor->id
+            );
+
+            // Marquer comme supprimé au lieu de supprimer physiquement
+            $professor->update([
+                'is_deleting' => true
+            ]);
+
+            $this->showDeleteModal = false;
+            $this->professorToDelete = null;
+            
+            $this->dispatch('success', ['message' => 'Professeur supprimé avec succès']);
+        } catch (\Exception $e) {
+            $this->dispatch('error', ['message' => 'Une erreur est survenue']);
+        }
     }
 
     public function store()
     {
+        if ($this->id && !Auth::user()->hasPermission('professeurs', 'edit')) {
+            $this->dispatch('error', ['message' => 'Permission non accordée']);
+            return;
+        }
+
+        if (!$this->id && !Auth::user()->hasPermission('professeurs', 'create')) {
+            $this->dispatch('error', ['message' => 'Permission non accordée']);
+            return;
+        }
+
+        $this->validate();
+
+        try {
+            $photoPath = $this->photo ? $this->photo->store('photos', 'public') : null;
        
         if ($this->id) {
-            $this->validate([
-                'prenom' => 'required|string|max:255',
-                'nom' => 'required|string|max:255',
-                'username' => 'required|string|max:255|unique:users,username,'.$this->id,
-                'adresse' => 'required|string|max:255',
-                'tel' => 'required',
-                'sexe' => 'required|in:Homme,Femme',
-                'email' => 'required|email|unique:users,email,'.$this->id,
-                'password' => 'nullable',
-            ]);
-            
-            $p = User::where("id", $this->id)->first();
-            
-            if ($p) {
-                $p->prenom = $this->prenom;
-                $p->nom = $this->nom;
-                $p->username = $this->username;
-                $p->adresse = $this->adresse;
-                $p->tel = $this->tel;
-                $p->sexe = $this->sexe;
-                // $p->role = "professeur";
-                $p->email = $this->email;
-                $p->campus_id = Auth::user()->campus_id;
+                $prof = User::findOrFail($this->id);
+                $oldData = $prof->toArray();
+                
+                $prof->update([
+                    'prenom' => $this->prenom,
+                    'nom' => $this->nom,
+                    'username' => $this->username,
+                    'adresse' => $this->adresse,
+                    'tel' => $this->tel,
+                    'sexe' => $this->sexe,
+                    'email' => $this->email,
+                    'specialite' => $this->specialite,
+                    'disponibilites' => $this->disponibilites,
+                    'image' => $this->photo ? $photoPath : $prof->image
+                ]);
 
-                $p->save();
-                $this->outil->addHistorique("Mis à jour des données d'un professeur", "edit");
-
-                $this->dispatch("updateSuccessful");
-                $this->init();
-            }
-        }else{
-            $this->validate();
-            User::create([
+                // Historique de modification
+                $this->outil->addHistorique(
+                    "Modification du professeur {$prof->prenom} {$prof->nom}",
+                    'edit',
+                    'users',
+                    $prof->id,
+                    $oldData,
+                    $prof->toArray()
+                );
+            } else {
+                $prof = User::create([
                 'prenom' => $this->prenom,
                 'nom' => $this->nom,
                 'username' => $this->username,
                 'adresse' => $this->adresse,
                 'tel' => $this->tel,
                 'sexe' => $this->sexe,
-                "role" => "professeur",
-                "image" => "profil.jpg",
                 'email' => $this->email,
-                'password' => null,
-                'campus_id' => Auth::user()->campus_id, // Lier l'administrateur au campus
-            ]);
+                    'role' => 'professeur',
+                    'specialite' => $this->specialite,
+                    'disponibilites' => $this->disponibilites,
+                    'image' => $photoPath ?? 'profil.jpg',
+                    'campus_id' => Auth::user()->campus_id
+                ]);
 
-            $this->outil->addHistorique("Ajout d'un professeur", "add");
+                // Historique d'ajout
+                $this->outil->addHistorique(
+                    "Ajout du professeur {$prof->prenom} {$prof->nom}",
+                    'add',
+                    'users',
+                    $prof->id
+                );
+            }
 
-            $this->dispatch("addSuccessful");
+            $this->status = "list";
+            $this->resetForm();
+            $this->dispatch('success', ['message' => 'Professeur ' . ($this->id ? 'modifié' : 'ajouté') . ' avec succès']);
+        } catch (\Exception $e) {
+            $this->dispatch('error', ['message' => 'Une erreur est survenue']);
         }
-
-        // Réinitialiser les champs du formulaire
-        $this->status = "list";
     }
 
-    public function changeStatus($status)
+    public function edit($id)
     {
-        $this->status = $status;
-        $this->init();
+        if (!Auth::user()->hasPermission('professeurs', 'edit')) {
+            $this->dispatch('error', ['message' => 'Permission non accordée']);
+            return;
+        }
+
+        $professeur = User::findOrFail($id);
+        
+        // Remplir les propriétés avec les données du professeur
+        $this->id = $professeur->id;
+        $this->prenom = $professeur->prenom;
+        $this->nom = $professeur->nom;
+        $this->username = $professeur->username;
+        $this->adresse = $professeur->adresse;
+        $this->tel = $professeur->tel;
+        $this->sexe = $professeur->sexe;
+        $this->email = $professeur->email;
+        $this->specialite = $professeur->specialite;
+        $this->disponibilites = $professeur->disponibilites ?? [];
+
+        // Changer le statut pour afficher le formulaire d'édition
+        $this->status = 'add';
+        $this->title = "Modifier le professeur";
+    }
+
+    // Règles de validation personnalisées pour la mise à jour
+    public function updatedRules()
+    {
+        return [
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users')->ignore($this->id),
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($this->id),
+            ],
+            'tel' => [
+                'required',
+                'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/',
+                Rule::unique('users')->ignore($this->id),
+            ],
+        ];
     }
 
     #[Layout("components.layouts.app")]
     public function render()
     {
-        $this->outil = new Outils();
+        $query = User::query()
+            ->where('campus_id', Auth::user()->campus_id)
+            ->where('role', 'professeur')
+            ->where('is_deleting', false)
+            ->when($this->search, function($q) {
+                $q->where(function($q) {
+                    $q->where('nom', 'like', '%'.$this->search.'%')
+                      ->orWhere('prenom', 'like', '%'.$this->search.'%')
+                      ->orWhere('email', 'like', '%'.$this->search.'%')
+                      ->orWhere('tel', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->when($this->specialiteFilter, function($q) {
+                $q->where('specialite', $this->specialiteFilter);
+            });
+
+        $professeurs = $query->orderBy($this->sortField, $this->sortDirection)
+                           ->paginate($this->perPage);
+
+        $currentAcademicYearId = Auth::user()->campus->currentAcademicYear()->id;
+
+        $stats = [
+            'total_cours' => Cour::where('campus_id', Auth::user()->campus_id)
+                                ->where('academic_year_id', $currentAcademicYearId)
+                                ->count(),
+            'total_notes' => Note::where('campus_id', Auth::user()->campus_id)
+                               ->where('academic_year_id', $currentAcademicYearId)
+                               ->count(),
+            'total_classes' => Classe::where('campus_id', Auth::user()->campus_id)
+                                   ->where('academic_year_id', $currentAcademicYearId)
+                                   ->count()
+        ];
+
         return view('livewire.personnel.professeur.professeur', [
-            "campus" => Campus::orderBy("id", "desc")->get(),
-            "users" => User::where("campus_id", Auth::user()->campus_id)->where("role","professeur")->where("is_deleting", false)->get(),
+            'professeurs' => $professeurs,
+            'stats' => $stats
         ]);
     }
 
-    public function init(){
-        $this->id=null;
-        $this->reset(['prenom', 'nom', 'username', 'adresse', 'tel', 'sexe','email']);
+    private function resetForm()
+    {
+        $this->reset([
+            'id', 'prenom', 'nom', 'username', 'adresse', 'tel', 
+            'sexe', 'email', 'photo', 'specialite', 'disponibilites'
+        ]);
     }
 }

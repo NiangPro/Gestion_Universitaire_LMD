@@ -62,12 +62,17 @@ class Etablissements extends Component
     public function changeStatus($id, $etat)
     {
         $val = $etat == "actif" ? 1 : 0;
-
         $camp = Campus::where("id", $id)->first();
-
         $camp->statut = $val;
-
         $camp->save();
+
+        // Ajouter l'historique
+        $this->outils->addHistorique(
+            "Changement de statut du campus {$camp->nom} en " . ($val ? 'actif' : 'inactif'),
+            "edit",
+            "campuses",
+            $camp->id
+        );
 
         $this->dispatch($etat);
     }
@@ -76,10 +81,9 @@ class Etablissements extends Component
     {
         $this->validate();
 
-        // Définir la date de fermeture à un mois à partir d'aujourd'hui
         $dateFermeture = Carbon::now()->addMonth();
-        // Sauvegarde du campus dans la base de données
-        Campus::create([
+        
+        $campus = Campus::create([
             'nom' => ucfirst($this->nom),
             'tel' => $this->telephone,
             'adresse' => ucfirst($this->adresse),
@@ -88,19 +92,32 @@ class Etablissements extends Component
             'email' => $this->email
         ]);
 
-        // Réinitialiser les champs du formulaire après l'ajout
+        // Ajouter l'historique
+        $this->outils->addHistorique(
+            "Création du nouveau campus {$campus->nom}",
+            "add",
+            "campuses",
+            $campus->id
+        );
+
         $this->reset(["nom", "telephone", "adresse", "email"]);
-
-
-        // Émettre un événement pour fermer le modal
         $this->dispatch('campusAdded');
     }
 
     public function delete($id)
     {
         $c = Campus::where("id", $id)->first();
+        $oldNom = $c->nom;
         $c->is_deleting = true;
         $c->save();
+
+        // Ajouter l'historique
+        $this->outils->addHistorique(
+            "Suppression du campus {$oldNom}",
+            "delete",
+            "campuses",
+            $c->id
+        );
 
         $this->dispatch("deleteCampus");
     }

@@ -18,8 +18,6 @@ return new class extends Migration
             $table->boolean("is_deleting")->default(false);
             $table->unsignedBigInteger('filiere_id')->nullable();
             $table->foreign('filiere_id')->references("id")->on("filieres")->onDelete("cascade");
-            $table->unsignedBigInteger('niveau_etude_id')->nullable();
-            $table->foreign('niveau_etude_id')->references("id")->on("niveau_etudes")->onDelete("cascade");
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references("id")->on("campuses")->onDelete("cascade");
             $table->timestamps();

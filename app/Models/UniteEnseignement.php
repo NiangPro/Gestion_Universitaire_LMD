@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Livewire\Matieres;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +15,6 @@ class UniteEnseignement extends Model
         "nom",
         "is_deleting",
         "credit",
-        "niveau_etude_id",
         "filiere_id",
         "campus_id",
     ];
@@ -25,9 +23,6 @@ class UniteEnseignement extends Model
         return $this->hasMany(Matiere::class);
     }
     
-    public function niveauEtude(){
-        return $this->belongsTo(NiveauEtude::class, "niveau_etude_id");
-    }
 
     public function filiere(){
         return $this->belongsTo(Filiere::class, "filiere_id");

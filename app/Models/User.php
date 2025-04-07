@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasPermissions;
 
 
 /**
@@ -71,7 +72,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -85,6 +86,7 @@ class User extends Authenticatable
         'email',
         'tel',
         'sexe',
+        'image',
         'date_naissance',
         'lieu_naissance',
         'nationalite',
@@ -114,8 +116,13 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function cours(){
-        return $this->hasMany(Cour::class, "professeur_id");
+    public function cours()
+    {
+        return $this->hasMany(Cour::class, 'professeur_id');
+    }
+
+    public function departement(){
+        return $this->hasOne(Departement::class, "user_id");
     }
 
     public function sentMessages()
@@ -157,12 +164,12 @@ class User extends Authenticatable
 
     public function estSuperAdmin()
     {
-        return $this->role == "superadmin";
+        return $this->role === 'superadmin';
     }
 
     public function estAdmin()
     {
-        return $this->role == "admin";
+        return $this->role === 'admin';
     }
 
     public function estParent()
@@ -205,5 +212,76 @@ class User extends Authenticatable
     public function medical()
     {
         return $this->hasOne(Medical::class);
+    }
+    /**
+     * Get all payments for the user.
+     */
+    public function paiements(): HasMany
+    {
+        return $this->hasMany(Paiement::class, 'user_id');
+    }
+
+    /**
+     * Get total payments for the user.
+     */
+    public function totalPaiements()
+    {
+        return $this->paiements()
+            ->selectRaw('user_id, SUM(montant) as total_montant, COUNT(*) as nombre_paiements')
+            ->groupBy('user_id')
+            ->first();
+    }
+
+    /**
+     * Get current academic year payments for the user.
+     */
+    public function paiementsAnneeEnCours()
+    {
+        return $this->paiements()
+            ->where('academic_year_id', $this->campus->currentAcademicYear()->id);
+    }
+
+    /**
+     * Get payments for a specific academic year.
+     */
+    public function paiementsParAnnee($academic_year_id)
+    {
+        return $this->paiements()
+            ->where('academic_year_id', $academic_year_id);
+    }
+
+    public function permissions()
+    {
+        return $this->hasMany(Permission::class);
+    }
+
+    public function hasPermission($module, $action)
+    {
+        $permission = $this->permissions->where('module', $module)->first();
+        if (!$permission) return false;
+        
+        return $permission->{"can_$action"};
+    }
+
+    public function notes()
+    {
+        return $this->hasManyThrough(
+            Note::class,
+            Cour::class,
+            'professeur_id',
+            'matiere_id',
+            'id',
+            'matiere_id'
+        )->select('notes.*')
+        ->join('cours', 'cours.matiere_id', '=', 'notes.matiere_id')
+        ->where('cours.academic_year_id', function($query) {
+            $query->select('id')
+                  ->from('academic_years')
+                  ->whereIn('id', function($subquery) {
+                      $subquery->select('academic_year_id')
+                              ->from('cours')
+                              ->where('professeur_id', $this->id);
+                  });
+        });
     }
 }

@@ -18,19 +18,36 @@ class Filiere extends Model
         "campus_id",
     ];
 
-    public function departement(){
+    public function departement()
+    {
         return $this->belongsTo(Departement::class, "departement_id");
     }
 
-    public function campus(){
+    public function campus()
+    {
         return $this->belongsTo(Campus::class, "campus_id");
     }
 
-    public function uniteEnseignements(){
+    public function uniteEnseignements()
+    {
         return $this->hasMany(UniteEnseignement::class);
     }
 
-    public function matieres(){
-        return $this->hasMany(Matiere::class);
+    // Modifions la relation matieres pour utiliser une relation à travers les UE
+    public function matieres()
+    {
+        return $this->hasManyThrough(
+            Matiere::class,
+            UniteEnseignement::class,
+            'filiere_id', // Clé étrangère sur unite_enseignements
+            'unite_enseignement_id', // Clé étrangère sur matieres
+            'id', // Clé locale sur filieres
+            'id' // Clé locale sur unite_enseignements
+        );
+    }
+
+    public function classes()
+    {
+        return $this->hasMany(Classe::class, 'filiere_id');
     }
 }

@@ -3,11 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Absence;
-use App\Models\AcademicYear;
-use App\Models\Campus;
 use App\Models\Cour;
-use App\Models\Cours;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -91,6 +87,12 @@ class Absences extends Component
 
     public function showAddAbsenceModal()
     {
+        if (!Auth::user()->hasPermission('absences', 'create')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de créer des absences'
+            ]);
+            return;
+        }
         $this->isOpen = true;
     }
 
@@ -101,6 +103,10 @@ class Absences extends Component
 
     public function mount()
     {
+        if (!Auth::user()->hasPermission('absences', 'view')) {
+            return redirect()->route('dashboard');
+        }
+        
         $this->date = now()->format('Y-m-d\TH:i');
         $this->academicYear = Auth::user()->campus->currentAcademicYear();
     }
@@ -119,6 +125,20 @@ class Absences extends Component
 
     public function save()
     {
+        if ($this->isEditing && !Auth::user()->hasPermission('absences', 'edit')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de modifier des absences'
+            ]);
+            return;
+        }
+
+        if (!$this->isEditing && !Auth::user()->hasPermission('absences', 'create')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de créer des absences'
+            ]);
+            return;
+        }
+
         $this->validate();
 
         $data = [
@@ -134,20 +154,33 @@ class Absences extends Component
             'created_by' => Auth::user()->id
         ];
 
-        if ($this->isEditing) {
-            Absence::find($this->absence_id)->update($data);
-            $this->dispatch('updated');
-        } else {
-            Absence::create($data);
-            $this->dispatch('added');
-        }
+        try {
+            if ($this->isEditing) {
+                Absence::find($this->absence_id)->update($data);
+                $this->dispatch('updated');
+            } else {
+                Absence::create($data);
+                $this->dispatch('added');
+            }
 
-        $this->reset(['etudiant_id', 'cours_id', 'status', 'motif', 'justifie', 'commentaire', 'isEditing', 'absence_id', 'inscriptions']);
-        $this->closeModal();
+            $this->reset(['etudiant_id', 'cours_id', 'status', 'motif', 'justifie', 'commentaire', 'isEditing', 'absence_id', 'inscriptions']);
+            $this->closeModal();
+        } catch (\Exception $e) {
+            $this->dispatch('error', [
+                'message' => 'Une erreur est survenue lors de l\'enregistrement'
+            ]);
+        }
     }
 
     public function edit(Absence $absence)
     {
+        if (!Auth::user()->hasPermission('absences', 'edit')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de modifier des absences'
+            ]);
+            return;
+        }
+
         $this->isEditing = true;
         $this->absence_id = $absence->id;
         $this->etudiant_id = $absence->etudiant_id;
@@ -157,11 +190,28 @@ class Absences extends Component
         $this->motif = $absence->motif;
         $this->justifie = $absence->justifie;
         $this->commentaire = $absence->commentaire;
+        $this->isOpen = true;
     }
 
     public function delete(Absence $absence)
     {
-        $absence->delete();
-        $this->dispatch('alert', ['type' => 'success', 'message' => 'Absence supprimée avec succès']);
+        if (!Auth::user()->hasPermission('absences', 'delete')) {
+            $this->dispatch('error', [
+                'message' => 'Vous n\'avez pas la permission de supprimer des absences'
+            ]);
+            return;
+        }
+
+        try {
+            $absence->delete();
+            $this->dispatch('alert', [
+                'type' => 'success',
+                'message' => 'Absence supprimée avec succès'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('error', [
+                'message' => 'Une erreur est survenue lors de la suppression'
+            ]);
+        }
     }
 }

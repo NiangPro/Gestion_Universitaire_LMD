@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('table')->nullable();
             $table->string('element_id')->nullable();
+            $table->string("device")->nullable();
             $table->string('ip', 45)->nullable();
             $table->string('navigateur')->nullable();
             $table->unsignedBigInteger('campus_id')->nullable();

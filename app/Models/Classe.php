@@ -15,7 +15,12 @@ class Classe extends Model
         "nom",
         "filiere_id",
         "campus_id",
+        "type_periode",
+        "duree",
         "academic_year_id",
+        "cout_formation",
+        "cout_inscription",
+        "mensualite",
         "is_deleting",
     ];
 
@@ -34,10 +39,19 @@ class Classe extends Model
         return $this->belongsTo(AcademicYear::class, "academic_year_id");
     }
 
-    public function eleves()
+    public function etudiants()
     {
-        return $this->belongsToMany(User::class, 'classe_eleve')
-            ->withPivot('academic_year_id')
+        return $this->belongsToMany(User::class, 'inscriptions', 'classe_id', 'user_id')
+            ->withPivot(['academic_year_id', 'montant', 'restant', 'status'])
             ->withTimestamps();
+    }
+
+    public function getDureeFormatteeAttribute()
+    {
+        if ($this->type_periode === 'annee') {
+            return $this->duree . ' ' . ($this->duree > 1 ? 'années' : 'année');
+        } else {
+            return $this->duree . ' ' . ($this->duree > 1 ? 'mois' : 'mois');
+        }
     }
 }

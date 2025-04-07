@@ -1,64 +1,66 @@
 <div>
-    <!-- Hero Section -->
+    <!-- Hero Section améliorée -->
     <section class="hero-section position-relative overflow-hidden bg-gradient-primary text-white">
-        <div class="container position-relative py-2" style="z-index: 2;">
+        <div class="container position-relative" style="z-index: 2;">
             <div class="row min-vh-100 align-items-center">
                 <div class="col-lg-6">
-                    <span class="badge mb-3 px-3 py-2" style="background-color: #479CD5; color: #FF8A00;">Plateforme de Gestion Universitaire</span>
-                    <h1 class="display-3 fw-bold mb-4">
-                        Transformez la Gestion de Votre Université
+                    <div class="animate-left">
+                        <span class="badge mb-3 px-3 py-2 animate-pulse" style="background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
+                            <i class="fas fa-rocket me-2"></i>Nouvelle Version Disponible
+                        </span>
+                        <h1 class="display-4 fw-bold mb-4 text-shadow">
+                            La Meilleure Solution de<br>
+                            <span class="gradient-text">Gestion Universitaire</span>
                     </h1>
-                    <p class="lead mb-4 opacity-75">
-                        Une solution tout-en-un pour gérer efficacement votre université. De l'administration aux résultats, en passant par la communication.
-                    </p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="{{ route('register', ['id' => 1]) }}" class="btn btn-light btn-lg px-4 rounded-pill">
-                            Commencer gratuitement
-                        </a>
-                        <a href="#demo" class="btn btn-outline-light btn-lg px-4 rounded-pill">
-                            Voir la démo
+                        <p class="lead mb-4 opacity-90 fw-light">
+                            Simplifiez la gestion de votre établissement avec notre plateforme tout-en-un. 
+                            De l'administration aux résultats, en passant par la communication.
+                        </p>
+                        <div class="d-flex gap-3 flex-wrap mb-5">
+                            <a href="{{ route('register', ['id' => 1]) }}" class="btn btn-light btn-lg px-4 rounded-pill hover-scale">
+                                <i class="fas fa-play me-2"></i>Démarrer Gratuitement
+                            </a>
+                            <a href="#demo" class="btn btn-outline-light btn-lg px-4 rounded-pill hover-scale">
+                                <i class="fas fa-video me-2"></i>Voir la démo
                         </a>
                     </div>
-                    <div class="mt-5 d-flex gap-4">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-white p-2 me-2">
-                                <i class="fas fa-check text-primary"></i>
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <i class="fas fa-school text-warning"></i>
+                                <span>100+ Établissements</span>
                             </div>
-                            <span>Installation rapide</span>
+                            <div class="stat-item">
+                                <i class="fas fa-users text-info"></i>
+                                <span>5000+ Utilisateurs</span>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-white p-2 me-2">
-                                <i class="fas fa-check text-primary"></i>
+                            <div class="stat-item">
+                                <i class="fas fa-star text-warning"></i>
+                                <span>4.9/5 Satisfaction</span>
                             </div>
-                            <span>Support 24/7</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <div class="position-relative">
-                        <div class="floating-dashboard">
-                            <video src="{{ asset('images/home.mp4') }}" autoplay muted loop class="img-fluid rounded-lg shadow-2xl" style="border-radius: 20px; box-shadow: 5 5 10px 0 rgba(246, 156, 46, 0.5);"></video>
-                            <!-- <img src="{{ asset('images/services.png') }}" alt="Dashboard" class="img-fluid rounded-lg shadow-2xl"> -->
+                    <div class="position-relative animate-right">
+                        <div class="dashboard-preview">
+                            <video src="{{ asset('images/home.mp4') }}" autoplay muted loop 
+                                   class="img-fluid rounded-lg main-video"></video>
                         </div>
-                        <!-- <div class="position-absolute top-0 end-0 animation-float delay-1">
-                            <div class="card bg-white p-3 rounded-lg shadow-sm">
+                        <div class="floating-card card-1">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-graduation-cap text-primary fa-2x me-3"></i>
                                     <div>
-                                        <h6 class="text-dark mb-0">1000+ Étudiants</h6>
-                                        <small class="text-muted">Gestion simplifiée</small>
-                                    </div>
+                                    <h6 class="mb-0">Gestion Simplifiée</h6>
+                                    <small>1000+ Étudiants</small>
                                 </div>
                             </div>
-                        </div> -->
-                        <div class="position-absolute bottom-0 end-0 animation-float delay-1">
-                            <div class="card bg-white p-3 rounded-lg shadow-sm">
+                        </div>
+                        <div class="floating-card card-2">
                                 <div class="d-flex align-items-center">
-                                    <i class="fas fa-school text-primary fa-2x me-3"></i>
+                                <i class="fas fa-chart-line text-success fa-2x me-3"></i>
                                     <div>
-                                        <h6 class="text-dark mb-0">10+ Établissements</h6>
-                                        <small class="text-muted">Gestion simplifiée</small>
-                                    </div>
+                                    <h6 class="mb-0">Performance</h6>
+                                    <small>98% de réussite</small>
                                 </div>
                             </div>
                         </div>
@@ -66,12 +68,136 @@
                 </div>
             </div>
         </div>
+        <!-- Formes d'arrière-plan améliorées -->
         <div class="hero-shapes">
-            <div class="shape-1"></div>
-            <div class="shape-2"></div>
-            <div class="shape-3"></div>
+            <div class="shape-1 animate-float"></div>
+            <div class="shape-2 animate-float-delay"></div>
+            <div class="shape-3 animate-float-delay-2"></div>
+            <div class="shape-4 animate-pulse"></div>
         </div>
     </section>
+
+    <!-- Styles CSS améliorés -->
+    <style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #FF8A00, #0288d1, #0097a7);
+        position: relative;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, #fff, #64b5f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .animate-left {
+        animation: slideInLeft 1s ease-out;
+    }
+
+    .animate-right {
+        animation: slideInRight 1s ease-out;
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    .dashboard-preview {
+        position: relative;
+        z-index: 2;
+    }
+
+    .main-video {
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .main-video:hover {
+        transform: translateY(-10px);
+    }
+
+    .floating-card {
+        position: absolute;
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        z-index: 3;
+    }
+
+    .card-1 {
+        top: 10%;
+        right: -30px;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .card-2 {
+        bottom: 10%;
+        left: -30px;
+        animation: float 6s ease-in-out infinite 1s;
+    }
+
+    .stats-container {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+    }
+
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .shape-4 {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%;
+        top: 30%;
+        left: 20%;
+    }
+    </style>
 
     <!-- Statistiques Section -->
     <section class="py-5 bg-light">
@@ -125,50 +251,199 @@
         </div>
     </section>
 
-    <!-- Fonctionnalités Section -->
+    <!-- Section Système LMD -->
     <section class="py-5">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Fonctionnalités Principales</h2>
-                <p class="lead text-muted">Découvrez nos outils puissants pour une gestion efficace</p>
+                <span class="badge bg-primary text-white px-3 py-2 mb-3">Système LMD</span>
+                <h2 class="display-5 fw-bold mb-3">Une Solution Adaptée au Système LMD</h2>
+                <p class="lead text-muted">Gérez efficacement votre établissement selon les normes License-Master-Doctorat</p>
             </div>
 
             <div class="row g-4">
-                <!-- Gestion des Étudiants -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="card feature-card border-0 shadow-sm h-100 hover-translate">
-                        <div class="card-body p-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
                             <div class="feature-icon bg-primary-soft rounded-circle mb-4">
-                                <i class="fas fa-user-graduate text-primary"></i>
+                                <i class="fas fa-layer-group text-primary"></i>
                             </div>
-                            <h4 class="mb-3">Gestion des Étudiants</h4>
-                            <p class="text-muted mb-0">Gérez efficacement les dossiers étudiants, les inscriptions et suivez leurs performances académiques.</p>
+                            <h4>Licence (BAC+3)</h4>
+                            <ul class="list-unstyled mt-3">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>6 semestres</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>180 crédits</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Unités d'enseignement</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-
-                <!-- Gestion des Notes -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="card feature-card border-0 shadow-sm h-100 hover-translate">
-                        <div class="card-body p-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
                             <div class="feature-icon bg-success-soft rounded-circle mb-4">
-                                <i class="fas fa-chart-line text-success"></i>
+                                <i class="fas fa-chart-bar text-success"></i>
                             </div>
-                            <h4 class="mb-3">Gestion des Notes</h4>
-                            <p class="text-muted mb-0">Système complet de notation avec calcul automatique des moyennes et génération de bulletins.</p>
+                            <h4>Master (BAC+5)</h4>
+                            <ul class="list-unstyled mt-3">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>4 semestres</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>120 crédits</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Spécialisations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
+                            <div class="feature-icon bg-info-soft rounded-circle mb-4">
+                                <i class="fas fa-microscope text-info"></i>
+                            </div>
+                            <h4>Doctorat (BAC+8)</h4>
+                            <ul class="list-unstyled mt-3">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>6 semestres</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>180 crédits</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Recherche</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Modules Complets -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="badge bg-primary text-white px-3 py-2 mb-3">Modules</span>
+                <h2 class="display-5 fw-bold mb-3">Une Suite Complète de Gestion</h2>
+                <p class="lead text-muted">Tous les outils nécessaires pour votre établissement</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Gestion Académique -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
+                            <h4 class="d-flex align-items-center mb-4">
+                                <span class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </span>
+                                Gestion Académique
+                            </h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>UE et matières</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Crédits ECTS</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Semestres</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Filières</li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Départements</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Cycles</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Spécialités</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Parcours</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Emploi du Temps -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="card feature-card border-0 shadow-sm h-100 hover-translate">
-                        <div class="card-body p-4">
-                            <div class="feature-icon bg-info-soft rounded-circle mb-4">
-                                <i class="fas fa-calendar-alt text-info"></i>
+                <!-- Gestion des Évaluations -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
+                            <h4 class="d-flex align-items-center mb-4">
+                                <span class="icon-circle bg-success text-white me-3">
+                                    <i class="fas fa-tasks"></i>
+                                </span>
+                                Évaluations & Suivi
+                            </h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Notes & moyennes</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Contrôle continu</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Examens</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Rattrapages</li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Bulletins</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Relevés de notes</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>PV de délibération</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Attestations</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <h4 class="mb-3">Emploi du Temps</h4>
-                            <p class="text-muted mb-0">Planifiez et gérez facilement les emplois du temps des classes et des professeurs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestion Administrative -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
+                            <h4 class="d-flex align-items-center mb-4">
+                                <span class="icon-circle bg-info text-white me-3">
+                                    <i class="fas fa-user-cog"></i>
+                                </span>
+                                Administration
+                            </h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Inscriptions</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Réinscriptions</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Paiements</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Comptabilité</li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Gestion RH</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Permissions</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Historiques</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Rapports</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestion du Personnel -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-translate">
+                        <div class="card-body">
+                            <h4 class="d-flex align-items-center mb-4">
+                                <span class="icon-circle bg-warning text-white me-3">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                Personnel & Communication
+                            </h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professeurs</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Surveillants</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Parents</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Administration</li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Messagerie</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Notifications</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Emplois du temps</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Planning</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

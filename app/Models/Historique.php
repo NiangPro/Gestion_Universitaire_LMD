@@ -17,6 +17,7 @@ class Historique extends Model
         "element_id",
         "description",
         "ip",
+        "device",
         "navigateur",
         "user_id",
         "campus_id",

@@ -62,4 +62,9 @@ class Cour extends Model
     {
         return $this->belongsTo(Salle::class, "salle_id");
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class, 'cours_id');
+    }
 }

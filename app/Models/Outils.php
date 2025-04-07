@@ -28,9 +28,10 @@ class Outils extends Model
             'user_id' => Auth::user()->id,
             'type' => $type,
             'description' => $description,
+            'device' => $agent->isPhone() ? 'Téléphone' : ($agent->isTablet() ? 'Tablette' : 'Ordinateur'),
             'ip' => request()->ip(),
             'navigateur' => "$navigateur $version ($os)",
-            'campus_id' => Auth::user()->campus_id
+            'campus_id' => Auth::user()->estSuperAdmin() ? null : Auth::user()->campus_id
         ]);
     }
 

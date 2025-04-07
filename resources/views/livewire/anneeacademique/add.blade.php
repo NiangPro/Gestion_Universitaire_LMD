@@ -11,10 +11,18 @@
             <input type="date" wire:model='fin' class="form-control @error('fin') error @enderror" placeholder="Veuillez entrer la date de fermeture">
             @error('fin') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
-        @if($id)
-        <button type="submit" class="btn btn-warning">Modifier</button>
-        @else 
-        <button type="submit" class="btn btn-success">Ajouter</button>
-        @endif 
+
+        <div class="mt-3">
+            @if($id)
+                @if(Auth::user()->hasPermission('academic_years', 'edit'))
+                    <button type="submit" class="btn btn-warning">Modifier</button>
+                @endif
+            @else
+                @if(Auth::user()->hasPermission('academic_years', 'create'))
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                @endif
+            @endif
+            <a href="{{route('academicyear')}}" class="btn btn-primary">Retour</a>
+        </div>
     </form>
 </div>

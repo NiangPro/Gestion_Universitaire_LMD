@@ -1,6 +1,6 @@
 <div>
     <div class="container-fluid py-4">
-        @if($currentAcademicYear)
+        @if(Auth::user()->campus->currentAcademicYear())
         <!-- En-tête -->
         <div class="row mb-4">
             <div class="col-12">
@@ -22,7 +22,12 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Étudiants</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Étudiants
+                                    <small class="d-block text-muted">
+                                        {{ date('Y', strtotime($currentAcademicYear->debut)) }} - {{ date('Y', strtotime($currentAcademicYear->fin)) }}
+                                    </small>
+                                </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalEtudiants }}</div>
                             </div>
                             <div class="col-auto">
@@ -80,6 +85,85 @@
                                 <i class="fas fa-book fa-2x text-gray-300"></i>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Cours du jour -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            <i class="fas fa-calendar-day text-primary"></i> 
+                            Cours du jour - {{ date('d/m/Y') }}
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        @if($coursAujourdhui->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Horaire</th>
+                                            <th>Classe</th>
+                                            <th>Matière</th>
+                                            <th>Professeur</th>
+                                            <th>Salle</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($coursAujourdhui as $cours)
+                                            <tr>
+                                                <td>
+                                                    <span class="badge badge-primary">
+                                                        {{ substr($cours->heure_debut, 0, 5) }} - {{ substr($cours->heure_fin, 0, 5) }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-info">
+                                                        {{ $cours->classe->nom }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ $cours->matiere->nom }}</td>
+                                                <td>
+                                                    {{ $cours->professeur->nom }} {{ $cours->professeur->prenom }}
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-secondary">
+                                                        {{ $cours->salle->nom }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    @switch($cours->statut)
+                                                        @case('en attente')
+                                                            <span class="badge badge-warning">En attente</span>
+                                                            @break
+                                                        @case('encours')
+                                                            <span class="badge badge-success">En cours</span>
+                                                            @break
+                                                        @case('terminé')
+                                                            <span class="badge badge-secondary">Terminé</span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge badge-light">{{ $cours->statut }}</span>
+                                                    @endswitch
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <img src="{{ asset('images/empty.png') }}" alt="Aucun cours" 
+                                     style="width: 200px; opacity: 0.5;">
+                                <p class="text-muted mt-3">
+                                    Aucun cours programmé pour aujourd'hui
+                                </p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -193,10 +277,50 @@
                 </div>
             </div>
         </div>
-        @else 
-            <div class="alert alert-warning">
-                <strong>Veuillez d'abord <a href="{{ route('academicyear')}}">ajouter et activer une année académique</a> pour voir les autres fonctionnalités</strong>
+
+        @else
+            <div class="alert">
+                <h4 class="alert-heading text-center mb-4">Aucune année académique active</h4>
+                <p class="mb-3">Pour activer une année académique, veuillez suivre ces étapes :</p>
+                <ol class="list-group list-group-numbered mb-4">
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>1.</strong> Cliquez sur le menu <strong>"Années Académiques"</strong> dans la barre latérale
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>2.</strong> Cliquez sur le bouton <strong>"Nouvelle Année"</strong>
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>3.</strong> Remplissez le formulaire avec :
+                        <ul class="mt-2">
+                            <li>• La date de début</li>
+                            <li>• La date de fin</li>
+                        </ul>
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>4.</strong> Cliquez sur <strong>"Enregistrer"</strong>
+                    </li>
+                    <li class="list-group-item border-0 bg-transparent">
+                        <strong>5.</strong> Une fois créée, cliquez sur le bouton <strong>"Activer"</strong> pour rendre l'année académique active
+                    </li>
+                </ol>
+                <div class="text-center">
+                    <a href="{{ route('academicyear') }}" class="btn btn-primary">
+                        <i class="fa fa-calendar me-2"></i>Gérer les Années Académiques
+                    </a>
+                </div>
             </div>
         @endif
     </div>
 </div>
+
+@section("css")
+<style>
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 0.85em;
+    }
+    .table td {
+        vertical-align: middle;
+    }
+</style>
+@endsection
