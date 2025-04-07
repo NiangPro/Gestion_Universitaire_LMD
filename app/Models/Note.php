@@ -42,5 +42,10 @@ class Note extends Model
     {
         return $this->belongsTo(Campus::class);
     }
+
+    public function cours()
+    {
+        return $this->belongsTo(Cour::class, 'matiere_id', 'matiere_id');
+    }
    
 }

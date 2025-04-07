@@ -255,14 +255,6 @@ class User extends Authenticatable
         return $this->hasMany(Permission::class);
     }
 
-    public function hasPermission($module, $action)
-    {
-        $permission = $this->permissions->where('module', $module)->first();
-        if (!$permission) return false;
-        
-        return $permission->{"can_$action"};
-    }
-
     public function notes()
     {
         return $this->hasManyThrough(

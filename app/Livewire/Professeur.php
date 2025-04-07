@@ -44,7 +44,8 @@ class Professeur extends Component
     public $showDeleteModal = false;
     public $professorToDelete = null;
 
-    public $notesData = [];
+    public $notesData;
+    public $stats = [];
 
     protected $rules = [
         'prenom' => 'required|string|max:255',
@@ -106,6 +107,10 @@ class Professeur extends Component
             $matiere = $cours->first()->matiere;
             $notes = Note::where('matiere_id', $matiere_id)
                 ->where('academic_year_id', $currentAcademicYearId)
+                ->whereHas('cours', function($query) use ($id) {
+                    $query->where('professeur_id', $id)
+                          ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id);
+                })
                 ->get();
             
             $this->notesData->push([
