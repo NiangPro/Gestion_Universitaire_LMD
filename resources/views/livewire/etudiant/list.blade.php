@@ -59,12 +59,32 @@
                                             <i class="fa fa-edit"></i>
                                         </button>
                                         @if($inscription)
-                                            <button wire:click="confirmerSuppression({{ $inscription->id }})" class="btn btn-sm btn-danger">
+                                            <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#confirmationModal{{$inscription->id}}">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         @endif
                                     </td>
                                 </tr>
+                                
+                                <div class="modal fade" id="confirmationModal{{$inscription->id}}" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true" wire:ignore.self>
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmationModalLabel">Confirmation de Suppression</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Êtes-vous sûr de vouloir supprimer cet étudiant ? Cette action est irréversible.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                                <button type="button" class="btn btn-danger"  wire:click="supprimer({{ $inscription->id }})">Supprimer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @endforeach
                         </tbody>
                     </table>
@@ -82,25 +102,3 @@
     </div>
 </div>
 
-@push('scripts')
-<script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('confirmerSuppression', (inscriptionId) => {
-            Swal.fire({
-                title: 'Êtes-vous sûr?',
-                text: "Cette action est irréversible!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Oui, supprimer!',
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.dispatch('supprimer', inscriptionId);
-                }
-            })
-        });
-    });
-</script>
-@endpush

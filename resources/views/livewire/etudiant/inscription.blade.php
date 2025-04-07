@@ -345,7 +345,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"> <i class="fa fa-user" style="font-size:15px;"></i> </span>
                             </div>
-                            <select class="form-control" id="relation" name="relation" wire:model.live="relation">
+                            <select class="form-control" id="relation" wire:model.live="relation">
                                 <option value="">Sélectionner la relation</option>
                                 <option value="Père">Père</option>
                                 <option value="Mère">Mère</option>
@@ -367,7 +367,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"> <i class="fa-solid fa-question" style="font-size:15px;"></i> </span>
                             </div>
-                            <select class="form-control @error('maladie') is-invalid @enderror" id="maladie" name="maladie" wire:model.live="maladie">
+                            <select class="form-control @error('maladie') is-invalid @enderror" id="maladie" wire:model.live="maladie">
                                 <option value="">Souffrez-vous d'une maladie ?</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>

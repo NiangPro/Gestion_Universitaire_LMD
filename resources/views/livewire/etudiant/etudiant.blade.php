@@ -1,10 +1,39 @@
 <div>
     <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Gestion des étudiants</h4>
+        <div class="card-header row">
+            <h1 class="card-title col-md-6">{{$title}}</h1>
+            <div class="col-md-6 text-right">
+                @if($status == "list")
+                    <button wire:click='changeStatus("add")' class="btn btn-success ml-5"><span class="btn-icon-left text-primary"><i class="fa fa-plus"></i></span>Inscription</button>&nbsp;&nbsp;&nbsp;
+                    <button wire:click='changeStatus("re-register")' class="btn btn-info"><span class="btn-icon-left text-primary"><i class="fa fa-plus"></i></span>Réinscription</button>
+                @else
+                    <a href="{{route('etudiant')}}" class="btn btn-primary"><span class="btn-icon-left text-primary"><i class="fa fa-hand-o-left"></i></span>Retour</a>
+                @endif
+            </div>
         </div>
         <div class="card-body">
-            <div wire:ignore.self>
+            @if($status == "list")
+                @include("livewire.etudiant.list")
+            @elseif($status == "add")
+                @include("livewire.etudiant.inscription")
+            @elseif($status == "re-register")   
+                <div class="row">
+                    <div class="col-md-6">
+                        <select class="form-control" wire:model.live="matricule">
+                            <option value="">Sélectionner un étudiant</option>
+                            @foreach($etudiants as $etudiant)
+                                <option value="{{ $etudiant->matricule }}">
+                                    {{ $etudiant->matricule }} - {{ $etudiant->nom }} {{ $etudiant->prenom }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                @if ($matricule)
+                    @include("livewire.etudiant.reinscription")
+                @endif
+            @endif
+            {{-- <div wire:ignore.self>
                 <div class="custom-tab-1">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
@@ -64,7 +93,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>
@@ -73,7 +102,7 @@
 <script>
     window.addEventListener('saved', event => {
         iziToast.success({
-            title: 'Inscription',
+            title: 'Etudiant/Inscription',
             message: 'Enregistré avec succès',
             position: 'topRight'
         });
@@ -81,7 +110,7 @@
 
     window.addEventListener('deleted', event => {
         iziToast.success({
-            title: 'Inscription',
+            title: 'Etudiant/Inscription',
             message: 'Supprimé avec succès',
             position: 'topRight'
         });

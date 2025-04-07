@@ -21,10 +21,11 @@ use App\Models\Campus;
 class Etudiant extends Component
 {
     // Propriétés existantes
-    public $status = "";
+    public $status = "list";
     public $etat = "";
     public $classe = "";
     public $matricule = "";
+    public $title = "";
 
     // Nouvelles propriétés pour l'inscription
     #[Rule('required|string|max:255')]
@@ -143,7 +144,18 @@ class Etudiant extends Component
     public $campuses = [];
     public $inscription_id = null;
    
+    public function changeStatus($status){
+        $this->status = $status;
 
+        if ($status == "add") {
+            $this->title = "Formulaire d'ajout année académique";
+        }elseif($status == "edit"){
+            $this->title = "Formulaire d'édition année académique";
+        }else{
+            $this->title = "Liste des années académiques";
+        }
+    }
+    
     // Méthodes existantes
     public function updatedClasse($value)
     {
@@ -479,11 +491,6 @@ class Etudiant extends Component
 
         $this->etudiants = $query->get();
     }
-    
-    public function confirmerSuppression($inscriptionId)
-    {
-        $this->dispatch('confirmerSuppression', $inscriptionId);
-    }
 
     public function supprimer($inscriptionId)
     {
@@ -505,9 +512,10 @@ class Etudiant extends Component
             DB::commit();
             
             // Notification de succès
-            session()->flash('success', 'Étudiant et inscription supprimés avec succès.');
-            
-            $this->loadEtudiants();
+            $this->dispatch('deleted');
+
+            // $this->loadEtudiants();
+            return redirect()->route('etudiants');
             
         } catch (\Exception $e) {
             DB::rollBack();
@@ -597,12 +605,14 @@ class Etudiant extends Component
             session()->flash('error', 'Une erreur est survenue lors de la réinscription: ' . $e->getMessage());
         }
     }
-
+    
     public function edit($etudiantId)
     {
+        
         $etudiant = User::with('inscriptions', 'medical')
             ->where('role', 'etudiant')
             ->findOrFail($etudiantId);
+          
 
         $inscription = $etudiant->inscriptions()->latest()->first();
 
@@ -663,7 +673,6 @@ class Etudiant extends Component
             $this->nom_medecin = '';
             $this->telephone_medecin = '';
         }
-        $this->setActiveTab('add');
     }
 
     #[Layout("components.layouts.app")]
