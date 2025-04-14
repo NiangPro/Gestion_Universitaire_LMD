@@ -59,7 +59,9 @@ class Login extends Component
         }
 
         // Vérifier le mot de passe
-        if (!Hash::check($this->password, $user->password)) {
+        if (!$user->password) {
+            return redirect()->route('forget');
+        }else if (!Hash::check($this->password, $user->password)) {
             $user->increment('failed_login_attempts');
             
             // Verrouiller le compte après 5 tentatives échouées
