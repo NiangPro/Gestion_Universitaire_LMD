@@ -150,7 +150,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"> <i class="fa fa-house" style="font-size:15px;"></i> </span>
                             </div>
-                            <select class="form-control @error('classe_id') is-invalid @enderror" id="classe_id" name="classe_id" wire:model="classe_id">
+                            <select class="form-control @error('classe_id') is-invalid @enderror" id="classe_id" name="classe_id" wire:model.live="classe_id">
                                 <option value="">Selectionné la classe</option>
                                 @foreach ($classes as $classe)
                                     <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
@@ -193,8 +193,9 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa-solid fa-money-bill-wave" style="font-size:15px;"></i> </span>
                                 </div>
-                                <input type="number" id="montant" name="montant" wire:model.live="montant" class="form-control" value="" id="" name="val-username">
+                                <input type="number" id="montant" wire:model="montant" class="form-control" readonly>
                             </div>
+                            <small class="text-muted">Montant fixé selon la classe sélectionnée</small>
                             @error('montant') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
                     @elseif($etat === "Avance")
@@ -205,7 +206,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa-solid fa-money-bill-wave" style="font-size:15px;"></i> </span>
                                     </div>
-                                    <input type="number" id="montant" name="montant" wire:model.live="montant" class="form-control" value="" id="" name="val-username">
+                                    <input type="number" id="montant" name="montant" wire:model.live="montant" class="form-control">
                                 </div>
                                 @error('montant') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>

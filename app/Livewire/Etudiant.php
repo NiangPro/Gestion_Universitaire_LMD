@@ -162,9 +162,28 @@ class Etudiant extends Component
         $this->classe = $value;
     }
 
-    public function updatedPaiement($value)
+    public function updatedClasseId($value)
     {
-        $this->etat = $value;
+        if ($value) {
+            $classe = \App\Models\Classe::find($value);
+            if ($classe) {
+                $this->montant = $classe->cout_inscription;
+            }
+        }
+    }
+
+    public function updatedEtat($value)
+    {
+        if ($value === "Payé" && $this->classe_id) {
+            $classe = \App\Models\Classe::find($this->classe_id);
+            if ($classe) {
+                $this->montant = $classe->cout_inscription;
+                $this->restant = 0; 
+            }
+        } elseif ($value === "Avance") {
+            $this->montant = null;
+            $this->restant = null;
+        }
     }
 
     public function updatedMatricule($value)
