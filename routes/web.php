@@ -32,6 +32,7 @@ use App\Livewire\Surveillant;
 use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
+use App\Http\Middleware\ProfesseurMiddleware;
 use App\Livewire\Absences;
 use App\Livewire\Acces;
 use App\Livewire\Contact;
@@ -43,6 +44,7 @@ use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
 use App\Livewire\EditNote;
+use App\Livewire\NotesProfesseur;
 use App\Livewire\NotFound;
 
 // Routes publiques
@@ -75,6 +77,11 @@ Route::middleware(['auth', SuperAdminMiddleware::class])->prefix('super-admin')-
     Route::get("/packs", Packs::class)->name("pack");
     Route::get("/activations", Activations::class)->name("activation");
     Route::get("/corbeille", Corbeille::class)->name("corbeille");
+});
+
+// Routes Super Admin
+Route::middleware(['auth', ProfesseurMiddleware::class])->prefix('professeur')->group(function () {
+    Route::get("/notes", NotesProfesseur::class)->name("noteprofesseur");
 });
 
 // Routes Admin
