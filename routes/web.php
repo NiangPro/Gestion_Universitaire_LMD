@@ -43,6 +43,7 @@ use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
 use App\Livewire\EditNote;
+use App\Livewire\NotFound;
 
 // Routes publiques
 Route::group([], function () {
@@ -122,5 +123,11 @@ if (app()->environment('local')) {
 }
 
 Route::get('/notes/edit/{id}', EditNote::class)->name('notes.edit');
+
+// Route pour la page 404
+Route::get('/404', NotFound::class)->name('404');
+
+// Route fallback pour capturer toutes les URLs non définies
+Route::fallback(NotFound::class);
 
 
