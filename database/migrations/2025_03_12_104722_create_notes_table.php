@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreign('etudiant_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('academic_year_id')->nullable();
             $table->foreign('academic_year_id')->references('id')->on('academic_years')->onDelete('cascade');
-            $table->string('type_evaluation');
+            $table->unsignedInteger('type_evaluation_id')->nullable();
+            $table->foreign('type_evaluation_id')->references('id')->on('type_evaluations')->onDelete('cascade');
             $table->decimal('note', 5, 2);
             $table->string('observation')->nullable();
             $table->unsignedBigInteger('campus_id')->nullable();

@@ -6,6 +6,7 @@ use App\Models\Classe;
 use App\Models\Cour;
 use App\Models\Note;
 use App\Models\User;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -81,17 +82,33 @@ class NotesProfesseur extends Component
             return;
         }
 
-        Note::updateOrCreate(
+        $currentSemestre = Auth::user()->campus->currentSemestre();
+        if (!$currentSemestre) {
+            $this->message = 'Aucun semestre actif trouvé';
+            return;
+        }
+
+        $noteModel = Note::updateOrCreate(
             [
                 'matiere_id' => $this->selectedMatiere,
                 'etudiant_id' => $etudiantId,
-                'type_evaluation' => $this->selectedTypeEvaluation,
+                'type_evaluation_id' => $this->selectedTypeEvaluation,
                 'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
                 'campus_id' => Auth::user()->campus_id,
+                'semestre_id' => $currentSemestre->id,
             ],
             [
                 'note' => $note
             ]
+        );
+
+        // Enregistrer l'historique
+        $action = $noteModel->wasRecentlyCreated ? 'Ajout' : 'Modification';
+        $etudiant = User::find($etudiantId);
+        Outils::historique(
+            $action . ' de note',
+            'Note ' . $action . ' pour l\'étudiant ' . $etudiant->prenom . ' ' . $etudiant->nom . ' (Matricule: ' . $etudiant->username . ') - Note: ' . $note,
+            Auth::user()->id
         );
 
         $this->message = 'Note enregistrée avec succès';
