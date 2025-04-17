@@ -1,26 +1,15 @@
 <div>
     <div class="row">
-        {{-- partie gauche  --}}
         <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
             <div class="row">
-               @include("livewire.configuration.departement")
-
-                @include("livewire.configuration.classe")
-
                 @include("livewire.configuration.salle")
-                
             </div>
         </div>
-        {{-- partie droite  --}}
         <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
             <div class="row">
-                @include("livewire.configuration.filiere")
-                @include("livewire.configuration.ue")
                 @include("livewire.configuration.semestre")
             </div>
         </div>
-
-
     </div>
 </div>
 

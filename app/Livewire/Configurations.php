@@ -81,6 +81,21 @@ class Configurations extends Component
         $this->semestre["ordre"] = $semestre->ordre;
     }
 
+    public function toggleSemestre($id) {
+        $semestre = Semestre::where("id", $id)->first();
+        
+        if (!$semestre->is_active) {
+            // Désactiver tous les autres semestres
+            Semestre::where('campus_id', Auth::user()->campus_id)->update(['is_active' => false]);
+            
+            // Activer le semestre sélectionné
+            $semestre->is_active = true;
+            $semestre->save();
+        }
+
+        $this->dispatch("updated");
+    }
+
     public function storeSemestre(){
         if ($this->semestre["idsemestre"]) {
             $this->validate(["semestre.ordre" => "required|min:1|max:4|unique:semestres,ordre,{$this->semestre["idsemestre"]}"]);
