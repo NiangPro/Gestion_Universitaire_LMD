@@ -140,8 +140,6 @@ class Campus extends Model
         return $this->activeSubscription() !== null;
     }
 
-  
-
     public function absences()
     {
         return $this->hasMany(Absence::class);

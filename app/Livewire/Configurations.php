@@ -9,6 +9,7 @@ use App\Models\Matiere;
 use App\Models\Salle;
 use App\Models\Semestre;
 use App\Models\UniteEnseignement;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -83,6 +84,7 @@ class Configurations extends Component
 
     public function toggleSemestre($id) {
         $semestre = Semestre::where("id", $id)->first();
+        $outils = new Outils();
         
         if (!$semestre->is_active) {
             // Désactiver tous les autres semestres
@@ -91,8 +93,12 @@ class Configurations extends Component
             // Activer le semestre sélectionné
             $semestre->is_active = true;
             $semestre->save();
+        
+            $outils->addHistorique("Activation du semestre {$semestre->nom}", "activation");
+        } else {
+            $outils->addHistorique("Désactivation du semestre {$semestre->nom}", "desactivation");
         }
-
+    
         $this->dispatch("updated");
     }
 
