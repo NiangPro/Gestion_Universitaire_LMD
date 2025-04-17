@@ -91,37 +91,37 @@
           });
       });
 
-      window.addEventListener('passwordEditSuccessful', event =>{
-        iziToast.success({
-        title: 'Mot de passe',
-        message: 'Mis à jour avec succes',
-        position: 'topRight'
+        window.addEventListener('passwordEditSuccessful', event =>{
+            iziToast.success({
+            title: 'Mot de passe',
+            message: 'Mis à jour avec succes',
+            position: 'topRight'
+            });
         });
-    });
 
-    window.addEventListener('accessCode', event =>{
-        iziToast.success({
-        title: 'Code',
-        message: 'verification exacte',
-        position: 'topRight'
+        window.addEventListener('accessCode', event =>{
+            iziToast.success({
+            title: 'Code',
+            message: 'verification exacte',
+            position: 'topRight'
+            });
         });
-    });
 
-    window.addEventListener('sendCode', event =>{
-        iziToast.success({
-        title: 'Code ',
-        message: 'envoyé par email avec succes',
-        position: 'topRight'
+        window.addEventListener('sendCode', event =>{
+            iziToast.success({
+            title: 'Code ',
+            message: 'envoyé par email avec succes',
+            position: 'topRight'
+            });
         });
-    });
 
-    window.addEventListener('errorCode', event =>{
-          iziToast.error({
-          title: 'Verification',
-          message: 'code incorrecte',
-          position: 'topRight'
-          });
-      });
+        window.addEventListener('errorCode', event =>{
+            iziToast.error({
+            title: 'Verification',
+            message: 'code incorrecte',
+            position: 'topRight'
+            });
+        });
 
     </script>
 @endsection
