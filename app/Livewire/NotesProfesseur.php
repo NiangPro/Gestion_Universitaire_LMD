@@ -90,8 +90,7 @@ class NotesProfesseur extends Component
                 'campus_id' => Auth::user()->campus_id,
             ],
             [
-                'note' => $note,
-                'valeur' => $note
+                'note' => $note
             ]
         );
 
