@@ -84,14 +84,13 @@
 
             @foreach($heures as $index => $heure)
                 <tr>
-                    <td>{{ $heure }} - {{ $index < count($heures) - 1 ? $heures[$index + 1] : '20:00' }}</td>
+                    <td>{{ $heure . ' - ' . ($index < count($heures) - 1 ? $heures[$index + 1] : date('H:i', strtotime($heure . ' +1 hour'))) }}</td>
                     @foreach($jours as $jour)
                     @php 
                         $findc = false;
-                        $heure_suivante = $index < count($heures) - 1 ? $heures[$index + 1] : '20:00';
                     @endphp
                         @foreach($courses as $cours)
-                            @if($cours->semaine->jour == $jour && $cours->heure_debut <= $heure && $cours->heure_fin > $heure)
+                            @if($cours->semaine->jour == $jour && substr($cours->heure_debut, 0, 5) <= $heure && substr($cours->heure_fin, 0, 5) > $heure)
                             @php 
                                 $findc = true;
                             @endphp    
