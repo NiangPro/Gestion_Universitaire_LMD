@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('nom');
             $table->text('description')->nullable();
+            $table->integer('is_deleting')->default(0);
             $table->unsignedBigInteger('campus_id')->nullable();
             $table->foreign('campus_id')->references('id')->on('campuses')->onDelete('cascade');
             $table->timestamps();
