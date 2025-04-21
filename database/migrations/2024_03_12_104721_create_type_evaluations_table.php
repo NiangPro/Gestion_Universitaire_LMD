@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('type_evaluations', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('nom');
             $table->text('description')->nullable();
-            $table->foreignId('campus_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('campus_id')->nullable();
+            $table->foreign('campus_id')->references('id')->on('campuses')->onDelete('cascade');
             $table->timestamps();
         });
     }

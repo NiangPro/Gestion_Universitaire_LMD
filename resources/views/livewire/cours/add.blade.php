@@ -103,6 +103,25 @@
                             <option value="{{ $semaine->id }}">{{ $semaine->jour }}</option>
                             @endforeach
                         </select>
+                        @error('semaine_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="type_evaluation_id">Type d'évaluation</label>
+                        <select class="form-control @error('type_evaluation_id') is-invalid @enderror"
+                            id="type_evaluation_id" wire:model="type_evaluation_id">
+                            <option value="">Sélectionner le type d'évaluation</option>
+                            @foreach($typeEvaluations as $type)
+                            <option value="{{ $type->id }}">{{ $type->nom }}</option>
+                            @endforeach
+                        </select>
+                        @error('type_evaluation_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 

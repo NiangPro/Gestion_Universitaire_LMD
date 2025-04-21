@@ -46,6 +46,8 @@ class Notes extends Component
     public $ue_id = null;
     public $uniteEnseignements = [];
     public $matieres = [];
+    public $type_evaluation_id = null;
+    public $typeEvaluations = [];
     public $type_evaluation = null;
     public $currentNote = null;
     public $editNoteId;
@@ -73,6 +75,8 @@ class Notes extends Component
         if ($currentAcademicYear) {
             $this->academic_year_id = $currentAcademicYear->id;
         }
+        $this->outil = new Outils();
+        $this->typeEvaluations = Auth::user()->campus->typeEvaluations;
     }
 
     public function changeStatut($statut)
