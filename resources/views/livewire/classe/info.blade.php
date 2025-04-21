@@ -94,7 +94,7 @@
                     <div class="card-body">
                         <div class="media align-items-center">
                             <div class="media-body mr-3">
-                                <h2 class="text-success">{{ number_format($classe->cout_inscription) }}</h2>
+                                <h2 class="text-success">{{ number_format($classe->cout_inscription, 0, ',', ' ') }} FCFA</h2>
                                 <span>Frais d'inscription</span>
                             </div>
                             <i class="fa fa-money fa-2x text-success"></i>
@@ -107,7 +107,7 @@
                     <div class="card-body">
                         <div class="media align-items-center">
                             <div class="media-body mr-3">
-                                <h2 class="text-warning">{{ number_format($classe->mensualite) }}</h2>
+                                <h2 class="text-warning">{{ number_format($classe->mensualite, 0, ',', ' ') }} FCFA</h2>
                                 <span>Mensualité</span>
                             </div>
                             <i class="fa fa-calendar fa-2x text-warning"></i>
@@ -239,4 +239,4 @@
             padding: 8px !important;
         }
     }
-</style> 
+</style>

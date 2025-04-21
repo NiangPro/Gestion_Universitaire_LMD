@@ -121,7 +121,7 @@
                                     </p>
                                     <p class="mb-0">
                                         <i class="fa fa-book text-info"></i>
-                                        {{ $ue->matieres_count ?? 0 }} matières
+                                        {{ $ue->matieres->count() }} matières
                                     </p>
                                 </div>
                             </div>
