@@ -113,6 +113,7 @@ class User extends Authenticatable
         'two_factor_confirmed_at',
         'campus_id',
         'matricule',
+        'specialite',
     ];
 
     public function campus(){

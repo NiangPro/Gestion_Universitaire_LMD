@@ -16,7 +16,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form wire:submit.prevent="store">
+                    <form wire:submit.prevent="store" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -118,30 +118,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Disponibilités <span class="text-danger">*</span></label>
-                                    <div class="row">
-                                        @foreach(['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'] as $jour)
-                                        <div class="col-md-4">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" 
-                                                       class="custom-control-input" 
-                                                       id="jour_{{ $jour }}"
-                                                       wire:model="disponibilites"
-                                                       value="{{ $jour }}">
-                                                <label class="custom-control-label" for="jour_{{ $jour }}">
-                                                    {{ $jour }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                    @error('disponibilites')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
+
                         </div>
 
                         <div class="text-right mt-4">
@@ -155,4 +132,4 @@
             </div>
         </div>
     </div>
-</div> 
+</div>

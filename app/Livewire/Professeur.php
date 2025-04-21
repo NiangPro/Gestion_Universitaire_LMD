@@ -30,13 +30,11 @@ class Professeur extends Component
     public $id, $prenom, $nom, $username, $adresse, $tel, $sexe, $email;
     public $photo;
     public $specialite;
-    public $disponibilites = [];
     public $cours_assignes = [];
 
     // Filtres
     public $search = '';
     public $specialiteFilter = '';
-    public $disponibiliteFilter = '';
     public $perPage = 10;
     public $sortField = 'nom';
     public $sortDirection = 'asc';
@@ -56,7 +54,6 @@ class Professeur extends Component
         'sexe' => 'required|in:Homme,Femme',
         'email' => 'required|email',
         'specialite' => 'required|string',
-        'disponibilites' => 'required|array|min:1',
         'photo' => 'nullable|image|max:1024'
     ];
 
@@ -216,7 +213,6 @@ class Professeur extends Component
                     'sexe' => $this->sexe,
                     'email' => $this->email,
                     'specialite' => $this->specialite,
-                    'disponibilites' => $this->disponibilites,
                     'image' => $this->photo ? $photoPath : $prof->image
                 ]);
 
@@ -240,7 +236,6 @@ class Professeur extends Component
                 'email' => $this->email,
                     'role' => 'professeur',
                     'specialite' => $this->specialite,
-                    'disponibilites' => $this->disponibilites,
                     'image' => $photoPath ?? 'profil.jpg',
                     'campus_id' => Auth::user()->campus_id
                 ]);
@@ -281,7 +276,7 @@ class Professeur extends Component
         $this->sexe = $professeur->sexe;
         $this->email = $professeur->email;
         $this->specialite = $professeur->specialite;
-        $this->disponibilites = $professeur->disponibilites ?? [];
+
 
         // Changer le statut pour afficher le formulaire d'édition
         $this->status = 'add';
@@ -357,7 +352,7 @@ class Professeur extends Component
     {
         $this->reset([
             'id', 'prenom', 'nom', 'username', 'adresse', 'tel', 
-            'sexe', 'email', 'photo', 'specialite', 'disponibilites'
+            'sexe', 'email', 'photo', 'specialite'
         ]);
     }
 }
