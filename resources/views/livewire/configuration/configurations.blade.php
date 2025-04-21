@@ -3,10 +3,6 @@
         <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
             <div class="row">
                 @include("livewire.configuration.salle")
-            </div>
-        </div>
-        <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
-            <div class="row">
                 @include("livewire.configuration.semestre")
             </div>
         </div>
@@ -15,6 +11,7 @@
                 @include("livewire.configuration.type-evaluation")
             </div>
         </div>
+        
     </div>
 </div>
 
