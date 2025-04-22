@@ -40,8 +40,6 @@ class Cours extends Component
     public $heure_debut;
     public $heure_fin;
     public $statut = 'en attente';
-    public $type_evaluation_id;
-
     // Propriété pour gérer le modal
     public $isOpen = false;
 
@@ -54,8 +52,7 @@ class Cours extends Component
         'semaine_id' => 'required|exists:semaines,id',
         'heure_debut' => 'required',
         'heure_fin' => 'required',
-        'statut' => 'required',
-        'type_evaluation_id' => 'required|exists:type_evaluations,id'
+        'statut' => 'required'
     ];
 
     protected $messages = [
@@ -66,8 +63,7 @@ class Cours extends Component
         'salle_id.required' => 'Veuillez sélectionner une salle',
         'heure_debut.required' => 'L\'heure de début est requise',
         'heure_fin.after' => 'L\'heure de fin doit être après l\'heure de début',
-        'statut.required' => 'Le statut est obligatoire',
-        'type_evaluation_id.required' => 'Veuillez sélectionner un type d\'évaluation'
+        'statut.required' => 'Le statut est obligatoire'
     ];
 
     public function changeStatus($status)
@@ -165,7 +161,6 @@ class Cours extends Component
         $this->heure_debut = $course->heure_debut;
         $this->heure_fin = $course->heure_fin;
         $this->statut = $course->statut;
-        $this->type_evaluation_id = $course->type_evaluation_id;
         $this->matieres = [];
 
         $classe = Classe::find($this->classe_id);
@@ -189,7 +184,7 @@ class Cours extends Component
             'classes' => Classe::all(),
             'semaines' => Semaine::all(),
             'salles' => Salle::all(),
-            'typeEvaluations' => TypeEvaluation::where('campus_id', Auth::user()->campus_id)->get()
+
         ]);
     }
 
@@ -205,7 +200,7 @@ class Cours extends Component
     public function closeModal()
     {
         $this->isOpen = false;
-        $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut", "id", "semaine_id", "type_evaluation_id"]);
+        $this->reset(["professeur_id", "matiere_id", "classe_id", "heure_debut", "heure_fin", "statut", "id", "semaine_id"]);
     }
 
     public function delete($id)
@@ -283,8 +278,7 @@ class Cours extends Component
                         'semaine_id' => $this->semaine_id,
                         'heure_debut' => $this->heure_debut,
                         'heure_fin' => $this->heure_fin,
-                        'statut' => $this->statut,
-                        'type_evaluation_id' => $this->type_evaluation_id,
+                        'statut' => $this->statut
                     ]);
                     $this->dispatch('updated');
                 } else {
@@ -298,8 +292,7 @@ class Cours extends Component
                         'campus_id' => Auth::user()->campus_id,
                         'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
                         'heure_fin' => $this->heure_fin,
-                        'statut' => $this->statut,
-                        'type_evaluation_id' => $this->type_evaluation_id,
+                        'statut' => $this->statut
                     ]);
                     $this->dispatch('added');
                 }
