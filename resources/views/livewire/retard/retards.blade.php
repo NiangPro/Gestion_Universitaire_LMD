@@ -34,7 +34,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Classe</label>
-                        <select wire:model.live="selectedClasse" class="form-select">
+                        <select wire:model.live="selectedClasse" class="form-control">
                             <option value="">Toutes les classes</option>
                             @foreach ($classes as $classe)
                                 <option value="{{ $classe->id }}">{{ $classe->nom }} - {{ $classe->filiere->nom }}</option>

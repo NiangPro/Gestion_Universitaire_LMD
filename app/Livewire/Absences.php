@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Absence;
 use App\Models\Cour;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -155,12 +156,21 @@ class Absences extends Component
         ];
 
         try {
+            $outils = new Outils();
             if ($this->isEditing) {
                 Absence::find($this->absence_id)->update($data);
-                $this->dispatch('updated');
+                $outils->addHistorique("Modification d'une absence", "edit");
+                $this->dispatch('alert', [
+                    'type' => 'success',
+                    'message' => 'Absence modifiée avec succès'
+                ]);
             } else {
                 Absence::create($data);
-                $this->dispatch('added');
+                $outils->addHistorique("Création d'une absence", "create");
+                $this->dispatch('alert', [
+                    'type' => 'success',
+                    'message' => 'Absence ajoutée avec succès'
+                ]);
             }
 
             $this->reset(['etudiant_id', 'cours_id', 'status', 'motif', 'justifie', 'commentaire', 'isEditing', 'absence_id', 'inscriptions']);
