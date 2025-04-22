@@ -18,6 +18,9 @@ return new class extends Migration
             $table->date('date_evaluation');
             $table->time('heure_debut');
             $table->integer('duree'); // en minutes
+            $table->unsignedBigInteger('semestre_id');
+            $table->foreign('semestre_id')->references('id')->on('semestres')->onDelete('cascade');
+            
             $table->foreignId('type_evaluation_id')->constrained()->onDelete('cascade');
             $table->foreignId('matiere_id')->constrained()->onDelete('cascade');
             $table->foreignId('campus_id')->constrained()->onDelete('cascade');

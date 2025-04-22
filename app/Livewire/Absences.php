@@ -49,6 +49,17 @@ class Absences extends Component
         'commentaire' => 'nullable|string'
     ];
 
+    protected $messages = [
+        'etudiant_id.required' => 'Veuillez sélectionner un étudiant',
+        'cours_id.required' => 'Veuillez sélectionner un cours',
+        'date.required' => 'La date est obligatoire',
+        'date.date' => 'Le format de la date est invalide',
+        'status.required' => 'Le statut est obligatoire',
+        'status.in' => 'Le statut doit être soit "absent" soit "present"',
+        'motif.string' => 'Le motif doit être une chaîne de caractères',
+        'commentaire.string' => 'Le commentaire doit être une chaîne de caractères'
+    ];
+
     public function updatedCoursId($value)
     {
         $classe = Cour::find($value)->classe;
@@ -152,6 +163,7 @@ class Absences extends Component
             'commentaire' => $this->commentaire,
             'campus_id' => Auth::user()->campus_id,
             'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+            'semestre_id' => Auth::user()->campus->currentSemestre()->id,
             'created_by' => Auth::user()->id
         ];
 

@@ -35,6 +35,7 @@ class Retards extends Component
     public $motif;
     public $justifie = false;
     public $commentaire;
+    public $semestre_id;
     
     // Pour l'édition
     public $retard_id;
@@ -212,6 +213,7 @@ class Retards extends Component
                 'commentaire' => $this->commentaire,
                 'campus_id' => Auth::user()->campus_id,
                 'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                'semestre_id' => Auth::user()->campus->currentSemestre()->id,
                 'created_by' => Auth::user()->id
             ];
 
