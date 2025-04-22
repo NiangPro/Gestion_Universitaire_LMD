@@ -24,6 +24,7 @@ class Evaluations extends Component
     public $coefficient, $type_evaluation_id, $matiere_id, $classe_id, $professeur_id, $statut;
     public $selectedClasses = []; // Pour stocker les classes sélectionnées
     public $academic_year_id; // Ajout de l'année académique
+    public $semestre_id; // Ajout du semestre
 
     // Propriétés pour le formulaire de type d'évaluation
     public $type_id, $type_nom, $type_description, $coefficient_defaut;
@@ -51,23 +52,52 @@ class Evaluations extends Component
         'professeur_id' => 'required|exists:users,id',
         'selectedClasses' => 'required|array|min:1',
         'statut' => 'required|in:planifié,en_cours,terminé,annulé',
-        'academic_year_id' => 'required|exists:academic_years,id', // Validation année académique
+        'academic_year_id' => 'required|exists:academic_years,id',
+        'semestre_id' => 'required|exists:semestres,id',
     ];
 
     protected $messages = [
+        'titre.required' => 'Le titre est obligatoire',
+        'titre.string' => 'Le titre doit être une chaîne de caractères',
+        'titre.max' => 'Le titre ne doit pas dépasser 255 caractères',
+        'date_evaluation.required' => 'La date d\'évaluation est obligatoire',
+        'date_evaluation.date' => 'La date d\'évaluation doit être une date valide',
+        'date_evaluation.after_or_equal' => 'La date d\'évaluation doit être aujourd\'hui ou une date ultérieure',
+        'heure_debut.required' => 'L\'heure de début est obligatoire',
+        'duree.required' => 'La durée est obligatoire',
+        'duree.integer' => 'La durée doit être un nombre entier',
+        'duree.min' => 'La durée minimale est de 15 minutes',
+        'coefficient.required' => 'Le coefficient est obligatoire',
+        'coefficient.numeric' => 'Le coefficient doit être un nombre',
+        'coefficient.min' => 'Le coefficient minimum est de 0.1',
+        'type_evaluation_id.required' => 'Le type d\'évaluation est obligatoire',
+        'type_evaluation_id.exists' => 'Le type d\'évaluation sélectionné n\'existe pas',
+        'matiere_id.required' => 'La matière est obligatoire',
+        'matiere_id.exists' => 'La matière sélectionnée n\'existe pas',
+        'classe_id.required' => 'La classe est obligatoire',
+        'classe_id.exists' => 'La classe sélectionnée n\'existe pas',
+        'professeur_id.required' => 'Le professeur est obligatoire',
+        'professeur_id.exists' => 'Le professeur sélectionné n\'existe pas',
         'selectedClasses.required' => 'Veuillez sélectionner au moins une classe',
         'selectedClasses.min' => 'Veuillez sélectionner au moins une classe',
+        'statut.required' => 'Le statut est obligatoire',
+        'statut.in' => 'Le statut sélectionné n\'est pas valide',
+        'academic_year_id.required' => 'L\'année académique est obligatoire',
+        'academic_year_id.exists' => 'L\'année académique sélectionnée n\'existe pas',
+        'semestre_id.required' => 'Le semestre est obligatoire',
+        'semestre_id.exists' => 'Le semestre sélectionné n\'existe pas'
     ];
 
-    protected $listeners = ['closeModal'];
+    protected $listeners = ['closeModal', 'refreshComponent' => '$refresh'];
 
     public function mount()
     {
         if (!Auth::user()->hasPermission('evaluations', 'view')) {
             abort(403);
         }
-        // Définir l'année académique actuelle par défaut
+        // Définir l'année académique et le semestre actuels par défaut
         $this->academic_year_id = Auth::user()->campus->currentAcademicYear()?->id;
+        $this->semestre_id = Auth::user()->campus->currentSemestre()?->id;
     }
 
     public function render()
@@ -80,6 +110,7 @@ class Evaluations extends Component
                           ->get();
         $academic_years = AcademicYear::where('campus_id', Auth::user()->campus_id)->get();
         $current_year = Auth::user()->campus->currentAcademicYear();
+        $semestres = Auth::user()->campus->semestres()->where('is_active', true)->get();
 
         $evaluations = Evaluation::where('campus_id', Auth::user()->campus_id)
             ->when($this->search, function ($query) {
@@ -132,14 +163,25 @@ class Evaluations extends Component
         $this->dispatch('success', ['message' => 'Type d\'évaluation créé avec succès']);
     }
 
-    public function saveEvaluation()
+    public function enregistrerEvaluation()
     {
         if (!Auth::user()->hasPermission('evaluations', $this->isEditing ? 'edit' : 'create')) {
             $this->dispatch('error', ['message' => 'Permission non accordée']);
             return;
         }
 
-        $this->validate();
+        try {
+            $this->validate();
+        } catch (\Exception $e) {
+            $this->dispatch('error', ['message' => 'Erreur de validation: ' . $e->getMessage()]);
+            return;
+        }
+
+        // Vérification des valeurs avant l'enregistrement
+        if (!$this->semestre_id) {
+            $this->dispatch('error', ['message' => 'Le semestre est requis']);
+            return;
+        }
 
         $data = [
             'titre' => $this->titre,
@@ -153,6 +195,7 @@ class Evaluations extends Component
             'statut' => $this->statut,
             'campus_id' => Auth::user()->campus_id,
             'academic_year_id' => $this->academic_year_id,
+            'semestre_id' => Auth::user()->campus->currentSemestre()->id,
         ];
 
         if ($this->isEditing) {
@@ -161,9 +204,14 @@ class Evaluations extends Component
             $evaluation->classes()->sync($this->selectedClasses);
             $message = "Modification de l'évaluation : {$evaluation->titre}";
         } else {
-            $evaluation = Evaluation::create($data);
-            $evaluation->classes()->attach($this->selectedClasses);
-            $message = "Création de l'évaluation : {$evaluation->titre}";
+            try {
+                $evaluation = Evaluation::create($data);
+                $evaluation->classes()->attach($this->selectedClasses);
+                $message = "Création de l'évaluation : {$evaluation->titre}";
+            } catch (\Exception $e) {
+                $this->dispatch('error', ['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
+                return;
+            }
         }
 
         $outils = new Outils();
@@ -244,11 +292,13 @@ class Evaluations extends Component
         $this->academic_year_id = Auth::user()->campus->currentAcademicYear()?->id;
         $this->showModal = true;
         $this->dispatch('showModal');
+        $this->dispatch('show-evaluation-modal');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetEvaluationFields();
+        $this->dispatch('hide-evaluation-modal');
     }
 }
