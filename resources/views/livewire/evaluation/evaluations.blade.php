@@ -1,41 +1,5 @@
 <div class="container-fluid py-4">
-    <!-- Filtres -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <div class="form-group mb-md-0">
-                        <label for="annee_academique" class="form-label">Année Académique</label>
-                        <select wire:model="annee_academique_id" id="annee_academique" class="form-select">
-                            <option value="">Toutes les années</option>
-                            @foreach($anneeAcademiques as $annee)
-                                <option value="{{ $annee->id }}">{{ $annee->nom }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group mb-md-0">
-                        <label for="semestre" class="form-label">Semestre</label>
-                        <select wire:model="semestre_id" id="semestre" class="form-select">
-                            <option value="">Tous les semestres</option>
-                            @foreach($semestres as $semestre)
-                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" wire:model.debounce.300ms="search" class="form-control" placeholder="Rechercher une évaluation...">
-                        <button class="btn btn-primary" wire:click="showModal">
-                            <i class="fas fa-plus"></i> Nouvelle évaluation
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  
 
     <!-- Dashboard Cards -->
     <div class="row mb-4">
@@ -44,7 +8,7 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Évaluations</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total</div>
                             <div class="h5 mb-0 font-weight-bold">{{ $evaluations->total() }}</div>
                         </div>
                         <div class="col-auto">
@@ -101,20 +65,50 @@
         </div>
     </div>
 
+      <!-- Filtres -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="form-group mb-md-0">
+                        <label for="annee_academique" class="form-label">Année Académique</label>
+                        <select wire:model="annee_academique_id" id="annee_academique" class="form-control">
+                            <option value="">Toutes les années</option>
+                            @foreach($anneeAcademiques as $annee)
+                                <option value="{{ $annee->id }}">{{ $annee->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-md-0">
+                        <label for="semestre" class="form-label">Semestre</label>
+                        <select wire:model="semestre_id" id="semestre" class="form-control">
+                            <option value="">Tous les semestres</option>
+                            @foreach($semestres as $semestre)
+                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" wire:model.debounce.300ms="search" class="form-control" placeholder="Rechercher une évaluation...">
+                        <button class="btn btn-primary" wire:click="showModal">
+                            <i class="fas fa-plus"></i> Nouvelle évaluation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Liste des évaluations</h3>
-                    <div class="card-tools">
-                        <button class="btn btn-primary btn-sm mr-2" wire:click="showModal">
-                            <i class="fas fa-plus"></i> Nouvelle évaluation
-                        </button>
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" wire:model.debounce.300ms="search" 
-                                   class="form-control float-right" placeholder="Rechercher...">
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
