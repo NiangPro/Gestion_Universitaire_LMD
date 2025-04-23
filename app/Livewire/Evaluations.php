@@ -30,6 +30,8 @@ class Evaluations extends Component
     public $statut = 'planifié';
     public $mode = 'create';
     public $search = '';
+    public $annee_academique_id;
+    public $semestre_id;
     
     protected $rules = [
         'titre' => 'required|string|max:255',
@@ -65,6 +67,8 @@ class Evaluations extends Component
     public function mount()
     {
         $this->resetForm();
+        $this->annee_academique_id = Auth::user()->campus->currentAcademicYear()?->id;
+        $this->semestre_id = Auth::user()->campus->currentSemestre()?->id;
     }
 
     public function resetForm()
@@ -79,6 +83,37 @@ class Evaluations extends Component
         $this->resetForm();
         $this->mode = 'create';
         $this->dispatch('showModal');
+    }
+
+    public function render()
+    {
+        $query = Evaluation::with(['typeEvaluation', 'matiere', 'classes'])
+            ->where('campus_id', Auth::user()->campus_id);
+
+        if ($this->search) {
+            $query->where('titre', 'like', '%' . $this->search . '%');
+        }
+
+        if ($this->annee_academique_id) {
+            $query->where('academic_year_id', $this->annee_academique_id);
+        }
+
+        if ($this->semestre_id) {
+            $query->where('semestre_id', $this->semestre_id);
+        }
+
+        $evaluations = $query->latest()->paginate(10);
+        
+        return view('livewire.evaluation.evaluations', [
+            'evaluations' => $evaluations,
+            'anneeAcademiques' => AcademicYear::where('campus_id', Auth::user()->campus_id)
+                ->orderBy('debut', 'desc')
+                ->get(),
+            'semestres' => Semestre::where('campus_id', Auth::user()->campus_id)->get(),
+            'typeEvaluations' => TypeEvaluation::where('campus_id', Auth::user()->campus_id)->get(),
+            'matieres' => Matiere::where('campus_id', Auth::user()->campus_id)->get(),
+            'allClasses' => Classe::where('campus_id', Auth::user()->campus_id)->get()
+        ]);
     }
 
     public function save()
@@ -169,24 +204,5 @@ class Evaluations extends Component
                 'message' => 'Une erreur est survenue lors de la suppression'
             ]);
         }
-    }
-
-    public function render()
-    {
-        $query = Evaluation::with(['typeEvaluation', 'matiere', 'classes'])
-            ->where('campus_id', Auth::user()->campus_id);
-
-        if ($this->search) {
-            $query->where('titre', 'like', '%' . $this->search . '%');
-        }
-
-        $evaluations = $query->latest()->paginate(10);
-        
-        return view('livewire.evaluation.evaluations', [
-            'evaluations' => $evaluations,
-            'typeEvaluations' => TypeEvaluation::where('campus_id', Auth::user()->campus_id)->get(),
-            'matieres' => Matiere::where('campus_id', Auth::user()->campus_id)->get(),
-            'allClasses' => Classe::where('campus_id', Auth::user()->campus_id)->get()
-        ]);
     }
 }

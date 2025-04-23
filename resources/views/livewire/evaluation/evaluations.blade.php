@@ -1,35 +1,101 @@
-<div class="container-fluid">
+<div class="container-fluid py-4">
+    <!-- Filtres -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="form-group mb-md-0">
+                        <label for="annee_academique" class="form-label">Année Académique</label>
+                        <select wire:model="annee_academique_id" id="annee_academique" class="form-select">
+                            <option value="">Toutes les années</option>
+                            @foreach($anneeAcademiques as $annee)
+                                <option value="{{ $annee->id }}">{{ $annee->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-md-0">
+                        <label for="semestre" class="form-label">Semestre</label>
+                        <select wire:model="semestre_id" id="semestre" class="form-select">
+                            <option value="">Tous les semestres</option>
+                            @foreach($semestres as $semestre)
+                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" wire:model.debounce.300ms="search" class="form-control" placeholder="Rechercher une évaluation...">
+                        <button class="btn btn-primary" wire:click="showModal">
+                            <i class="fas fa-plus"></i> Nouvelle évaluation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
-            <div class="card bg-primary text-white">
+            <div class="card border-left-primary shadow h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Total Évaluations</h5>
-                    <h2 class="mb-0">{{ $evaluations->total() }}</h2>
+                    <div class="row align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Évaluations</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $evaluations->total() }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card bg-info text-white">
+            <div class="card border-left-info shadow h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Planifiées</h5>
-                    <h2 class="mb-0">{{ $evaluations->where('statut', 'planifié')->count() }}</h2>
+                    <div class="row align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Planifiées</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $evaluations->where('statut', 'planifié')->count() }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card bg-warning text-white">
+            <div class="card border-left-warning shadow h-100">
                 <div class="card-body">
-                    <h5 class="card-title">En Cours</h5>
-                    <h2 class="mb-0">{{ $evaluations->where('statut', 'en_cours')->count() }}</h2>
+                    <div class="row align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">En Cours</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $evaluations->where('statut', 'en_cours')->count() }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card bg-success text-white">
+            <div class="card border-left-success shadow h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Terminées</h5>
-                    <h2 class="mb-0">{{ $evaluations->where('statut', 'terminé')->count() }}</h2>
+                    <div class="row align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Terminées</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $evaluations->where('statut', 'terminé')->count() }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,27 +171,6 @@
             </div>
         </div>
     </div>
-
-    @push('scripts')
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('showToast', (event) => {
-                iziToast[event.type]({
-                    message: event.message,
-                    position: 'topRight'
-                });
-            });
-
-            Livewire.on('evaluation-saved', () => {
-                $('#evaluationModal').modal('hide');
-            });
-
-            Livewire.on('closeModal', () => {
-                $('#evaluationModal').modal('hide');
-            });
-        });
-    </script>
-    @endpush
 
     <!-- Modal -->
     <div class="modal fade" id="evaluationModal" tabindex="-1" wire:ignore.self>
@@ -266,9 +311,21 @@
 @push('scripts')
 <script>
     document.addEventListener('livewire:init', () => {
+        Livewire.on('showToast', (event) => {
+            iziToast[event.type]({
+                message: event.message,
+                position: 'topRight'
+            });
+        });
+
+        Livewire.on('evaluation-saved', () => {
+            $('#evaluationModal').modal('hide');
+        });
+
         Livewire.on('closeModal', () => {
             $('#evaluationModal').modal('hide');
         });
+
         Livewire.on('showModal', () => {
             $('#evaluationModal').modal('show');
         });
