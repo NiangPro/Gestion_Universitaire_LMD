@@ -177,13 +177,29 @@ class Evaluations extends Component
         $this->evaluation_id = $evaluation->id;
         $this->titre = $evaluation->titre;
         $this->description = $evaluation->description;
-        $this->date_evaluation = $evaluation->date_evaluation;
-        $this->heure_debut = $evaluation->heure_debut;
+        $this->date_evaluation = $evaluation->date_evaluation->format('Y-m-d');
+        $this->heure_debut = $evaluation->heure_debut->format('H:i');
         $this->duree = $evaluation->duree;
         $this->type_evaluation_id = $evaluation->type_evaluation_id;
         $this->matiere_id = $evaluation->matiere_id;
         $this->statut = $evaluation->statut;
         $this->classes = $evaluation->classes->pluck('id')->toArray();
+        $this->dispatch('showModal');
+    }
+
+    public $evaluationIdToDelete;
+
+    public function showDeleteModal($evaluationId)
+    {
+        $this->evaluationIdToDelete = $evaluationId;
+        $this->dispatch('showDeleteModal');
+    }
+
+    public function confirmDelete()
+    {
+        $evaluation = Evaluation::findOrFail($this->evaluationIdToDelete);
+        $this->delete($evaluation);
+        $this->dispatch('closeDeleteModal');
     }
 
     public function delete(Evaluation $evaluation)
@@ -207,7 +223,7 @@ class Evaluations extends Component
 
     public function showDetails(Evaluation $evaluation)
     {
-        $this->selectedEvaluation = $evaluation->load(['typeEvaluation', 'matiere', 'classes']);
+        $this->selectedEvaluation = $evaluation->load(['typeEvaluation', 'matiere', 'classes.filiere']);
         $this->dispatch('showDetailsModal');
     }
 }
