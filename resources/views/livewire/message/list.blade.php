@@ -1,23 +1,32 @@
 <div class="col-md-8">
-    <h4><i class="fa fa-file-text-o"></i> {{ $titre }}</h4>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="m-0"><i class="fa fa-file-text-o"></i> {{ $titre }}</h4>
+        <div class="message-actions text-right">
+            <button class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> Actualiser</button>
+        </div>
+    </div>
     @if(count($receivedMessages) > 0)
     <div class="email-list">
         @foreach($receivedMessages as $m)
-        <div class="message mb-1"  @if($m->is_read == 0) style="background: lightgrey" @endif>
-            <div class="d-flex">
-                <div class="d-flex message-single">
-                    <div class="">
-                        <button wire:click='toggleFavorite({{$m->id}})' class="border-0 bg-transparent align-middle p-0"><i
-                                class="fa fa-star @if($m->isFavoriteForUser(Auth()->id())) text-warning @endif" aria-hidden="true"></i></button>
-                    </div>
-                    <div class="user">
-                        <i class="fa fa-hand-o-right"></i>
-                    </div>
+        <div class="message @if($m->is_read == 0) unread @endif">
+            <div class="d-flex align-items-center">
+                <div class="message-single">
+                    <button wire:click='toggleFavorite({{$m->id}})' class="star-btn border-0 bg-transparent p-0 @if($m->isFavoriteForUser(Auth()->id())) active @endif">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                    </button>
                 </div>
-                <a href="javascript:void()" wire:click='readMessage({{$m->id}})' class="col-mail unread col-mail-2 d-flex justify-content-between">
-                    <div class=" ml-2"> de {{ $m->sender->prenom}} {{ $m->sender->nom}}</div>
-                    <div class="d-none d-md-block">{{ ucfirst(substr($m->content, 0, 30))}}...</div>
-                    <div class="d-none d-md-block">{{ date("H\h:i\m\\n", strtotime($m->created_at))}}</div>
+                <a href="javascript:void()" wire:click='readMessage({{$m->id}})' class="message-content d-flex align-items-center w-100">
+                    <div class="message-header w-100">
+                        <div class="sender-info">
+                            <span class="font-weight-bold">{{ $m->sender->prenom}} {{ $m->sender->nom}}</span>
+                        </div>
+                        <div class="message-preview flex-grow-1 px-3">
+                            {{ ucfirst(substr($m->content, 0, 30))}}...
+                        </div>
+                        <div class="message-time">
+                            {{ date("H\h:i", strtotime($m->created_at))}}
+                        </div>
+                    </div>
                 </a>
             </div>
         </div>

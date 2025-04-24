@@ -19,6 +19,7 @@ class Retard extends Model
         'commentaire',
         'campus_id',
         'academic_year_id',
+        'semestre_id',
         'created_by'
     ];
 
@@ -51,5 +52,10 @@ class Retard extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function semestre()
+    {
+        return $this->belongsTo(Semestre::class);
     }
 }

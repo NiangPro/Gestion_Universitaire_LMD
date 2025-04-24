@@ -103,8 +103,13 @@
                             <option value="{{ $semaine->id }}">{{ $semaine->jour }}</option>
                             @endforeach
                         </select>
+                        @error('semaine_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
+
+
 
                 <div class="text-right">
                     <button type="button" class="btn btn-secondary" wire:click="closeModal">Annuler</button>

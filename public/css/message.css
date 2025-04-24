@@ -1,0 +1,112 @@
+.email-list {
+    transition: all 0.3s ease;
+}
+
+.message {
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.message:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.message-single {
+    padding: 15px;
+    align-items: center;
+}
+
+.message.unread {
+    background: #f8f9fa;
+    border-left: 4px solid #007bff;
+}
+
+.star-btn {
+    color: #adb5bd;
+    transition: color 0.2s ease;
+}
+
+.star-btn:hover {
+    color: #ffc107;
+}
+
+.star-btn.active {
+    color: #ffc107;
+}
+
+.message-content {
+    flex-grow: 1;
+    padding: 0 15px;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.message-preview {
+    color: #6c757d;
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message-time {
+    color: #6c757d;
+    font-size: 0.85em;
+}
+
+.compose-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.compose-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.email-list .message {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .message-preview {
+        display: none;
+    }
+    
+    .message-single {
+        padding: 10px;
+    }
+    
+    .compose-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+}

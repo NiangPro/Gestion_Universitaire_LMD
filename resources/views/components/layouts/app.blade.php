@@ -213,67 +213,42 @@
         Main wrapper end
     ***********************************-->
     @endif
+    <!-- 1. jQuery (requis pour Bootstrap et autres plugins) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- 2. Scripts Livewire -->
+    @livewireScripts
+
+    <!-- 3. Bootstrap et autres dépendances -->
     @if (!request()->is("/"))
-
-
-    <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
-    <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
-    <script src="{{asset('themes/js/custom.min.js')}}"></script>
-
-
-    <script src="{{asset('themes/vendor/moment/moment.min.js')}}"></script>
-    <script src="{{asset('themes/vendor/pg-calendar/js/pignose.calendar.min.js')}}"></script>
-
-
-
-    <!-- Jquery Validation -->
-    <script src="{{asset('themes/vendor/jquery-validation/jquery.validate.min.js')}}"></script>
-    <!-- Form validate init -->
-    <script src="{{asset('themes/js/plugins-init/jquery.validate-init.js')}}"></script>
-    <script src="{{ asset('themes/vendor/jquery-steps/build/jquery.steps.min.js')}}"></script>
-    <script src="{{ asset('themes/vendor/jquery-validation/jquery.validate.min.js')}}"></script>
-    <!-- Form validate init -->
-    <!-- Datatable -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
-    <!-- Form step init -->
-    <script src="{{ asset('themes/js/plugins-init/jquery-steps-init.js')}}"></script>
-    @elseif(request()->is("/"))
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="{{asset('themes/vendor/moment/moment.min.js')}}"></script>
+        <script src="{{asset('themes/vendor/pg-calendar/js/pignose.calendar.min.js')}}"></script>
+        <script src="{{asset('themes/vendor/jquery-validation/jquery.validate.min.js')}}"></script>
+        <script src="{{asset('themes/js/plugins-init/jquery.validate-init.js')}}"></script>
+        <script src="{{asset('themes/vendor/jquery-steps/build/jquery.steps.min.js')}}"></script>
+        <script src="{{asset('themes/js/plugins-init/jquery-steps-init.js')}}"></script>
+        <!-- Datatable -->
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
+        <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
+        <script src="{{asset('themes/js/custom.min.js')}}"></script>
+    @else
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @endif
+
+    <!-- 4. Plugins et scripts spécifiques -->
     <script src="{{ asset('iziToast.min.js')}}"></script>
     <script src="{{ asset('themes/vendor/summernote/js/summernote.min.js')}}"></script>
-    @stack('scripts')
-    <script>
-        document.addEventListener('livewire:init', () => {
-            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    <script src="{{ asset('js/dark-mode.js')}}"></script>
 
-            Livewire.on('show-confirmation-modal', () => {
-                modal.show();
-            });
-
-            Livewire.on('hide-confirmation-modal', () => {
-                modal.hide();
-            });
-        });
-        Livewire.on('theme-changed', (event) => {
-            if (event.darkMode) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-            document.documentElement.setAttribute('data-theme', event.darkMode ? 'dark' : 'light');
-        });
-    </script>
-    <script src="{{ asset('js/dark-mode.js') }}"></script>
-
-
-    @yield('script')
-
+    <!-- 5. Configuration DataTables -->
     <script>
         let table = $('#myTable').DataTable({
             language: {
@@ -291,56 +266,14 @@
             dom: 'lBfrtip',
             buttons: ['excel', 'pdf', {
                     extend: 'print',
-                    text: 'Imprimer' // Renommer le bouton "Print" en "Imprimer"
-                },
-                //{extend:'colvis', text:"Visibilité"}
-            ],
-            lengthMenu: [10, 20, 50, 75, 100], // Options de sélection pour les éléments par page
+                    text: 'Imprimer'
+                }],
+            lengthMenu: [10, 20, 50, 75, 100]
         });
     </script>
 
-    @livewireScripts
-
-    <!-- 1. D'abord jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-    <!-- 2. Scripts Livewire -->
-    @livewireScripts
-
-    <!-- 3. Bootstrap et autres dépendances -->
-    @if (!request()->is("/"))
-        <script src="{{asset('themes/vendor/global/global.min.js')}}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    @endif
-
-    <!-- 4. Vos autres scripts -->
-    <script src="{{asset('themes/js/quixnav-init.js')}}"></script>
-    <script src="{{asset('themes/js/custom.min.js')}}"></script>
-
-    <!-- 5. Script du thème sombre -->
+    <!-- 6. Gestion du thème sombre et des modales -->
     <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('theme-changed', (event) => {
-                const darkMode = event.darkMode;
-                if (darkMode) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-                document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-            });
-        });
-    </script>
-
-    <!-- 6. Autres scripts spécifiques -->
-    <script src="{{ asset('js/dark-mode.js') }}"></script>
-    @stack('scripts')
-    @yield('script')
-
-    <!-- Avant la fermeture de </body> -->
-    <script>
-        // Fonction pour appliquer le thème
         function applyTheme(darkMode) {
             if (darkMode) {
                 document.body.classList.add('dark-mode');
@@ -351,27 +284,29 @@
             }
         }
 
-        // Au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
-            // Vérifier le localStorage
             const savedTheme = localStorage.getItem('darkMode');
             if (savedTheme !== null) {
-                const darkMode = savedTheme === 'true';
-                applyTheme(darkMode);
+                applyTheme(savedTheme === 'true');
             }
         });
 
-        // Écouter les changements de thème via Livewire
         document.addEventListener('livewire:init', () => {
+            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+            Livewire.on('show-confirmation-modal', () => modal.show());
+            Livewire.on('hide-confirmation-modal', () => modal.hide());
+
             Livewire.on('theme-changed', (event) => {
                 const darkMode = event.darkMode;
-                // Sauvegarder dans localStorage
                 localStorage.setItem('darkMode', darkMode);
-                // Appliquer le thème
                 applyTheme(darkMode);
             });
         });
     </script>
+
+    @stack('scripts')
+    @yield('script')
 </body>
 
 </html>

@@ -130,11 +130,11 @@
                                             <!-- Type d'évaluation (visible uniquement si matière sélectionnée) -->
                                             @if(!empty($matiere_id))
                                                 <div class="col-md-4 mb-3">
-                                                    <select wire:model.live="type_evaluation" class="form-control">
+                                                    <select wire:model.live="type_evaluation_id" class="form-control">
                                                         <option value="">4. Sélectionner le type d'évaluation</option>
-                                                        <option value="CC">Contrôle Continu</option>
-                                                        <option value="TP">Travaux Pratiques</option>
-                                                        <option value="Examen">Examen</option>
+                                                        @foreach(Auth::user()->campus->typeEvaluations as $type)
+                                                            <option value="{{ $type->id }}">{{ $type->nom }}</option>
+                                                        @endforeach
                                                     </select>
                                                     @error('type_evaluation') <span class="text-danger">{{ $message }}</span> @enderror
                                                 </div>

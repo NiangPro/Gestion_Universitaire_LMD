@@ -8,7 +8,9 @@ use App\Models\Filiere;
 use App\Models\Matiere;
 use App\Models\Salle;
 use App\Models\Semestre;
+use App\Models\TypeEvaluation;
 use App\Models\UniteEnseignement;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -81,6 +83,29 @@ class Configurations extends Component
         $this->semestre["ordre"] = $semestre->ordre;
     }
 
+    public function toggleSemestre($id) {
+        $semestre = Semestre::where("id", $id)->first();
+        $outils = new Outils();
+        
+        if (!$semestre->is_active) {
+            // Désactiver tous les autres semestres
+            Semestre::where('campus_id', Auth::user()->campus_id)->update(['is_active' => false]);
+            
+            // Activer le semestre sélectionné
+            $semestre->is_active = true;
+            $semestre->save();
+        
+            $outils->addHistorique("Activation du semestre {$semestre->nom}", "activation");
+        } else {
+            // Désactiver le semestre
+            $semestre->is_active = false;
+            $semestre->save();
+            $outils->addHistorique("Désactivation du semestre {$semestre->nom}", "desactivation");
+        }
+    
+        $this->dispatch("updated");
+    }
+
     public function storeSemestre(){
         if ($this->semestre["idsemestre"]) {
             $this->validate(["semestre.ordre" => "required|min:1|max:4|unique:semestres,ordre,{$this->semestre["idsemestre"]}"]);
@@ -94,7 +119,12 @@ class Configurations extends Component
             $this->dispatch("updated");
         }else{
             $this->validate(["semestre.ordre" => "required|min:1|max:4|unique:semestres,ordre"]);
-            Semestre::create(["nom" => "Semestre ".$this->semestre["ordre"], "ordre" => $this->semestre["ordre"], "campus_id" => Auth::user()->campus_id]);
+            Semestre::create([
+                "nom" => "Semestre ".$this->semestre["ordre"], 
+                "ordre" => $this->semestre["ordre"], 
+                "campus_id" => Auth::user()->campus_id,
+                "is_active" => false
+            ]);
             $this->dispatch("added");
         }
         
@@ -359,6 +389,7 @@ class Configurations extends Component
             "ues" => UniteEnseignement::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "salles" => Salle::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
             "semestres" => Semestre::where("is_deleting", false)->orderBy("nom", "ASC")->get(),
+            "typeEvaluations" => TypeEvaluation::where("is_deleting", false)->where("campus_id", Auth::user()->campus_id)->orderBy("nom", "ASC")->get(),
         ]);
     }
 }

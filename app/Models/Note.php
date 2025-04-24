@@ -10,7 +10,7 @@ class Note extends Model
         'matiere_id',
         'etudiant_id',
         'academic_year_id',
-        'type_evaluation',  // (CC, TP, Examen)
+        'type_evalution_id',  // (CC, TP, Examen)
         'note',
         'observation',
         'campus_id',
@@ -41,6 +41,16 @@ class Note extends Model
     public function campus()
     {
         return $this->belongsTo(Campus::class);
+    }
+
+    public function cours()
+    {
+        return $this->belongsTo(Cour::class, 'matiere_id', 'matiere_id');
+    }
+
+    public function typeEvaluation()
+    {
+        return $this->belongsTo(TypeEvaluation::class);
     }
    
 }

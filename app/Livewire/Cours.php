@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Classe;
 use App\Models\Salle;
 use App\Models\Semaine;
+use App\Models\TypeEvaluation;
 
 #[Title("Cours")]
 class Cours extends Component
@@ -39,7 +40,6 @@ class Cours extends Component
     public $heure_debut;
     public $heure_fin;
     public $statut = 'en attente';
-
     // Propriété pour gérer le modal
     public $isOpen = false;
 
@@ -183,7 +183,8 @@ class Cours extends Component
             'professeurs' => User::where('role', 'professeur')->get(),
             'classes' => Classe::all(),
             'semaines' => Semaine::all(),
-            'salles' => Salle::all()
+            'salles' => Salle::all(),
+
         ]);
     }
 
@@ -277,7 +278,7 @@ class Cours extends Component
                         'semaine_id' => $this->semaine_id,
                         'heure_debut' => $this->heure_debut,
                         'heure_fin' => $this->heure_fin,
-                        'statut' => $this->statut,
+                        'statut' => $this->statut
                     ]);
                     $this->dispatch('updated');
                 } else {
@@ -291,7 +292,7 @@ class Cours extends Component
                         'campus_id' => Auth::user()->campus_id,
                         'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
                         'heure_fin' => $this->heure_fin,
-                        'statut' => $this->statut,
+                        'statut' => $this->statut
                     ]);
                     $this->dispatch('added');
                 }

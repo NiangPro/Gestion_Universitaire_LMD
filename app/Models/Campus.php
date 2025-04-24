@@ -67,7 +67,38 @@ class Campus extends Model
         return $this->hasMany(Filiere::class);
     }
 
-    
+    public function typeEvaluations()
+    {
+        return $this->hasMany(TypeEvaluation::class);
+    }
+    public function evaluations()
+    {
+        return $this->hasMany(Evaluation::class);
+    }
+    public function currentEvaluations()
+    {
+        return $this->evaluations()->where('academic_year_id', $this->currentAcademicYear()->id);
+    }
+    public function currentEvaluationsBySemestre($semestre_id)
+    {
+        return $this->currentEvaluations()->where('semestre_id', $semestre_id);
+    }
+    public function currentEvaluationsByMatiere($matiere_id)
+    {
+        return $this->currentEvaluations()->where('matiere_id', $matiere_id);
+    }
+    public function currentEvaluationsByEtudiant($etudiant_id)
+    {
+        return $this->currentEvaluations()->where('etudiant_id', $etudiant_id);
+    }
+    public function currentEvaluationsByEtudiantAndMatiere($etudiant_id, $matiere_id)
+    {
+        return $this->currentEvaluations()->where('etudiant_id', $etudiant_id)->where('matiere_id', $matiere_id);
+    }
+    public function currentEvaluationsBySemestreAndMatiere($semestre_id, $matiere_id)
+    {
+        return $this->currentEvaluations()->where('semestre_id', $semestre_id)->where('matiere_id', $matiere_id);
+    }
 
     public function uniteEnseignements()
     {
@@ -107,10 +138,6 @@ class Campus extends Model
     public function hasActiveSubscription()
     {
         return $this->activeSubscription() !== null;
-    }
-
-    public function coefficients(){
-        return $this->hasMany(Coefficient::class);
     }
 
     public function absences()

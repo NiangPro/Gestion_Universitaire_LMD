@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Absence;
 use App\Models\Cour;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -46,6 +47,17 @@ class Absences extends Component
         'motif' => 'nullable|string',
         'justifie' => 'boolean',
         'commentaire' => 'nullable|string'
+    ];
+
+    protected $messages = [
+        'etudiant_id.required' => 'Veuillez sélectionner un étudiant',
+        'cours_id.required' => 'Veuillez sélectionner un cours',
+        'date.required' => 'La date est obligatoire',
+        'date.date' => 'Le format de la date est invalide',
+        'status.required' => 'Le statut est obligatoire',
+        'status.in' => 'Le statut doit être soit "absent" soit "present"',
+        'motif.string' => 'Le motif doit être une chaîne de caractères',
+        'commentaire.string' => 'Le commentaire doit être une chaîne de caractères'
     ];
 
     public function updatedCoursId($value)
@@ -151,16 +163,26 @@ class Absences extends Component
             'commentaire' => $this->commentaire,
             'campus_id' => Auth::user()->campus_id,
             'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+            'semestre_id' => Auth::user()->campus->currentSemestre()->id,
             'created_by' => Auth::user()->id
         ];
 
         try {
+            $outils = new Outils();
             if ($this->isEditing) {
                 Absence::find($this->absence_id)->update($data);
-                $this->dispatch('updated');
+                $outils->addHistorique("Modification d'une absence", "edit");
+                $this->dispatch('alert', [
+                    'type' => 'success',
+                    'message' => 'Absence modifiée avec succès'
+                ]);
             } else {
                 Absence::create($data);
-                $this->dispatch('added');
+                $outils->addHistorique("Création d'une absence", "create");
+                $this->dispatch('alert', [
+                    'type' => 'success',
+                    'message' => 'Absence ajoutée avec succès'
+                ]);
             }
 
             $this->reset(['etudiant_id', 'cours_id', 'status', 'motif', 'justifie', 'commentaire', 'isEditing', 'absence_id', 'inscriptions']);

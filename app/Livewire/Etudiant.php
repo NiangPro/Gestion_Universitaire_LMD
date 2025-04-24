@@ -14,8 +14,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Rule;
 use App\Services\MatriculeService;
-use App\Livewire\Traits\WithCustomTabs;
 use App\Models\Campus;
+use Illuminate\Support\Facades\Auth;
 
 #[Title("Etudiants")]
 class Etudiant extends Component
@@ -191,7 +191,7 @@ class Etudiant extends Component
         if ($value) {
             $this->etudiant = User::where('matricule', $value)
                 ->where('role', 'etudiant')
-                ->where('campus_id', auth()->user()->campus_id)
+                ->where('campus_id', Auth::user()->campus_id)
                 ->first();
 
             if ($this->etudiant) {
@@ -220,16 +220,16 @@ class Etudiant extends Component
     {
         // Si l'utilisateur est un admin, il voit tous les campus
         // Sinon, il ne voit que son campus
-        if (auth()->user()->role === 'admin') {
+        if (Auth::user()->role === 'admin') {
             $this->campuses = Campus::all();
         } else {
-            $this->campuses = collect([auth()->user()->campus]);
+            $this->campuses = collect([Auth::user()->campus]);
         }
     }
 
     protected function loadClasses()
     {
-        $this->classes = auth()->user()->campus->classes;
+        $this->classes = Auth::user()->campus->classes;
     }
 
     protected function loadAcademicYears()
@@ -240,7 +240,7 @@ class Etudiant extends Component
     protected function loadTuteurs()
     {
         $this->tuteurs = User::where('role', 'tuteur')
-            ->where('campus_id', auth()->user()->campus_id)
+            ->where('campus_id', Auth::user()->campus_id)
             ->get();
     }
 
@@ -346,7 +346,7 @@ class Etudiant extends Component
             Log::info('Transaction démarrée');
 
             // le matricule de l'etudiant exemple ETU-2025-1-0001
-            $matricule = MatriculeService::generateMatricule(auth()->user()->campus_id);
+            $matricule = MatriculeService::generateMatricule(Auth::user()->campus_id);
 
             // Créer l'utilisateur (étudiant)
             $user = User::create([
@@ -355,6 +355,7 @@ class Etudiant extends Component
                 'username' => $this->username,
                 'email' => $this->email,
                 'tel' => $this->tel,
+                'image' => "profil.jpg",
                 'sexe' => $this->sexe,
                 'date_naissance' => $this->date_naissance,
                 'lieu_naissance' => $this->lieu_naissance,
@@ -364,7 +365,7 @@ class Etudiant extends Component
                 'etablissement_precedant' => $this->etablissement_precedant,
                 'role' => 'etudiant',
                 'password' => Hash::make(str_replace(' ', '', strtolower($this->prenom)) . '@' . date('Y')),
-                'campus_id' => auth()->user()->campus_id,
+                'campus_id' => Auth::user()->campus_id,
                 'matricule' => $matricule
             ]);
             Log::info('Utilisateur créé avec succès', ['user_id' => $user->id]);
@@ -380,8 +381,9 @@ class Etudiant extends Component
                     'adresse' => $this->adresse_tuteur,
                     'profession' => $this->profession_tuteur,
                     'role' => 'tuteur',
+                    'image' => 'profil.jpg',
                     'password' => Hash::make('password'),
-                    'campus_id' => auth()->user()->campus_id,
+                    'campus_id' => Auth::user()->campus_id,
                     'status' => 'active'
                 ]);
                 $tuteur_id = $tuteur->id;
@@ -426,8 +428,8 @@ class Etudiant extends Component
                 // Créer une nouvelle inscription
                 $inscription = Inscription::create([
                     'user_id' => $user->id,
-                    'campus_id' => auth()->user()->campus_id,
-                    'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
+                    'campus_id' => Auth::user()->campus_id,
+                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
                     'classe_id' => $this->classe_id,
                     'tuteur_id' => $tuteur_id,
                     'medical_id' => $medical_id,
@@ -498,7 +500,7 @@ class Etudiant extends Component
     protected function loadEtudiants()
     {
         $query = User::where('role', 'etudiant')
-            ->where('campus_id', auth()->user()->campus_id);
+            ->where('campus_id', Auth::user()->campus_id);
 
         if ($this->search) {
             $query->where(function($q) {
@@ -588,7 +590,7 @@ class Etudiant extends Component
             $inscription = Inscription::create([
                 'user_id' => $this->etudiant->id,
                 'campus_id' => $this->campus_id,
-                'academic_year_id' => auth()->user()->campus->currentAcademicYear()->id,
+                'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
                 'classe_id' => $this->classe_id,
                 'tuteur_id' => $this->derniere_inscription->tuteur_id,
                 'medical_id' => $this->derniere_inscription->medical_id,
