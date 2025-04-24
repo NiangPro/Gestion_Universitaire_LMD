@@ -75,8 +75,9 @@
                                         </td>
                                         <td>{{ $prof->specialite }}</td>
                                         <td>
-                                            {{ $prof->cours->where('annee_academique_id', 
-                                               Auth::user()->campus->currentAcademicYear()->id)->count() }} cours
+                                            {{ $prof->cours()->where('campus_id', Auth::user()->campus->id)
+                                               ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
+                                               ->count() }} cours
                                         </td>
                                         <td>
                                             <div class="d-flex">

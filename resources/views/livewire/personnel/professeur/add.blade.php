@@ -6,7 +6,7 @@
         </div>
     </div>
     <div class="card-body">
-       <form wire:submit='store'>
+       <form wire:submit.prevent='store'>
         <div class="row">
             <div class="form-group col-md-6">
                 <label><strong>Prénom</strong></label>
