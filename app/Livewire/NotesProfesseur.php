@@ -117,6 +117,6 @@ class NotesProfesseur extends Component
     #[Layout('components.layouts.app')]
     public function render()
     {
-        return view('livewire.note.notes-professeur');
+        return view('livewire.professeur.notes-professeur');
     }
 }
