@@ -47,6 +47,12 @@
                 <input type="email" wire:model='email' class="form-control @error('email') error @enderror" placeholder="Veuillez entrer votre email">
                 @error('email') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
+
+            <div class="form-group col-md-6">
+                <label><strong>Spécialité</strong></label>
+                <input type="text" wire:model='specialite' class="form-control @error('specialite') error @enderror" placeholder="Veuillez entrer la spécialité">
+                @error('specialite') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
             
         </div>
         @if($status == 'edit')

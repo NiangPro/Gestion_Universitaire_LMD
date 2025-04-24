@@ -45,17 +45,22 @@ class Professeur extends Component
     public $notesData;
     public $stats = [];
 
-    protected $rules = [
-        'prenom' => 'required|string|max:255',
-        'nom' => 'required|string|max:255',
-        'username' => 'required|string|max:255',
-        'adresse' => 'required|string|max:255',
-        'tel' => ['required', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/'],
-        'sexe' => 'required|in:Homme,Femme',
-        'email' => 'required|email',
-        'specialite' => 'required|string',
-        'photo' => 'nullable|image|max:1024'
-    ];
+    protected function rules()
+    {
+        $rules = [
+            'prenom' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->id)],
+            'adresse' => 'required|string|max:255',
+            'tel' => ['required', 'regex:/^[33|70|75|76|77|78]+[0-9]{7}$/', Rule::unique('users')->ignore($this->id)],
+            'sexe' => 'required|in:Homme,Femme',
+            'email' => ['required', 'email', Rule::unique('users')->ignore($this->id)],
+            'specialite' => 'required|string',
+            'photo' => 'nullable|image|max:1024'
+        ];
+
+        return $rules;
+    }
 
     public function mount()
     {
@@ -197,7 +202,7 @@ class Professeur extends Component
 
         $this->validate();
 
-        try {
+       
             $photoPath = $this->photo ? $this->photo->store('photos', 'public') : null;
        
         if ($this->id) {
@@ -252,9 +257,7 @@ class Professeur extends Component
             $this->status = "list";
             $this->resetForm();
             $this->dispatch('success', ['message' => 'Professeur ' . ($this->id ? 'modifié' : 'ajouté') . ' avec succès']);
-        } catch (\Exception $e) {
-            $this->dispatch('error', ['message' => 'Une erreur est survenue']);
-        }
+       
     }
 
     public function edit($id)
