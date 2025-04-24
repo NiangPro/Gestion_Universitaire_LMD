@@ -71,17 +71,22 @@ class AbsencesProfesseur extends Component
         $classe = Classe::find($this->selectedClasse);
         if (!$classe) return;
 
+        $existingAbsences = Absence::where('cours_id', $this->cours)
+            ->where('date', $this->date)
+            ->pluck('etudiant_id')
+            ->toArray();
+
         $this->etudiants = $classe->etudiants()
             ->where('inscriptions.academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
             ->orderBy('users.nom')
             ->get()
-            ->map(function($etudiant) {
+            ->map(function($etudiant) use ($existingAbsences) {
                 return [
                     'id' => $etudiant->id,
                     'nom' => $etudiant->nom,
                     'prenom' => $etudiant->prenom,
                     'matricule' => $etudiant->matricule,
-                    'absent' => false
+                    'absent' => in_array($etudiant->id, $existingAbsences)
                 ];
             })
             ->toArray();
@@ -89,7 +94,16 @@ class AbsencesProfesseur extends Component
 
     public function toggleAbsence($etudiantIndex)
     {
-        $this->etudiants[$etudiantIndex]['absent'] = !$this->etudiants[$etudiantIndex]['absent'];
+        $etudiant = $this->etudiants[$etudiantIndex];
+        $this->etudiants[$etudiantIndex]['absent'] = !$etudiant['absent'];
+        
+        if (!$etudiant['absent']) {
+            // Supprimer l'absence si elle existe
+            Absence::where('etudiant_id', $etudiant['id'])
+                ->where('cours_id', $this->cours)
+                ->where('date', $this->date)
+                ->delete();
+        }
     }
 
     public function saveAbsences()
