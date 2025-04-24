@@ -13,9 +13,15 @@
                                             <ul class="mb-3 pb-3 ml-3 pl-3 mr-3 pr-3 list-config">
                                                 @foreach($semestres as $s)
                                                 <li class="row" id="semestre-{{$s->id}}">
-                                                    <span class="col-md-8"><i class="fa fa-tag" aria-hidden="true"></i>
+                                                    <span class="col-md-6"><i class="fa fa-tag" aria-hidden="true"></i>
                                                         {{ $s->nom }}</span>
-                                                    <div class="col-md-4 text-right item-actions">
+                                                    <div class="col-md-3">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="semestre-active-{{$s->id}}" wire:click="toggleSemestre({{$s->id}})" {{ $s->is_active ? 'checked' : '' }}>
+                                                            <label class="custom-control-label" for="semestre-active-{{$s->id}}">{{ $s->is_active ? 'Actif' : 'Inactif' }}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 text-right item-actions">
                                                         <a wire:click='getSemestre({{$s->id}})'><i class="fa fa-edit text-primary" style="font-size: 20px"></i></a>
                                                         <a data-toggle="modal" data-target="#semestreId{{$s->id}}"><i class="fa fa-trash text-danger" style="font-size: 20px"></i></a>
                                                     </div>

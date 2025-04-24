@@ -63,6 +63,18 @@ class Outils extends Model
         }
     }
 
+    public function createTypeEvaluation()
+    {
+        
+        $evaluations = TypeEvaluation::where("campus_id", Auth::user()->campus_id)->get();
+        if (count($evaluations) == 0) {
+            $tab = ["CC", "TP", "Examen", "Rattrapage", "Devoir", "Composition", "Projet"];
+            foreach ($tab as $val) {
+                TypeEvaluation::create(["nom" => $val, "campus_id" => Auth::user()->campus_id]);
+            }
+        }
+    }
+
     public function isLogged()
     {
         if (!Auth::user()) {

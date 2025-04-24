@@ -88,8 +88,8 @@
                                     </td>
                                     <td>
                                         <small>
-                                            <div>Inscription: {{ number_format($classe->cout_inscription) }} FCFA</div>
-                                            <div>Mensualité: {{ number_format($classe->mensualite) }} FCFA</div>
+                                            <div>Inscription: {{ number_format($classe->cout_inscription, 0, ',', ' ') }} FCFA</div>
+                                            <div>Mensualité: {{ number_format($classe->mensualite, 0, ',', ' ') }} FCFA</div>
                                         </small>
                                     </td>
                                     <td class="text-center">

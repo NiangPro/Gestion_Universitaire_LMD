@@ -11,6 +11,7 @@ use App\Models\Retard;
 use App\Models\AcademicYear;
 use App\Models\Classe;
 use App\Models\Inscription;
+use App\Models\Outils;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -18,6 +19,7 @@ use Livewire\Attributes\Title;
 #[Title("Tableau de bord")]
 class Dashboard extends Component
 {
+    public $outil;
     public $user;
     public $currentAcademicYear;
     public $totalCours = 0;
@@ -43,6 +45,9 @@ class Dashboard extends Component
     {
         $this->user = Auth::user();
         $campus = Auth::user()->campus;
+        $this->outil = new Outils();
+
+        $this->outil->createTypeEvaluation();
         
         // Vérifie si l'utilisateur n'est pas superadmin et qu'il n'y a pas d'année académique active
         if (!$this->user->estSuperAdmin() && !$campus->currentAcademicYear()) {

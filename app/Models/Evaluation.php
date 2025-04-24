@@ -17,6 +17,7 @@ class Evaluation extends Model
         'matiere_id',
         'academic_year_id',
         'campus_id',
+        'semestre_id',
         'statut'
     ];
 
@@ -50,6 +51,10 @@ class Evaluation extends Model
 
     public function academicYear(){
         return $this->belongsTo(AcademicYear::class, "academic_year_id");
+    }
+
+    public function semestre(){
+        return $this->belongsTo(Semestre::class, "semestre_id");
     }
 
     // ... autres relations existantes ...

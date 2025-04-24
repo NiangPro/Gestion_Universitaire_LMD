@@ -75,6 +75,16 @@ class User extends Authenticatable
     use HasFactory, Notifiable, TwoFactorAuthenticatable, HasPermissions;
 
     /**
+     * Check if the user is a professor
+     *
+     * @return bool
+     */
+    public function estProfesseur()
+    {
+        return $this->role === 'professeur';
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -103,6 +113,7 @@ class User extends Authenticatable
         'two_factor_confirmed_at',
         'campus_id',
         'matricule',
+        'specialite',
     ];
 
     public function campus(){
@@ -182,10 +193,6 @@ class User extends Authenticatable
         return $this->role == "etudiant";
     }
 
-    public function estProfesseur()
-    {
-        return $this->role == "professeur";
-    }
 
     public function historiques(){
         return $this->hasMany(Historique::class);
@@ -206,7 +213,7 @@ class User extends Authenticatable
 
     public function tuteur()
     {
-        return $this->hasOne(Tuteur::class, 'user_id');
+        return $this->hasOne(User::class, 'user_id');
     }
     
     public function medical()
@@ -253,14 +260,6 @@ class User extends Authenticatable
     public function permissions()
     {
         return $this->hasMany(Permission::class);
-    }
-
-    public function hasPermission($module, $action)
-    {
-        $permission = $this->permissions->where('module', $module)->first();
-        if (!$permission) return false;
-        
-        return $permission->{"can_$action"};
     }
 
     public function notes()

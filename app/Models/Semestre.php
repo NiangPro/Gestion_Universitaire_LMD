@@ -15,6 +15,7 @@ class Semestre extends Model
         return $this->belongsTo(Campus::class);
     }
 
+    
     public function notes()
     {
         return $this->hasMany(Note::class);

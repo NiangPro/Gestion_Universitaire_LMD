@@ -9,6 +9,7 @@ use App\Models\Classe;
 use App\Models\User;
 use App\Models\Outils;
 use App\Models\AcademicYear;
+use App\Models\Semestre;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -17,183 +18,187 @@ class Evaluations extends Component
 {
     use WithPagination;
 
-    protected $paginationTheme = 'bootstrap';
-
-    // Propriétés pour le formulaire d'évaluation
-    public $evaluation_id, $titre, $description, $date_evaluation, $heure_debut, $duree;
-    public $coefficient, $type_evaluation_id, $matiere_id, $classe_id, $professeur_id, $statut;
-    public $selectedClasses = []; // Pour stocker les classes sélectionnées
-    public $academic_year_id; // Ajout de l'année académique
-
-    // Propriétés pour le formulaire de type d'évaluation
-    public $type_id, $type_nom, $type_description, $coefficient_defaut;
-
-    // Propriétés de filtrage et recherche
+    public $titre;
+    public $description;
+    public $date_evaluation;
+    public $heure_debut;
+    public $duree;
+    public $type_evaluation_id;
+    public $matiere_id;
+    public $classes = [];
+    public $evaluation_id;
+    public $statut = 'planifié';
+    public $mode = 'create';
     public $search = '';
-    public $type_filter = '';
-    public $date_filter = '';
-    public $year_filter = ''; // Nouveau filtre pour l'année académique
-    public $showTypeModal = false;
-    public $showEvalModal = false;
-    public $showModal = false;
-    public $isEditing = false;
-
+    public $annee_academique_id;
+    public $semestre_id;
+    public $selectedEvaluation;
+    
     protected $rules = [
         'titre' => 'required|string|max:255',
         'description' => 'nullable|string',
         'date_evaluation' => 'required|date|after_or_equal:today',
         'heure_debut' => 'required',
-        'duree' => 'required|integer|min:15',
-        'coefficient' => 'required|numeric|min:0.1',
+        'duree' => 'required|integer|min:1',
         'type_evaluation_id' => 'required|exists:type_evaluations,id',
         'matiere_id' => 'required|exists:matieres,id',
-        'classe_id' => 'required|exists:classes,id',
-        'professeur_id' => 'required|exists:users,id',
-        'selectedClasses' => 'required|array|min:1',
-        'statut' => 'required|in:planifié,en_cours,terminé,annulé',
-        'academic_year_id' => 'required|exists:academic_years,id', // Validation année académique
+        'classes' => 'required|array|min:1',
+        'classes.*' => 'exists:classes,id',
+        'statut' => 'required|in:planifié,en_cours,terminé,annulé'
     ];
 
     protected $messages = [
-        'selectedClasses.required' => 'Veuillez sélectionner au moins une classe',
-        'selectedClasses.min' => 'Veuillez sélectionner au moins une classe',
+        'titre.required' => 'Le titre est requis',
+        'titre.max' => 'Le titre ne doit pas dépasser 255 caractères',
+        'date_evaluation.required' => 'La date est requise',
+        'date_evaluation.after_or_equal' => 'La date doit être égale ou postérieure à aujourd\'hui',
+        'heure_debut.required' => 'L\'heure de début est requise',
+        'duree.required' => 'La durée est requise',
+        'duree.integer' => 'La durée doit être un nombre entier',
+        'duree.min' => 'La durée minimum est de 1 minute',
+        'type_evaluation_id.required' => 'Le type d\'évaluation est requis',
+        'type_evaluation_id.exists' => 'Le type d\'évaluation sélectionné n\'existe pas',
+        'matiere_id.required' => 'La matière est requise',
+        'matiere_id.exists' => 'La matière sélectionnée n\'existe pas',
+        'classes.required' => 'Au moins une classe doit être sélectionnée',
+        'classes.min' => 'Au moins une classe doit être sélectionnée',
+        'classes.*.exists' => 'Une des classes sélectionnées n\'existe pas'
     ];
-
-    protected $listeners = ['closeModal'];
 
     public function mount()
     {
-        if (!Auth::user()->hasPermission('evaluations', 'view')) {
-            abort(403);
-        }
-        // Définir l'année académique actuelle par défaut
-        $this->academic_year_id = Auth::user()->campus->currentAcademicYear()?->id;
+        $this->resetForm();
+        $this->annee_academique_id = Auth::user()->campus->currentAcademicYear()?->id;
+        $this->semestre_id = Auth::user()->campus->currentSemestre()?->id;
+    }
+
+    public function resetForm()
+    {
+        $this->reset(['titre', 'description', 'date_evaluation', 'heure_debut', 'duree', 
+                      'type_evaluation_id', 'matiere_id', 'classes', 'evaluation_id', 
+                      'statut', 'mode']);
+    }
+
+    public function showModal()
+    {
+        $this->resetForm();
+        $this->mode = 'create';
+        $this->dispatch('showModal');
+    }
+
+    private function updateEvaluationStatuses()
+    {
+        $now = now();
+        
+        // Mettre à jour les évaluations planifiées qui doivent passer en cours
+        Evaluation::where('statut', 'planifié')
+            ->where('date_evaluation', '<=', $now->format('Y-m-d'))
+            ->where('heure_debut', '<=', $now->format('H:i:s'))
+            ->update(['statut' => 'en_cours']);
+        
+        // Mettre à jour les évaluations en cours qui doivent passer à terminé
+        Evaluation::where('statut', 'en_cours')
+            ->get()
+            ->each(function ($evaluation) use ($now) {
+                $finEvaluation = \Carbon\Carbon::parse($evaluation->date_evaluation->format('Y-m-d') . ' ' . $evaluation->heure_debut)
+                    ->addMinutes($evaluation->duree);
+                
+                if ($now->greaterThanOrEqualTo($finEvaluation)) {
+                    $evaluation->update(['statut' => 'terminé']);
+                }
+            });
     }
 
     public function render()
     {
-        $types = TypeEvaluation::where('campus_id', Auth::user()->campus_id)->get();
-        $matieres = Matiere::where('campus_id', Auth::user()->campus_id)->get();
-        $classes = Classe::where('campus_id', Auth::user()->campus_id)->get();
-        $professeurs = User::where('campus_id', Auth::user()->campus_id)
-                          ->where('role', 'professeur')
-                          ->get();
-        $academic_years = AcademicYear::where('campus_id', Auth::user()->campus_id)->get();
-        $current_year = Auth::user()->campus->currentAcademicYear();
+        $this->updateEvaluationStatuses();
+        
+        $query = Evaluation::with(['typeEvaluation', 'matiere', 'classes'])
+            ->where('campus_id', Auth::user()->campus_id);
 
-        $evaluations = Evaluation::where('campus_id', Auth::user()->campus_id)
-            ->when($this->search, function ($query) {
-                $query->where('titre', 'like', '%' . $this->search . '%');
-            })
-            ->when($this->type_filter, function ($query) {
-                $query->where('type_evaluation_id', $this->type_filter);
-            })
-            ->when($this->date_filter, function ($query) {
-                $query->whereDate('date_evaluation', $this->date_filter);
-            })
-            ->when($this->year_filter, function ($query) {
-                $query->where('academic_year_id', $this->year_filter);
-            }, function ($query) use ($current_year) {
-                // Par défaut, afficher les évaluations de l'année en cours
-                $query->where('academic_year_id', $current_year->id);
-            })
-            ->orderBy('date_evaluation', 'desc')
-            ->paginate(10);
-
-        return view('livewire.evaluation.evaluations', compact(
-            'evaluations', 'types', 'matieres', 'classes', 'professeurs', 'academic_years', 'current_year'
-        ));
-    }
-
-    public function saveType()
-    {
-        if (!Auth::user()->hasPermission('evaluations', 'create')) {
-            $this->dispatch('error', ['message' => 'Permission non accordée']);
-            return;
+        if ($this->search) {
+            $query->where('titre', 'like', '%' . $this->search . '%');
         }
 
-        $this->validate([
-            'type_nom' => 'required|string|max:255',
-            'type_description' => 'nullable|string',
-            'coefficient_defaut' => 'required|numeric|min:0.1',
-        ]);
-
-        $type = TypeEvaluation::create([
-            'nom' => $this->type_nom,
-            'description' => $this->type_description,
-            'coefficient_defaut' => $this->coefficient_defaut,
-            'campus_id' => Auth::user()->campus_id,
-        ]);
-
-        $outils = new Outils();
-        $outils->addHistorique("Création du type d'évaluation : {$type->nom}", 'create');
-
-        $this->resetType();
-        $this->dispatch('success', ['message' => 'Type d\'évaluation créé avec succès']);
-    }
-
-    public function saveEvaluation()
-    {
-        if (!Auth::user()->hasPermission('evaluations', $this->isEditing ? 'edit' : 'create')) {
-            $this->dispatch('error', ['message' => 'Permission non accordée']);
-            return;
+        if ($this->annee_academique_id) {
+            $query->where('academic_year_id', $this->annee_academique_id);
         }
 
+        if ($this->semestre_id) {
+            $query->where('semestre_id', $this->semestre_id);
+        }
+
+        $evaluations = $query->latest()->paginate(10);
+
+        return view('livewire.evaluation.evaluations', [
+            'evaluations' => $evaluations,
+            'typeEvaluations' => TypeEvaluation::all(),
+            'matieres' => Matiere::where('campus_id', Auth::user()->campus_id)->get(),
+            'allClasses' => Classe::where('campus_id', Auth::user()->campus_id)->get(),
+            'anneeAcademiques' => AcademicYear::where('campus_id', Auth::user()->campus_id)->get(),
+            'semestres' => Semestre::where('campus_id', Auth::user()->campus_id)->get()
+        ]);
+    }
+
+    public function save()
+    {
         $this->validate();
 
-        $data = [
-            'titre' => $this->titre,
-            'description' => $this->description,
-            'date_evaluation' => $this->date_evaluation,
-            'heure_debut' => $this->heure_debut,
-            'duree' => $this->duree,
-            'type_evaluation_id' => $this->type_evaluation_id,
-            'matiere_id' => $this->matiere_id,
-            'professeur_id' => $this->professeur_id,
-            'statut' => $this->statut,
-            'campus_id' => Auth::user()->campus_id,
-            'academic_year_id' => $this->academic_year_id,
-        ];
+  
+            $currentYear = Auth::user()->campus->currentAcademicYear();
+            $currentSemestre = Auth::user()->campus->currentSemestre();
 
-        if ($this->isEditing) {
-            $evaluation = Evaluation::find($this->evaluation_id);
-            $evaluation->update($data);
-            $evaluation->classes()->sync($this->selectedClasses);
-            $message = "Modification de l'évaluation : {$evaluation->titre}";
-        } else {
-            $evaluation = Evaluation::create($data);
-            $evaluation->classes()->attach($this->selectedClasses);
-            $message = "Création de l'évaluation : {$evaluation->titre}";
-        }
+            if (!$currentYear || !$currentSemestre) {
+                $this->dispatch('showToast', [
+                    'type' => 'error',
+                    'message' => 'Impossible de créer une évaluation sans année académique ou semestre actif'
+                ]);
+                return;
+            }
 
-        $outils = new Outils();
-        $outils->addHistorique($message, $this->isEditing ? 'edit' : 'create');
+            $data = [
+                'titre' => $this->titre,
+                'description' => $this->description,
+                'date_evaluation' => $this->date_evaluation,
+                'heure_debut' => $this->heure_debut,
+                'duree' => $this->duree,
+                'type_evaluation_id' => $this->type_evaluation_id,
+                'matiere_id' => $this->matiere_id,
+                'academic_year_id' => $currentYear->id,
+                'semestre_id' => $currentSemestre->id,
+                'campus_id' => Auth::user()->campus_id,
+                'statut' => $this->statut
+            ];
 
-        $this->resetEvaluationFields();
-        $this->dispatch('hideModal');
-        $this->dispatch('success', ['message' => 'Évaluation ' . ($this->isEditing ? 'modifiée' : 'créée') . ' avec succès']);
+
+            if ($this->mode === 'edit' && $this->evaluation_id) {
+                $evaluation = Evaluation::findOrFail($this->evaluation_id);
+                $evaluation->update($data);
+                $evaluation->classes()->sync($this->classes);
+                $message = 'Évaluation mise à jour avec succès';
+                $outils = new Outils();
+                $outils->addHistorique('Modification de l\'évaluation : ' . $evaluation->titre, 'modification');
+            } else {
+                $evaluation = Evaluation::create($data);
+                $evaluation->classes()->attach($this->classes);
+                $message = 'Évaluation créée avec succès';
+                $outils = new Outils();
+                $outils->addHistorique('Création d\'une nouvelle évaluation : ' . $evaluation->titre, 'creation');
+            }
+
+            $this->dispatch('showToast', [
+                'type' => 'success',
+                'message' => $message
+            ]);
+            $this->resetForm();
+            $this->dispatch('evaluation-saved');
+            $this->dispatch('closeModal');
+
     }
 
-    public function delete($id)
+    public function edit(Evaluation $evaluation)
     {
-        if (!Auth::user()->hasPermission('evaluations', 'delete')) {
-            $this->dispatch('error', ['message' => 'Permission non accordée']);
-            return;
-        }
-
-        $evaluation = Evaluation::find($id);
-        $outils = new Outils();
-        $outils->addHistorique("Suppression de l'évaluation : {$evaluation->titre}", 'delete');
-        
-        $evaluation->delete();
-        $this->dispatch('success', ['message' => 'Évaluation supprimée avec succès']);
-    }
-
-    public function edit($id)
-    {
-        $this->isEditing = true;
-        $evaluation = Evaluation::with('classes')->find($id);
-        
+        $this->mode = 'edit';
         $this->evaluation_id = $evaluation->id;
         $this->titre = $evaluation->titre;
         $this->description = $evaluation->description;
@@ -202,53 +207,48 @@ class Evaluations extends Component
         $this->duree = $evaluation->duree;
         $this->type_evaluation_id = $evaluation->type_evaluation_id;
         $this->matiere_id = $evaluation->matiere_id;
-        $this->professeur_id = $evaluation->professeur_id;
         $this->statut = $evaluation->statut;
-        $this->selectedClasses = $evaluation->classes->pluck('id')->toArray();
-        $this->academic_year_id = $evaluation->academic_year_id;
-        
-        $this->showEvalModal = true;
-    }
-
-    private function resetType()
-    {
-        $this->type_id = null;
-        $this->type_nom = '';
-        $this->type_description = '';
-        $this->coefficient_defaut = 1.00;
-        $this->showTypeModal = false;
-    }
-
-    private function resetEvaluationFields()
-    {
-        $this->evaluation_id = null;
-        $this->titre = '';
-        $this->description = '';
-        $this->date_evaluation = '';
-        $this->heure_debut = '';
-        $this->duree = '';
-        $this->type_evaluation_id = '';
-        $this->matiere_id = '';
-        $this->professeur_id = '';
-        $this->selectedClasses = [];
-        $this->statut = 'planifié';
-        $this->academic_year_id = '';
-        $this->showModal = false;
-        $this->isEditing = false;
-    }
-
-    public function openModal()
-    {
-        // Réinitialiser et définir l'année académique actuelle
-        $this->resetEvaluationFields();
-        $this->academic_year_id = Auth::user()->campus->currentAcademicYear()?->id;
-        $this->showModal = true;
+        $this->classes = $evaluation->classes->pluck('id')->toArray();
         $this->dispatch('showModal');
     }
 
-    public function closeModal()
+    public $evaluationIdToDelete;
+
+    public function showDeleteModal($evaluationId)
     {
-        $this->showModal = false;
-        $this->resetEvaluationFields();
+        $this->evaluationIdToDelete = $evaluationId;
+        $this->dispatch('showDeleteModal');
+    }
+
+    public function confirmDelete()
+    {
+        $evaluation = Evaluation::findOrFail($this->evaluationIdToDelete);
+        $this->delete($evaluation);
+        $this->dispatch('closeDeleteModal');
+    }
+
+    public function delete(Evaluation $evaluation)
+    {
+        try {
+            $titre = $evaluation->titre;
+            $evaluation->delete();
+            $outils = new Outils();
+            $outils->addHistorique('Suppression de l\'évaluation : ' . $titre, 'suppression');
+            $this->dispatch('showToast', [
+                'type' => 'success',
+                'message' => 'Évaluation supprimée avec succès'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('showToast', [
+                'type' => 'error',
+                'message' => 'Une erreur est survenue lors de la suppression'
+            ]);
+        }
+    }
+
+    public function showDetails(Evaluation $evaluation)
+    {
+        $this->selectedEvaluation = $evaluation->load(['typeEvaluation', 'matiere', 'classes.filiere']);
+        $this->dispatch('showDetailsModal');
     }
 }
