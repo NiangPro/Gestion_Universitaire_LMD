@@ -1,7 +1,7 @@
 <div class="col-md-8">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fa fa-file-text-o"></i> {{ $titre }}</h4>
-        <div class="message-actions">
+        <div class="message-actions text-right">
             <button class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> Actualiser</button>
         </div>
     </div>

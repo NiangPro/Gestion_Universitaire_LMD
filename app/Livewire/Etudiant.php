@@ -355,7 +355,7 @@ class Etudiant extends Component
                 'username' => $this->username,
                 'email' => $this->email,
                 'tel' => $this->tel,
-                'profil' => "profil.jpg",
+                'image' => "profil.jpg",
                 'sexe' => $this->sexe,
                 'date_naissance' => $this->date_naissance,
                 'lieu_naissance' => $this->lieu_naissance,
@@ -381,7 +381,7 @@ class Etudiant extends Component
                     'adresse' => $this->adresse_tuteur,
                     'profession' => $this->profession_tuteur,
                     'role' => 'tuteur',
-                    'profil' => 'profil.jpg',
+                    'image' => 'profil.jpg',
                     'password' => Hash::make('password'),
                     'campus_id' => Auth::user()->campus_id,
                     'status' => 'active'
