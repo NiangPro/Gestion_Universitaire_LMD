@@ -1,6 +1,5 @@
+<div>
 <div class="container-fluid py-4">
-  
-
     <!-- Dashboard Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
@@ -75,7 +74,7 @@
                         <select wire:model="annee_academique_id" id="annee_academique" class="form-control">
                             <option value="">Toutes les années</option>
                             @foreach($anneeAcademiques as $annee)
-                                <option value="{{ $annee->id }}">{{ $annee->nom }}</option>
+                                <option value="{{ $annee->id }}">{{ $annee->debut }}/{{ $annee->fin }}{{ $annee->encours ? ' (en cours)' : '' }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -141,6 +140,9 @@
                                         </span>
                                     </td>
                                     <td>
+                                        <button class="btn btn-sm btn-info" wire:click="showDetails({{ $evaluation->id }})" title="Voir les détails">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
                                         <button class="btn btn-sm btn-primary" wire:click="edit({{ $evaluation->id }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -165,6 +167,86 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Détails -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" wire:ignore.self>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Détails de l'évaluation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if($selectedEvaluation)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Titre:</strong> {{ $selectedEvaluation->titre }}</p>
+                            <p><strong>Type:</strong> {{ $selectedEvaluation->typeEvaluation->nom }}</p>
+                            <p><strong>Matière:</strong> {{ $selectedEvaluation->matiere->nom }}</p>
+                            <p><strong>Date:</strong> {{ $selectedEvaluation->date_evaluation->format('d/m/Y') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Heure de début:</strong> {{ \Carbon\Carbon::parse($selectedEvaluation->heure_debut)->format('H:i') }}</p>
+                            <p><strong>Durée:</strong> {{ $selectedEvaluation->duree }} minutes</p>
+                            <p><strong>Statut:</strong> 
+                                <span class="badge badge-{{ $selectedEvaluation->statut === 'planifié' ? 'info' : 
+                                    ($selectedEvaluation->statut === 'en_cours' ? 'warning' : 
+                                    ($selectedEvaluation->statut === 'terminé' ? 'success' : 'danger')) }}">
+                                    {{ $selectedEvaluation->statut }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6>Classes concernées:</h6>
+                        <div class="row">
+                            @foreach($selectedEvaluation->classes as $classe)
+                                <div class="col-md-3 mb-2">
+                                    <span class="badge badge-primary">{{ $classe->nom }} ({{ $classe->filiere->nom }})</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('showToast', (event) => {
+            iziToast[event.type]({
+                message: event.message,
+                position: 'topRight'
+            });
+        });
+
+        Livewire.on('evaluation-saved', () => {
+            $('#evaluationModal').modal('hide');
+        });
+
+        Livewire.on('closeModal', () => {
+            $('#evaluationModal').modal('hide');
+        });
+
+        Livewire.on('showModal', () => {
+            $('#evaluationModal').modal('show');
+        });
+
+        Livewire.on('showDetailsModal', () => {
+            $('#detailsModal').modal('show');
+        });
+    });
+</script>
+@endpush
 
     <!-- Modal -->
     <div class="modal fade" id="evaluationModal" tabindex="-1" wire:ignore.self>
@@ -261,17 +343,6 @@
                         <div class="row mt-3">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <textarea class="form-control @error('description') is-invalid @enderror" 
-                                              id="description" wire:model="description" rows="3"></textarea>
-                                    @error('description') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <div class="form-group">
                                     <label>Classes <span class="text-danger">*</span></label>
                                     <div class="row">
                                         @foreach($allClasses as $classe)
@@ -280,7 +351,7 @@
                                                     <input type="checkbox" class="custom-control-input" 
                                                            id="classe_{{ $classe->id }}" 
                                                            wire:model="classes" value="{{ $classe->id }}">
-                                                    <label class="custom-control-label" for="classe_{{ $classe->id }}">{{ $classe->nom }}</label>
+                                                    <label class="custom-control-label" for="classe_{{ $classe->id }}">{{ $classe->nom }} ({{ $classe->filiere->nom }})</label>
                                                 </div>
                                             </div>
                                         @endforeach

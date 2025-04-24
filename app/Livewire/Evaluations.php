@@ -32,6 +32,7 @@ class Evaluations extends Component
     public $search = '';
     public $annee_academique_id;
     public $semestre_id;
+    public $selectedEvaluation;
     
     protected $rules = [
         'titre' => 'required|string|max:255',
@@ -103,16 +104,14 @@ class Evaluations extends Component
         }
 
         $evaluations = $query->latest()->paginate(10);
-        
+
         return view('livewire.evaluation.evaluations', [
             'evaluations' => $evaluations,
-            'anneeAcademiques' => AcademicYear::where('campus_id', Auth::user()->campus_id)
-                ->orderBy('debut', 'desc')
-                ->get(),
-            'semestres' => Semestre::where('campus_id', Auth::user()->campus_id)->get(),
-            'typeEvaluations' => TypeEvaluation::where('campus_id', Auth::user()->campus_id)->get(),
+            'typeEvaluations' => TypeEvaluation::all(),
             'matieres' => Matiere::where('campus_id', Auth::user()->campus_id)->get(),
-            'allClasses' => Classe::where('campus_id', Auth::user()->campus_id)->get()
+            'allClasses' => Classe::where('campus_id', Auth::user()->campus_id)->get(),
+            'anneeAcademiques' => AcademicYear::where('campus_id', Auth::user()->campus_id)->get(),
+            'semestres' => Semestre::where('campus_id', Auth::user()->campus_id)->get()
         ]);
     }
 
@@ -204,5 +203,11 @@ class Evaluations extends Component
                 'message' => 'Une erreur est survenue lors de la suppression'
             ]);
         }
+    }
+
+    public function showDetails(Evaluation $evaluation)
+    {
+        $this->selectedEvaluation = $evaluation->load(['typeEvaluation', 'matiere', 'classes']);
+        $this->dispatch('showDetailsModal');
     }
 }
