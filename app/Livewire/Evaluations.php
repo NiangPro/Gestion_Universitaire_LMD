@@ -86,8 +86,33 @@ class Evaluations extends Component
         $this->dispatch('showModal');
     }
 
+    private function updateEvaluationStatuses()
+    {
+        $now = now();
+        
+        // Mettre à jour les évaluations planifiées qui doivent passer en cours
+        Evaluation::where('statut', 'planifié')
+            ->where('date_evaluation', '<=', $now->format('Y-m-d'))
+            ->where('heure_debut', '<=', $now->format('H:i:s'))
+            ->update(['statut' => 'en_cours']);
+        
+        // Mettre à jour les évaluations en cours qui doivent passer à terminé
+        Evaluation::where('statut', 'en_cours')
+            ->get()
+            ->each(function ($evaluation) use ($now) {
+                $finEvaluation = \Carbon\Carbon::parse($evaluation->date_evaluation->format('Y-m-d') . ' ' . $evaluation->heure_debut)
+                    ->addMinutes($evaluation->duree);
+                
+                if ($now->greaterThanOrEqualTo($finEvaluation)) {
+                    $evaluation->update(['statut' => 'terminé']);
+                }
+            });
+    }
+
     public function render()
     {
+        $this->updateEvaluationStatuses();
+        
         $query = Evaluation::with(['typeEvaluation', 'matiere', 'classes'])
             ->where('campus_id', Auth::user()->campus_id);
 

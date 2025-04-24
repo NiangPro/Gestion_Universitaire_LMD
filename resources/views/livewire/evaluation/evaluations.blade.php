@@ -156,7 +156,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Êtes-vous sûr de vouloir supprimer cette évaluation ? Cette action est irréversible.</p>
+                                                            <p>Êtes-vous sûr de vouloir supprimer cette évaluation ? <br> Cette action est irréversible.</p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
