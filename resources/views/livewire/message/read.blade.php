@@ -6,7 +6,7 @@
             <div class="right-box-padding">
                 <div class="read-content">
                     <div class="media">
-                        <img class="mr-4 rounded-circle" alt="image" width="100" height="50" src="{{asset('storage/images/'.(Auth()->id() == $msg->sender_id ? $msg->receiver->image : $msg->sender->image))}}">
+                        <img class="mr-4 rounded-circle" alt="image" width="100" height="50" src="{{asset('storage/images/'.(Auth()->user()->id == $msg->sender_id ? $msg->receiver->image : $msg->sender->image))}}">
                         <div class="media-body">
                             @if(Auth()->user()->id == $msg->sender_id)
                             <h5 class="text-primary">{{$msg->receiver->prenom}} {{$msg->receiver->nom}}</h5>
