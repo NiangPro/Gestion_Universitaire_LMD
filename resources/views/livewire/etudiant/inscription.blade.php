@@ -83,7 +83,11 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"> <i class="fa fa-location" style="font-size:15px;"></i> </span>
                             </div>
-                            <input type="text" id="nationalite" name="nationalite" placeholder="Nationalité" class="form-control @error('nationalite') is-invalid @enderror" wire:model="nationalite">
+                            <select class="form-control @error('nationalite') is-invalid @enderror" wire:model="nationalite" id="nationalite" name="nationalite">
+                                @foreach($pays as $pays)
+                                    <option value="{{ $pays->nom_fr }}" {{ $pays->nom_fr == 'Sénégal' ? 'selected' : '' }}>{{ $pays->nom_fr }}</option>
+                                @endforeach
+                            </select>
                             @error('nationalite') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>

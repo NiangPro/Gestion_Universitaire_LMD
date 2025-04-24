@@ -16,7 +16,7 @@ use Livewire\Attributes\Rule;
 use App\Services\MatriculeService;
 use App\Livewire\Traits\WithCustomTabs;
 use App\Models\Campus;
-
+use App\Models\Outils;
 #[Title("Etudiants")]
 class Etudiant extends Component
 {
@@ -143,7 +143,8 @@ class Etudiant extends Component
     // Propriétés pour les listes déroulantes
     public $campuses = [];
     public $inscription_id = null;
-   
+    public $pays = [];
+    
     public function changeStatus($status){
         $this->status = $status;
 
@@ -207,14 +208,29 @@ class Etudiant extends Component
         }
     }
 
+
+
     // Nouvelles méthodes pour l'inscription
+        // ... existing code ...
+
+
     public function mount()
     {
+        $this->outils = new Outils;
+        $this->outils->initCountries(); // Assurez-vous que les pays sont initialisés
         $this->loadCampuses();
         $this->loadClasses();
         $this->loadAcademicYears();
         $this->loadEtudiants();
+        $this->loadPays(); // Charger les pays
     }
+
+    protected function loadPays()
+    {
+        $this->pays = \App\Models\Country::orderBy('nom_fr')->get();
+        $this->nationalite = 'Sénégal'; // Sélectionner le Sénégal par défaut
+    }
+// ... existing code ...
 
     protected function loadCampuses()
     {
