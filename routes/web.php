@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
 use App\Http\Middleware\ProfesseurMiddleware;
 use App\Livewire\Absences;
+use App\Livewire\AbsencesProfesseur;
 use App\Livewire\Acces;
 use App\Livewire\Contact;
 use App\Livewire\Evaluations;
@@ -82,6 +83,7 @@ Route::middleware(['auth', SuperAdminMiddleware::class])->prefix('super-admin')-
 // Routes Super Admin
 Route::middleware(['auth', ProfesseurMiddleware::class])->prefix('professeur')->group(function () {
     Route::get("/notes", NotesProfesseur::class)->name("noteprofesseur");
+    Route::get("/absences", AbsencesProfesseur::class)->name("absenceprofesseur");
 });
 
 // Routes Admin

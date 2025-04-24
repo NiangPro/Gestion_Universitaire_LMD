@@ -181,7 +181,7 @@
                 @endif
                 @if(Auth::user()->hasPermission('absences', 'view'))
                 <li>
-                    <a href="{{route('absence')}}" aria-expanded="false">
+                    <a href="{{route('absenceprofesseur')}}" aria-expanded="false">
                         <i class="fa fa-calendar-times"></i>
                         <span class="nav-text">Absences</span>
                     </a>

@@ -217,7 +217,7 @@ class Professeur extends Component
                     'tel' => $this->tel,
                     'sexe' => $this->sexe,
                     'email' => $this->email,
-                    'specialite' => $this->specialite,
+                    // 'specialite' => $this->specialite,
                     'image' => $this->photo ? $photoPath : $prof->image
                 ]);
 
