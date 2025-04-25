@@ -89,10 +89,16 @@ class Evaluations extends Component
     private function updateEvaluationStatuses()
     {
         $now = now();
+        $today = $now->format('Y-m-d');
         
-        // Mettre à jour les évaluations planifiées qui doivent passer en cours
+        // Mettre à jour les évaluations dont la date est passée
         Evaluation::where('statut', 'planifié')
-            ->where('date_evaluation', '<=', $now->format('Y-m-d'))
+            ->where('date_evaluation', '<', $today)
+            ->update(['statut' => 'terminé']);
+        
+        // Mettre à jour les évaluations du jour qui doivent passer en cours
+        Evaluation::where('statut', 'planifié')
+            ->where('date_evaluation', $today)
             ->where('heure_debut', '<=', $now->format('H:i:s'))
             ->update(['statut' => 'en_cours']);
         
@@ -100,7 +106,8 @@ class Evaluations extends Component
         Evaluation::where('statut', 'en_cours')
             ->get()
             ->each(function ($evaluation) use ($now) {
-                $finEvaluation = \Carbon\Carbon::parse($evaluation->date_evaluation->format('Y-m-d') . ' ' . $evaluation->heure_debut)
+                $finEvaluation = \Carbon\Carbon::parse($evaluation->date_evaluation)
+                    ->setTimeFromTimeString($evaluation->heure_debut)
                     ->addMinutes($evaluation->duree);
                 
                 if ($now->greaterThanOrEqualTo($finEvaluation)) {

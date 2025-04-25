@@ -23,7 +23,6 @@ return new class extends Migration
             $table->datetime('date');
             $table->unsignedBigInteger('semestre_id');
             $table->foreign('semestre_id')->references('id')->on('semestres')->onDelete('cascade');
-            
             $table->string('motif')->nullable();
             $table->boolean('justifie')->default(false);
             $table->text('commentaire')->nullable();

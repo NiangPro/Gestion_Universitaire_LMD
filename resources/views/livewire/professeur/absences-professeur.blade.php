@@ -1,50 +1,85 @@
-<div class="container-fluid px-4">
-    <div class="row mb-4">
+<div class="container-fluid py-3">
+    <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center bg-white rounded-3 p-4 shadow-sm">
-                <div>
-                    <h4 class="mb-0 text-primary">
-                        <i class="fas fa-calendar-check me-2"></i>Gestion des Absences
-                    </h4>
-                    <p class="text-muted mb-0">{{ \Carbon\Carbon::now()->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
-                </div>
-                <div>
-                    <input type="date" wire:model.live="date" class="form-control" max="{{ date('Y-m-d') }}">
+            <div class="card border-left-primary shadow-sm h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8 mb-3 mb-md-0">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary-soft p-3 mr-3">
+                                    <i class="fas fa-calendar-check text-primary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0 text-primary font-weight-bold">Gestion des Absences</h4>
+                                    <p class="text-muted mb-0 mt-1">{{ \Carbon\Carbon::now()->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-calendar text-primary"></i>
+                                    </span>
+                                </div>
+                                <input type="date" wire:model.live="date" class="form-control" max="{{ date('Y-m-d') }}">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Liste des Classes -->
-    <div class="row mb-4">
+    <div class="row mt-4">
         <div class="col-12">
-            <h5 class="text-muted mb-3">Classes ayant cours aujourd'hui</h5>
-            @if($loading)
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Chargement...</span>
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary-soft p-2 mr-2">
+                            <i class="fas fa-chalkboard text-primary"></i>
+                        </div>
+                        <h5 class="mb-0 font-weight-bold text-dark">Classes ayant cours aujourd'hui</h5>
                     </div>
                 </div>
-            @else
-                @if(empty($classes))
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>Aucune classe n'a cours aujourd'hui
-                    </div>
-                @else
-                    <div class="row">
-                        @foreach($classes as $classe)
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100 {{ $selectedClasse === $classe['id'] ? 'border-primary' : '' }} hover-shadow cursor-pointer"
-                                     wire:click="selectClasse('{{ $classe['id'] }}', '{{ $classe['cours_id'] }}')">
-                                    <div class="card-body">
-                                        <h5 class="card-title text-primary mb-3">{{ $classe['nom'] }}</h5>
-                                        <div class="d-flex align-items-center mb-2">
-                                            <i class="fas fa-book me-2 text-muted"></i>
-                                            <span>{{ $classe['matiere'] }}</span>
+                <div class="card-body">
+                    @if($loading)
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Chargement...</span>
+                            </div>
+                        </div>
+                    @else
+                        @if(empty($classes))
+                            <div class="alert alert-info mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    <span>Aucune classe n'a cours aujourd'hui</span>
+                                </div>
+                            </div>
+                        @else
+                            <div class="row">
+                                @foreach($classes as $classe)
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div class="card h-100 class-card {{ $selectedClasse === $classe['id'] ? 'selected' : '' }}"
+                                             wire:click="selectClasse('{{ $classe['id'] }}', '{{ $classe['cours_id'] }}')">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h5 class="card-title text-dark mb-0 font-weight-bold">{{ $classe['nom'] }}</h5>
+                                            <span class="badge badge-primary">En cours</span>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="rounded-circle bg-success-soft p-2 mr-2">
+                                                <i class="fas fa-book text-success"></i>
+                                            </div>
+                                            <span class="text-muted">{{ $classe['matiere'] }}</span>
                                         </div>
                                         <div class="d-flex align-items-center">
-                                            <i class="fas fa-clock me-2 text-muted"></i>
-                                            <span>{{ substr($classe['heure_debut'], 0, 5) }} - {{ substr($classe['heure_fin'], 0, 5) }}</span>
+                                            <div class="rounded-circle bg-warning-soft p-2 mr-2">
+                                                <i class="fas fa-clock text-warning"></i>
+                                            </div>
+                                            <span class="text-muted">{{ substr($classe['heure_debut'], 0, 5) }} - {{ substr($classe['heure_fin'], 0, 5) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -58,38 +93,48 @@
 
     <!-- Liste des Étudiants -->
     @if($selectedClasse && !empty($etudiants))
-        <div class="card shadow-sm">
-            <div class="card-header bg-white py-3 row">
-                <h5 class="col-md-8">Liste des Étudiants</h5>
-                <div class="col-md-4 text-right">
-                    <button class="btn btn-primary" wire:click="saveAbsences">
-                        <i class="fas fa-save me-2"></i>Enregistrer les absences
-                    </button>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-4 border-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-8 d-flex align-items-center">
+                        <div class="rounded-circle bg-primary-soft p-2 me-3">
+                            <i class="fas fa-users text-primary"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Liste des Étudiants</h5>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <button class="btn btn-primary btn-lg px-4 rounded-pill" wire:click="saveAbsences">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <th>Matricule</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <th class="text-center">Absent</th>
+                                <th class="py-3 px-4 border-0">Matricule</th>
+                                <th class="py-3 px-4 border-0">Nom</th>
+                                <th class="py-3 px-4 border-0">Prénom</th>
+                                <th class="py-3 px-4 border-0 text-center">Statut</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($etudiants as $index => $etudiant)
-                                <tr>
-                                    <td>{{ $etudiant['matricule'] }}</td>
-                                    <td>{{ $etudiant['nom'] }}</td>
-                                    <td>{{ $etudiant['prenom'] }}</td>
-                                    <td class="text-center">
-                                        <div class="form-check d-flex justify-content-center">
-                                            <input class="form-check-input cursor-pointer" 
-                                                   type="checkbox" 
-                                                   wire:model.live="etudiants.{{ $index }}.absent"
-                                                   wire:click="toggleAbsence({{ $index }})">
+                                <tr class="align-middle">
+                                    <td class="py-3 px-4">{{ $etudiant['matricule'] }}</td>
+                                    <td class="py-3 px-4 fw-medium">{{ $etudiant['nom'] }}</td>
+                                    <td class="py-3 px-4">{{ $etudiant['prenom'] }}</td>
+                                    <td class="py-3 px-4 text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" 
+                                                       type="checkbox" 
+                                                       role="switch"
+                                                       wire:model.live="etudiants.{{ $index }}.absent"
+                                                       wire:click="toggleAbsence({{ $index }})">
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -102,13 +147,79 @@
     @endif
 
     <style>
-        .hover-shadow:hover {
-            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-            transform: translateY(-2px);
-            transition: all .2s ease-in-out;
+        .border-left-primary {
+            border-left: 4px solid #4e73df !important;
         }
-        .cursor-pointer {
+
+        .bg-primary-soft {
+            background-color: rgba(78, 115, 223, 0.1) !important;
+        }
+
+        .bg-success-soft {
+            background-color: rgba(40, 167, 69, 0.1) !important;
+        }
+
+        .bg-warning-soft {
+            background-color: rgba(255, 193, 7, 0.1) !important;
+        }
+
+        .class-card {
             cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 0.35rem;
+            border: 1px solid #e3e6f0;
+        }
+
+        .class-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+        }
+
+        .class-card.selected {
+            background-color: #4e73df;
+            border-color: #4e73df;
+            color: #fff !important;
+        }
+
+        .class-card.selected .text-dark,
+        .class-card.selected .text-muted,
+        .class-card.selected .badge {
+            color: #fff !important;
+        }
+
+        .class-card.selected .bg-success-soft,
+        .class-card.selected .bg-warning-soft {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .class-card.selected .text-success,
+        .class-card.selected .text-warning {
+            color: #fff !important;
+        }
+
+        .form-check.form-switch {
+            padding-left: 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .form-check-input {
+            width: 2rem;
+            height: 1rem;
+            margin: 0;
+            cursor: pointer;
+            background-size: contain;
+            position: relative;
+        }
+
+        .table > tbody > tr > td,
+        .table > thead > tr > th {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .font-weight-medium {
+            font-weight: 500;
         }
     </style>
 </div>
