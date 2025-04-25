@@ -94,20 +94,13 @@
     <!-- Liste des Étudiants -->
     @if($selectedClasse && !empty($etudiants))
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-4 border-bottom">
-                <div class="row align-items-center">
-                    <div class="col-md-8 d-flex align-items-center">
-                        <div class="rounded-circle bg-primary-soft p-2 me-3">
-                            <i class="fas fa-users text-primary"></i>
-                        </div>
-                        <h5 class="mb-0 fw-bold">Liste des Étudiants</h5>
-                    </div>
-                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="card-header row bg-white py-4 border-bottom">
+                        <h5 class="mb-0 fw-bold col-md-8"><i class="fas fa-users text-primary"></i>Liste des Étudiants</h5>
+                    <div class="col-md-4 text-md-right mt-3 mt-md-0">
                         <button class="btn btn-primary btn-lg px-4 rounded-pill" wire:click="saveAbsences">
                             <i class="fas fa-save me-2"></i>Enregistrer
                         </button>
                     </div>
-                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -127,14 +120,12 @@
                                     <td class="py-3 px-4 fw-medium">{{ $etudiant['nom'] }}</td>
                                     <td class="py-3 px-4">{{ $etudiant['prenom'] }}</td>
                                     <td class="py-3 px-4 text-center">
-                                        <div class="d-flex justify-content-center">
-                                            <div class="form-check form-switch mb-0">
-                                                <input class="form-check-input" 
-                                                       type="checkbox" 
-                                                       role="switch"
-                                                       wire:model.live="etudiants.{{ $index }}.absent"
-                                                       wire:click="toggleAbsence({{ $index }})">
-                                            </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" 
+                                                   class="custom-control-input" 
+                                                   id="absence-{{ $index }}"
+                                                   wire:model.live="etudiants.{{ $index }}.absent">
+                                            <label class="custom-control-label" for="absence-{{ $index }}"></label>
                                         </div>
                                     </td>
                                 </tr>
@@ -197,19 +188,17 @@
             color: #fff !important;
         }
 
-        .form-check.form-switch {
-            padding-left: 0;
-            display: flex;
-            justify-content: center;
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: #4e73df;
+            border-color: #4e73df;
         }
-        
-        .form-check-input {
-            width: 2rem;
-            height: 1rem;
-            margin: 0;
-            cursor: pointer;
-            background-size: contain;
-            position: relative;
+
+        .custom-control-input:focus ~ .custom-control-label::before {
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .custom-checkbox .custom-control-label::before {
+            border-radius: 0.25rem;
         }
 
         .table > tbody > tr > td,
