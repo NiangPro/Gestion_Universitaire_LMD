@@ -187,6 +187,14 @@
                     </a>
                 </li>
                 @endif
+                @if(Auth::user()->hasPermission('retards', 'view'))
+                <li>
+                    <a href="{{route('retardprofesseur')}}" aria-expanded="false">
+                        <i class="fa fa-clock"></i>
+                        <span class="nav-text">Retards</span>
+                    </a>
+                </li>
+                @endif
             @endif
 
             @if(Auth()->user()->estSuperAdmin())

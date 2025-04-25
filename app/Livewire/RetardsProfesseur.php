@@ -2,29 +2,32 @@
 
 namespace App\Livewire;
 
-use App\Models\Absence;
+use App\Models\Retard;
 use App\Models\Classe;
 use App\Models\Cour;
 use App\Models\Outils;
-use App\Models\Semestre;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title("Absences")]
-class AbsencesProfesseur extends Component
+#[Title("Retards")]
+class RetardsProfesseur extends Component
 {
     public $classes = [];
     public $selectedClasse = null;
     public $etudiants = [];
     public $date;
-    public $absences = [];
     public $cours = null;
     public $loading = false;
     public $success = false;
     public $message = '';
+    public $retardModal = false;
+    public $selectedEtudiant = null;
+    public $minutes_retard = '';
+    public $motif = '';
+    public $commentaire = '';
 
     public function mount()
     {
@@ -73,92 +76,98 @@ class AbsencesProfesseur extends Component
         $classe = Classe::find($this->selectedClasse);
         if (!$classe) return;
 
-        $existingAbsences = Absence::where('cours_id', $this->cours)
+        $existingRetards = Retard::where('cours_id', $this->cours)
             ->where('date', $this->date)
-            ->pluck('etudiant_id')
+            ->get()
+            ->pluck('minutes_retard', 'etudiant_id')
             ->toArray();
 
         $this->etudiants = $classe->etudiants()
             ->where('inscriptions.academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
             ->orderBy('users.nom')
             ->get()
-            ->map(function($etudiant) use ($existingAbsences) {
+            ->map(function($etudiant) use ($existingRetards) {
                 return [
                     'id' => $etudiant->id,
                     'nom' => $etudiant->nom,
                     'prenom' => $etudiant->prenom,
                     'matricule' => $etudiant->matricule,
-                    'absent' => in_array($etudiant->id, $existingAbsences)
+                    'minutes_retard' => $existingRetards[$etudiant->id] ?? null
                 ];
             })
             ->toArray();
     }
 
-    public function toggleAbsence($etudiantIndex)
+    public function openRetardModal($etudiantIndex)
     {
-        $etudiant = $this->etudiants[$etudiantIndex];
-        $this->etudiants[$etudiantIndex]['absent'] = !$etudiant['absent'];
-        
-        if (!$etudiant['absent']) {
-            // Supprimer l'absence si elle existe
-            $absence = Absence::where('etudiant_id', $etudiant['id'])
-                ->where('cours_id', $this->cours)
-                ->where('date', $this->date)
-                ->first();
-            
-            if ($absence) {
-                $absence->delete();
-                $outils = new Outils();
-                $outils->addHistorique("Suppression d'une absence", "delete");
-                
-                $this->dispatch('alert', [
-                    'type' => 'warning',
-                    'message' => 'Absence supprimée avec succès'
-                ]);
-            }
-        }
+        $this->selectedEtudiant = $this->etudiants[$etudiantIndex];
+        $this->minutes_retard = '';
+        $this->motif = '';
+        $this->commentaire = '';
+        $this->retardModal = true;
     }
 
-    public function saveAbsences()
+    public function saveRetard()
     {
         $this->validate([
-            'date' => 'required|date',
-            'cours' => 'required|exists:cours,id'
+            'minutes_retard' => 'required|integer|min:1',
+            'motif' => 'nullable|string|max:255',
+            'commentaire' => 'nullable|string'
         ]);
 
-        $cours = Cour::with(['matiere.uniteEnseignement.filiere'])->find($this->cours);
-       
-
-        foreach ($this->etudiants as $etudiant) {
-            if ($etudiant['absent']) {
-                Absence::create([
-                    'etudiant_id' => $etudiant['id'],
-                    'cours_id' => $this->cours,
-                    'date' => $this->date,
-                    'status' => 'absent',
-                    'campus_id' => Auth::user()->campus->id,
-                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
-                    'semestre_id' => Auth::user()->campus->currentSemestre()->id,
-                    'created_by' => Auth::id()
-                ]);
-            }
-        }
+        Retard::updateOrCreate(
+            [
+                'etudiant_id' => $this->selectedEtudiant['id'],
+                'cours_id' => $this->cours,
+                'date' => $this->date
+            ],
+            [
+                'minutes_retard' => $this->minutes_retard,
+                'motif' => $this->motif,
+                'commentaire' => $this->commentaire,
+                'campus_id' => Auth::user()->campus->id,
+                'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                'semestre_id' => Auth::user()->campus->currentSemestre()->id,
+                'created_by' => Auth::id()
+            ]
+        );
 
         $outils = new Outils();
-        $outils->addHistorique("Enregistrement des absences", "create");
-        
-        $this->success = true;
-        $this->message = 'Les absences ont été enregistrées avec succès.';
+        $outils->addHistorique("Enregistrement d'un retard", "create");
+
+        $this->retardModal = false;
+        $this->loadEtudiants();
 
         $this->dispatch('alert', [
             'type' => 'success',
-            'message' => 'Les absences ont été enregistrées avec succès'
+            'message' => 'Le retard a été enregistré avec succès'
         ]);
+    }
+
+    public function deleteRetard($etudiantId)
+    {
+        $retard = Retard::where('etudiant_id', $etudiantId)
+            ->where('cours_id', $this->cours)
+            ->where('date', $this->date)
+            ->first();
+
+        if ($retard) {
+            $retard->delete();
+            $outils = new Outils();
+            $outils->addHistorique("Suppression d'un retard", "delete");
+
+            $this->loadEtudiants();
+            
+            $this->dispatch('alert', [
+                'type' => 'warning',
+                'message' => 'Retard supprimé avec succès'
+            ]);
+        }
     }
 
     #[Layout('components.layouts.app')]
     public function render()
     {
-        return view('livewire.professeur.absences-professeur');
+        return view('livewire.professeur.retards-professeur');
     }
 }

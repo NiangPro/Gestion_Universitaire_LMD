@@ -137,7 +137,33 @@
         </div>
     @endif
 
-    <style>
+    @push('scripts')
+<script>
+    window.addEventListener('alert', event => {
+        if (event.detail.type === 'success') {
+            iziToast.success({
+                title: 'Succès',
+                message: event.detail.message,
+                position: 'topRight'
+            });
+        } else if (event.detail.type === 'warning') {
+            iziToast.warning({
+                title: 'Attention',
+                message: event.detail.message,
+                position: 'topRight'
+            });
+        } else if (event.detail.type === 'error') {
+            iziToast.error({
+                title: 'Erreur',
+                message: event.detail.message,
+                position: 'topRight'
+            });
+        }
+    });
+</script>
+@endpush
+
+<style>
         .border-left-primary {
             border-left: 4px solid #4e73df !important;
         }

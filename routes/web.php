@@ -35,6 +35,7 @@ use App\Http\Controllers\SubscriptionPaymentController;
 use App\Http\Middleware\ProfesseurMiddleware;
 use App\Livewire\Absences;
 use App\Livewire\AbsencesProfesseur;
+use App\Livewire\RetardsProfesseur;
 use App\Livewire\Acces;
 use App\Livewire\Contact;
 use App\Livewire\Evaluations;
@@ -80,10 +81,11 @@ Route::middleware(['auth', SuperAdminMiddleware::class])->prefix('super-admin')-
     Route::get("/corbeille", Corbeille::class)->name("corbeille");
 });
 
-// Routes Super Admin
+// Routes Professeurs
 Route::middleware(['auth', ProfesseurMiddleware::class])->prefix('professeur')->group(function () {
     Route::get("/notes", NotesProfesseur::class)->name("noteprofesseur");
     Route::get("/absences", AbsencesProfesseur::class)->name("absenceprofesseur");
+    Route::get("/retards", RetardsProfesseur::class)->name("retardprofesseur");
 });
 
 // Routes Admin
