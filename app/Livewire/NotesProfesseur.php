@@ -25,6 +25,16 @@ class NotesProfesseur extends Component
     public $typesEvaluation = [];
     public $message = '';
 
+    // Propriétés pour la visualisation
+    public $selectedClasseVisu = null;
+    public $selectedMatiereVisu = null;
+    public $selectedTypeEvaluationVisu = null;
+    public $matieresVisu = [];
+    public $notesVisu = [];
+    public $moyenneGenerale = 0;
+    public $meilleureNote = 0;
+    public $tauxReussite = 0;
+
     public function mount()
     {
         $user = Auth::user();
@@ -67,7 +77,7 @@ class NotesProfesseur extends Component
                 ->get();
 
             $this->notes = Note::where('matiere_id', $this->selectedMatiere)
-                ->where('type_evaluation', $this->selectedTypeEvaluation)
+                ->where('type_evaluation_id', $this->selectedTypeEvaluation)
                 ->whereIn('etudiant_id', $this->etudiants->pluck('id'))
                 ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
                 ->get()
@@ -105,7 +115,8 @@ class NotesProfesseur extends Component
         // Enregistrer l'historique
         $action = $noteModel->wasRecentlyCreated ? 'Ajout' : 'Modification';
         $etudiant = User::find($etudiantId);
-        Outils::historique(
+        $outils = new Outils();
+        $outils->addHistorique(
             $action . ' de note',
             'Note ' . $action . ' pour l\'étudiant ' . $etudiant->prenom . ' ' . $etudiant->nom . ' (Matricule: ' . $etudiant->username . ') - Note: ' . $note,
             Auth::user()->id
@@ -115,6 +126,73 @@ class NotesProfesseur extends Component
     }
 
     #[Layout('components.layouts.app')]
+    public function updatedSelectedClasseVisu($value)
+    {
+        $this->selectedMatiereVisu = null;
+        $this->notesVisu = [];
+        $this->resetStats();
+        
+        if ($value) {
+            $user = Auth::user();
+            $this->matieresVisu = Cour::where('professeur_id', $user->id)
+                ->where('classe_id', $value)
+                ->where('academic_year_id', $user->campus->currentAcademicYear()->id)
+                ->with('matiere')
+                ->get()
+                ->pluck('matiere')
+                ->unique('id');
+        }
+    }
+
+    public function updatedSelectedMatiereVisu($value)
+    {
+        if ($value) {
+            $this->chargerNotesVisu();
+        }
+    }
+
+    public function updatedSelectedTypeEvaluationVisu($value)
+    {
+        if ($value) {
+            $this->chargerNotesVisu();
+        }
+    }
+
+    public function chargerNotesVisu()
+    {
+        if ($this->selectedClasseVisu && $this->selectedMatiereVisu && $this->selectedTypeEvaluationVisu) {
+            $this->notesVisu = Note::with('etudiant')
+                ->where('matiere_id', $this->selectedMatiereVisu)
+                ->where('type_evaluation_id', $this->selectedTypeEvaluationVisu)
+                ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
+                ->get();
+
+            $this->calculerStatistiques();
+        }
+    }
+
+    private function calculerStatistiques()
+    {
+        if ($this->notesVisu->isEmpty()) {
+            $this->resetStats();
+            return;
+        }
+
+        $this->moyenneGenerale = $this->notesVisu->avg('note');
+        $this->meilleureNote = $this->notesVisu->max('note');
+        $notesValidees = $this->notesVisu->filter(function($note) {
+            return $note->note >= 10;
+        })->count();
+        $this->tauxReussite = ($notesValidees / $this->notesVisu->count()) * 100;
+    }
+
+    private function resetStats()
+    {
+        $this->moyenneGenerale = 0;
+        $this->meilleureNote = 0;
+        $this->tauxReussite = 0;
+    }
+
     public function render()
     {
         return view('livewire.professeur.notes-professeur');
