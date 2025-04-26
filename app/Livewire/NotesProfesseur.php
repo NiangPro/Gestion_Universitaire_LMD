@@ -92,6 +92,11 @@ class NotesProfesseur extends Component
             return;
         }
 
+        if (!$this->selectedTypeEvaluation) {
+            $this->message = 'Veuillez sélectionner un type d\'évaluation';
+            return;
+        }
+
         $currentSemestre = Auth::user()->campus->currentSemestre();
         if (!$currentSemestre) {
             $this->message = 'Aucun semestre actif trouvé';

@@ -10,7 +10,7 @@ class Note extends Model
         'matiere_id',
         'etudiant_id',
         'academic_year_id',
-        'type_evalution_id',  // (CC, TP, Examen)
+        'type_evaluation_id',  // (CC, TP, Examen)
         'note',
         'observation',
         'campus_id',
