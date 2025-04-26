@@ -188,7 +188,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="classeVisu"><i class="fas fa-users mr-2"></i>Classe</label>
-                            <select wire:model.live.blur="selectedClasseVisu" id="classeVisu" class="form-control">
+                            <select wire:model.live="selectedClasseVisu" id="classeVisu" class="form-control">
                                 <option value="">Sélectionner une classe</option>
                                 @foreach($classes as $classe)
                                     <option value="{{ $classe->id }}">{{ $classe->nom }}({{ $classe->filiere->nom}})</option>
@@ -196,10 +196,11 @@
                             </select>
                         </div>
                     </div>
+                    @if($selectedClasseVisu)
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="matiereVisu"><i class="fas fa-book mr-2"></i>Matière</label>
-                            <select wire:model.live.blur="selectedMatiereVisu" id="matiereVisu" class="form-control">
+                            <select wire:model.live="selectedMatiereVisu" id="matiereVisu" class="form-control">
                                 <option value="">Sélectionner une matière</option>
                                 @foreach($matieresVisu ?? [] as $matiere)
                                     <option value="{{ $matiere->id }}">{{ $matiere->nom }}</option>
@@ -207,10 +208,12 @@
                             </select>
                         </div>
                     </div>
+                    @endif
+                    @if($selectedMatiereVisu)
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="typeEvaluationVisu"><i class="fas fa-tasks mr-2"></i>Type d'évaluation</label>
-                            <select wire:model.live.blur="selectedTypeEvaluationVisu" id="typeEvaluationVisu" class="form-control">
+                            <select wire:model.live="selectedTypeEvaluationVisu" id="typeEvaluationVisu" class="form-control">
                                 <option value="">Sélectionner le type</option>
                                 @foreach($typesEvaluation as $type)
                                     <option value="{{ $type->id }}">{{ $type->nom }}</option>
@@ -218,6 +221,7 @@
                             </select>
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <!-- Tableau des notes avec statistiques -->
