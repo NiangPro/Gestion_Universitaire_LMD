@@ -284,6 +284,9 @@ class Dashboard extends Component
         }else if(Auth::user()->estAdmin()){
             return view('livewire.dashboard.dashboard-admin');
 
+        }else if(Auth::user()->estProfesseur()){
+            return view('livewire.dashboard.dashboard-professeur');
+
         } else {
             return view('livewire.dashboard.dashboard');
         }
