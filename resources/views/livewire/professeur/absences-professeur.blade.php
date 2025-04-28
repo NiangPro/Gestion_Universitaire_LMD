@@ -11,7 +11,7 @@
                                 </div>
                                 <div>
                                     <h4 class="mb-0 text-primary font-weight-bold">Gestion des Absences</h4>
-                                    <p class="text-muted mb-0 mt-1">{{ \Carbon\Carbon::now()->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
+                                    <p class="text-muted mb-0 mt-1">{{ \Carbon\Carbon::parse($date)->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                         <div class="rounded-circle bg-primary-soft p-2 mr-2">
                             <i class="fas fa-chalkboard text-primary"></i>
                         </div>
-                        <h5 class="mb-0 font-weight-bold text-dark">Classes ayant cours aujourd'hui</h5>
+                        <h5 class="mb-0 font-weight-bold text-dark">Classes ayant cours le {{ \Carbon\Carbon::parse($date)->locale('fr')->isoFormat('D MMMM YYYY') }}</h5>
                     </div>
                 </div>
                 <div class="card-body">
@@ -99,6 +99,10 @@
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
                         <button class="btn btn-primary btn-lg px-4 rounded-pill" wire:click="saveAbsences">
                             <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+
+                        <button class="btn btn-warning btn-lg px-4 rounded-pill ms-2" wire:click="resetAbsences">
+                            <i class="fas fa-undo me-2"></i>Réinitialiser
                         </button>
                     </div>
             </div>

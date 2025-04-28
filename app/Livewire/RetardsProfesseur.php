@@ -35,10 +35,28 @@ class RetardsProfesseur extends Component
         $this->loadClassesOfDay();
     }
 
+    public function resetRetards()
+    {
+        $this->reset("etudiants");
+
+        $this->dispatch('alert', [
+            'type' => 'info',
+            'message' => 'Les retards ont été réinitialisées'
+        ]);
+    }
+
+    public function updatedDate()
+    {
+        $this->loadClassesOfDay();
+        $this->selectedClasse = null;
+        $this->etudiants = [];
+    }
+
     public function loadClassesOfDay()
     {
         $this->loading = true;
-        $jourSemaine = Carbon::now()->dayOfWeek;
+        $selectedDate = Carbon::parse($this->date);
+        $jourSemaine = $selectedDate->dayOfWeek;
         
         $this->classes = Cour::where('professeur_id', Auth::id())
             ->where('semaine_id', $jourSemaine)

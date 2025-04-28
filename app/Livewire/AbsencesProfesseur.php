@@ -164,6 +164,16 @@ class AbsencesProfesseur extends Component
         ]);
     }
 
+    public function resetAbsences()
+    {
+        $this->reset("etudiants");
+
+        $this->dispatch('alert', [
+            'type' => 'info',
+            'message' => 'Les absences ont été réinitialisées'
+        ]);
+    }
+
     #[Layout('components.layouts.app')]
     public function render()
     {

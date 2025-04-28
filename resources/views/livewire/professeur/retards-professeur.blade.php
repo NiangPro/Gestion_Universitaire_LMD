@@ -12,7 +12,9 @@
                                 </div>
                                 <div>
                                     <h4 class="mb-0 text-warning font-weight-bold">Gestion des Retards</h4>
-                                    <p class="text-muted mb-0 mt-1">{{ \Carbon\Carbon::now()->locale('fr')->isoFormat('dddd D MMMM YYYY') }}</p>
+                                    <p class="text-muted mb-0 mt-1">
+                                     {{ \Carbon\Carbon::parse($date)->locale('fr')->isoFormat('dddd D MMMM YYYY') }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +43,7 @@
                         <div class="rounded-circle bg-warning-soft p-2 mr-2">
                             <i class="fas fa-chalkboard text-warning"></i>
                         </div>
-                        <h5 class="mb-0 font-weight-bold text-dark">Classes ayant cours aujourd'hui</h5>
+                        <h5 class="mb-0 font-weight-bold text-dark">Classes ayant cours le {{ \Carbon\Carbon::parse($date)->locale('fr')->isoFormat('D MMMM YYYY') }}</h5>
                     </div>
                 </div>
                 <div class="card-body">
@@ -97,9 +99,12 @@
     <!-- Liste des Étudiants -->
     @if($selectedClasse && !empty($etudiants))
         <div class="card border-0 shadow-sm mt-4">
-            <div class="card-header bg-white py-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 font-weight-bold"><i class="fas fa-users text-warning mr-2"></i>Liste des Étudiants</h5>
+            <div class="card-header bg-white py-4 row">
+                <h5 class="mb-0 font-weight-bold col-md-8"><i class="fas fa-users text-warning mr-2"></i>Liste des Étudiants</h5>
+                <div class="col-md-4 text-right">
+                    <button class="btn btn-outline-warning btn-sm" wire:click="resetRetards" title="Réinitialiser les retards">
+                        <i class="fas fa-undo-alt mr-1"></i> Réinitialiser
+                    </button>
                 </div>
             </div>
             <div class="card-body p-0">
