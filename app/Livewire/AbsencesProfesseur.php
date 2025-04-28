@@ -32,10 +32,18 @@ class AbsencesProfesseur extends Component
         $this->loadClassesOfDay();
     }
 
+    public function updatedDate()
+    {
+        $this->selectedClasse = null;
+        $this->etudiants = [];
+        $this->loadClassesOfDay();
+    }
+
     public function loadClassesOfDay()
     {
         $this->loading = true;
-        $jourSemaine = Carbon::now()->dayOfWeek;
+        $selectedDate = Carbon::parse($this->date);
+        $jourSemaine = $selectedDate->dayOfWeek;
         
         $this->classes = Cour::where('professeur_id', Auth::id())
             ->where('semaine_id', $jourSemaine)

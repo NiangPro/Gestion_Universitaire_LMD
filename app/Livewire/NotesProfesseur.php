@@ -195,6 +195,26 @@ class NotesProfesseur extends Component
         }
     }
 
+    public function resetTab($tab)
+    {
+        if ($tab === 'ajout') {
+            $this->selectedClasse = null;
+            $this->selectedMatiere = null;
+            $this->selectedTypeEvaluation = null;
+            $this->etudiants = null;
+            $this->notes = [];
+            $this->noteTemp = [];
+            $this->message = '';
+        } elseif ($tab === 'visualisation') {
+            $this->selectedClasseVisu = null;
+            $this->selectedMatiereVisu = null;
+            $this->selectedTypeEvaluationVisu = null;
+            $this->notesVisu = [];
+            $this->resetStats();
+            $this->message = '';
+        }
+    }
+
     public function updatedSelectedMatiereVisu($value)
     {
         if ($value) {

@@ -6,12 +6,12 @@
             </div>
             <ul class="nav nav-tabs mt-3" role="tablist" wire:ignore.self>
                 <li class="nav-item" wire:ignore.self>
-                    <a class="nav-link active" id="ajout-tab" data-toggle="tab" href="#ajout" role="tab" wire:ignore.self>
+                    <a class="nav-link active" id="ajout-tab" data-toggle="tab" href="#ajout" role="tab" wire:ignore.self wire:click="resetTab('ajout')">
                         <i class="fas fa-plus-circle mr-2"></i>Ajout de Notes
                     </a>
                 </li>
                 <li class="nav-item" wire:ignore.self>
-                    <a class="nav-link" id="visualisation-tab" data-toggle="tab" href="#visualisation" role="tab" wire:ignore.self>
+                    <a class="nav-link" id="visualisation-tab" data-toggle="tab" href="#visualisation" role="tab" wire:ignore.self wire:click="resetTab('visualisation')">
                         <i class="fas fa-chart-bar mr-2"></i>Visualisation des Notes
                     </a>
                 </li>
