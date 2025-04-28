@@ -24,6 +24,7 @@ class NotesProfesseur extends Component
     public $matieres = [];
     public $typesEvaluation = [];
     public $message = '';
+    public $noteTemp = [];
 
     // Propriétés pour la visualisation
     public $selectedClasseVisu = null;
@@ -87,7 +88,26 @@ class NotesProfesseur extends Component
 
     public function sauvegarderNotes($etudiantId, $note)
     {
-        if (!is_numeric($note) || $note < 0 || $note > 20) {
+        $note = str_replace(',', '.', trim($note));
+        if (!isset($this->noteTemp[$etudiantId]) || !is_numeric($this->noteTemp[$etudiantId])) {
+            $this->message = 'Veuillez saisir une note valide';
+            return;
+        }
+
+        $note = $this->noteTemp[$etudiantId];
+
+        // Nettoyage et formatage de la note
+        
+        // Vérification que la valeur est numérique
+        if (!is_numeric($note)) {
+            $this->message = 'La note doit être un nombre valide';
+            return;
+        }
+
+        // Conversion en nombre à virgule flottante et arrondi à 2 décimales
+        $note = round(floatval($note), 2);
+
+        if ($note < 0 || $note > 20) {
             $this->message = 'La note doit être comprise entre 0 et 20';
             return;
         }

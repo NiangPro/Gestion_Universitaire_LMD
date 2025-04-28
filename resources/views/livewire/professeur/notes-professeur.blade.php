@@ -90,7 +90,7 @@
                             <th>Matricule</th>
                             <th>Nom</th>
                             <th>Prénom</th>
-                            <th style="width: 150px;">Note</th>
+                            <th style="width: 25%;">Note</th>
                             <th>Statut</th>
                         </tr>
                     </thead>
@@ -98,19 +98,30 @@
                         @foreach($etudiants as $etudiant)
                         <tr class="hover-shadow-sm transition-all">
                             <td class="font-monospace">{{ $etudiant->matricule }}</td>
-                            <td>{{ $etudiant->nom }}</td>
-                            <td>{{ $etudiant->prenom }}</td>
-                            <td>
+                            <td >{{ $etudiant->nom }}</td>
+                            <td >{{ $etudiant->prenom }}</td>
+                            <td style="width: 25%;">
                                 <div class="input-group">
                                     <input type="number" 
-                                           class="form-control" 
+                                           class="form-control form-control-lg border border-primary @error('noteTemp.' . $etudiant->id) is-invalid @enderror" 
                                            min="0" 
                                            max="20" 
                                            step="0.25"
+                                           wire:model.live="noteTemp.{{ $etudiant->id }}"
                                            value="{{ $notes[$etudiant->id]->note ?? '' }}"
-                                           wire:change="sauvegarderNotes({{ $etudiant->id }}, $event.target.value)">
-                                    <div class="input-group-append">
+                                           placeholder="0-20">
+                                    @error('noteTemp.' . $etudiant->id)
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                    <div class="input-group-append bg-white">
                                         <span class="input-group-text">/20</span>
+                                        <button type="button" 
+                                                class="btn btn-primary" 
+                                                wire:click="sauvegarderNotes({{ $etudiant->id }}, {{ isset($noteTemp[$etudiant->id]) && is_numeric($noteTemp[$etudiant->id]) ? $noteTemp[$etudiant->id] : 'null' }})">
+                                            <i class="fas fa-save"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </td>
@@ -256,7 +267,7 @@
                                         <span class="badge bg-danger rounded-pill">Non validé</span>
                                     @endif
                                 </td>
-                                <td>{{ $note->updated_at->format('d/m/Y H:i') }}</td>
+                                <td style="width: 25%;">{{ $note->updated_at->format('d/m/Y H:i') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
