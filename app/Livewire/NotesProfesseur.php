@@ -54,8 +54,10 @@ class NotesProfesseur extends Component
     public function updatedSelectedClasse($value)
     {
         $this->selectedMatiere = null;
-        $this->etudiants = [];
+        $this->selectedTypeEvaluation = null;
+        $this->etudiants = null;
         $this->notes = [];
+        $this->noteTemp = [];
         
         if ($value) {
             $user = Auth::user();
@@ -67,6 +69,21 @@ class NotesProfesseur extends Component
                 ->pluck('matiere')
                 ->unique('id');
         }
+    }
+
+    public function updatedSelectedMatiere($value)
+    {
+        $this->selectedTypeEvaluation = null;
+        $this->etudiants = null;
+        $this->notes = [];
+        $this->noteTemp = [];
+    }
+
+    public function updatedSelectedTypeEvaluation($value)
+    {
+        $this->etudiants = null;
+        $this->notes = [];
+        $this->noteTemp = [];
     }
 
     public function chargerEtudiants()
