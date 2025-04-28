@@ -77,12 +77,21 @@ class NotesProfesseur extends Component
                 ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
                 ->get();
 
-            $this->notes = Note::where('matiere_id', $this->selectedMatiere)
-                ->where('type_evaluation_id', $this->selectedTypeEvaluation)
-                ->whereIn('etudiant_id', $this->etudiants->pluck('id'))
-                ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
-                ->get()
-                ->keyBy('etudiant_id');
+            $currentSemestre = Auth::user()->campus->currentSemestre();
+            if ($currentSemestre) {
+                $this->notes = Note::where('matiere_id', $this->selectedMatiere)
+                    ->where('type_evaluation_id', $this->selectedTypeEvaluation)
+                    ->whereIn('etudiant_id', $this->etudiants->pluck('id'))
+                    ->where('academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
+                    ->where('semestre_id', $currentSemestre->id)
+                    ->get()
+                    ->keyBy('etudiant_id');
+
+                // Pré-remplir noteTemp avec les notes existantes
+                foreach ($this->notes as $etudiantId => $note) {
+                    $this->noteTemp[$etudiantId] = $note->note;
+                }
+            }
         }
     }
 
