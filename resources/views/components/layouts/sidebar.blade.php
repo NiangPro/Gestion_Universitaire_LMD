@@ -165,14 +165,6 @@
             @if(Auth()->user()->estProfesseur())
                 @if(Auth::user()->hasPermission('notes', 'view'))
                 <li>
-                    <a href="{{route('professeur')}}" aria-expanded="false">
-                        <i class="fa fa-user"></i>
-                        <span class="nav-text">Cours</span>
-                    </a>
-                </li>
-                @endif
-                @if(Auth::user()->hasPermission('notes', 'view'))
-                <li>
                     <a href="{{route('noteprofesseur')}}" aria-expanded="false">
                         <i class="fa fa-file"></i>
                         <span class="nav-text">Notes</span>
