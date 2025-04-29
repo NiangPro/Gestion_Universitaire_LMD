@@ -66,7 +66,10 @@
                                              wire:click="selectClasse('{{ $classe['id'] }}', '{{ $classe['cours_id'] }}')">
                                     <div class="card-body p-3">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <h5 class="card-title text-dark mb-0 font-weight-bold">{{ $classe['nom'] }}</h5>
+                                            <div class="d-flex flex-column">
+                                                <h5 class="card-title text-dark mb-1 font-weight-bold">{{ $classe['nom'] }}</h5>
+                                                <p class="text-muted small mb-0">({{ $classe['filiere'] }})</p>
+                                            </div>
                                             <span class="badge badge-primary">En cours</span>
                                         </div>
                                         <div class="d-flex align-items-center mb-3">

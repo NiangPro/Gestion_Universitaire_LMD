@@ -208,7 +208,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 mb-3">
-                                <a href="#" wire:click="toggleAbsenceModal" class="card action-card h-100">
+                                <a href="{{ route('absenceprofesseur') }}" class="card action-card h-100">
                                     <div class="card-body text-center">
                                         <div class="action-icon bg-danger text-white mb-3">
                                             <i class="fas fa-user-clock"></i>
@@ -238,7 +238,7 @@
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <a href="#" wire:click="toggleRetardModal" class="card action-card h-100">
+                                <a href="{{ route('retardprofesseur') }}" class="card action-card h-100">
                                     <div class="card-body text-center">
                                         <div class="action-icon bg-warning text-white mb-3">
                                             <i class="fa fa-clock"></i>
