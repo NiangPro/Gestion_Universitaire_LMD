@@ -69,8 +69,18 @@
                                              wire:click="selectClasse('{{ $classe['id'] }}', '{{ $classe['cours_id'] }}')">
                                             <div class="card-body p-3">
                                                 <div class="d-flex justify-content-between align-items-start mb-3">
-                                                    <h5 class="card-title text-dark mb-0 font-weight-bold">{{ $classe['nom'] }}</h5>
-                                                    <span class="badge badge-warning">En cours</span>
+                                                    <div class="d-flex flex-column">
+                                                        <h5 class="card-title text-dark mb-1 font-weight-bold">{{ $classe['nom'] }}</h5>
+                                                        <p class="text-muted small mb-0">({{ $classe['filiere'] }})</p>
+                                                    </div>
+                                                    @php
+                                                        $now = \Carbon\Carbon::now();
+                                                        $debut = \Carbon\Carbon::createFromFormat('H:i:s', $classe['heure_debut']);
+                                                        $fin = \Carbon\Carbon::createFromFormat('H:i:s', $classe['heure_fin']);
+                                                        $status = $now->between($debut, $fin) ? ['warning', 'En cours'] :
+                                                                 ($now->lt($debut) ? ['info', 'À venir'] : ['secondary', 'Terminé']);
+                                                    @endphp
+                                                    <span class="badge badge-{{ $status[0] }}">{{ $status[1] }}</span>
                                                 </div>
                                                 <div class="d-flex align-items-center mb-3">
                                                     <div class="rounded-circle bg-success-soft p-2 mr-2">
@@ -78,11 +88,17 @@
                                                     </div>
                                                     <span class="text-muted">{{ $classe['matiere'] }}</span>
                                                 </div>
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center mb-3">
                                                     <div class="rounded-circle bg-warning-soft p-2 mr-2">
                                                         <i class="fas fa-clock text-warning"></i>
                                                     </div>
                                                     <span class="text-muted">{{ substr($classe['heure_debut'], 0, 5) }} - {{ substr($classe['heure_fin'], 0, 5) }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle bg-info-soft p-2 mr-2">
+                                                        <i class="fas fa-users text-info"></i>
+                                                    </div>
+                                                    <span class="text-muted">Effectif : <span class="badge badge-info">{{ $classe['effectif'] }}</span></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -232,6 +248,10 @@
 
         .bg-success-soft {
             background-color: rgba(40, 167, 69, 0.1) !important;
+        }
+
+        .bg-info-soft {
+            background-color: rgba(23, 162, 184, 0.1) !important;
         }
 
         .class-card {

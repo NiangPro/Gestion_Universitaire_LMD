@@ -36,6 +36,28 @@ class Campus extends Model
         return $this->users()->where('role', 'etudiant');
     }
 
+    public function etudiantsByClasse($classe_id)
+    {
+        return $this->etudiants()->where('classe_id', $classe_id);
+    }
+
+    public function etudiantsByClasseForCurrentAcademicYear($classe_id)
+    {
+        return $this->currentInscriptions()
+            ->where('classe_id', $classe_id)
+            ->with('user')
+            ->get()
+            ->pluck('user');
+    }
+    public function etudiantsByDepartement($departement_id)
+    {
+        return $this->etudiants()->where('departement_id', $departement_id);
+    }
+    public function etudiantsByDepartementAndClasse($departement_id, $classe_id)
+    {
+        return $this->etudiants()->where('departement_id', $departement_id)->where('classe_id', $classe_id);
+    }
+
     public function professeurs()
     {
         return $this->users()->where('role', 'professeur');

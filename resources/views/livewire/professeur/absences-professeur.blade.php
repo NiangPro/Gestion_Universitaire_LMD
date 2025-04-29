@@ -64,30 +64,43 @@
                                     <div class="col-md-6 col-lg-4 mb-4">
                                         <div class="card h-100 class-card {{ $selectedClasse === $classe['id'] ? 'selected' : '' }}"
                                              wire:click="selectClasse('{{ $classe['id'] }}', '{{ $classe['cours_id'] }}')">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <div class="d-flex flex-column">
-                                                <h5 class="card-title text-dark mb-1 font-weight-bold">{{ $classe['nom'] }}</h5>
-                                                <p class="text-muted small mb-0">({{ $classe['filiere'] }})</p>
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                    <div class="d-flex flex-column">
+                                                        <h5 class="card-title text-dark mb-1 font-weight-bold">{{ $classe['nom'] }}</h5>
+                                                        <p class="text-muted small mb-0">({{ $classe['filiere'] }})</p>
+                                                    </div>
+                                                    @php
+                                                        $now = \Carbon\Carbon::now();
+                                                        $debut = \Carbon\Carbon::createFromFormat('H:i:s', $classe['heure_debut']);
+                                                        $fin = \Carbon\Carbon::createFromFormat('H:i:s', $classe['heure_fin']);
+                                                        $status = $now->between($debut, $fin) ? ['primary', 'En cours'] :
+                                                                 ($now->lt($debut) ? ['info', 'À venir'] : ['secondary', 'Terminé']);
+                                                    @endphp
+                                                    <span class="badge badge-{{ $status[0] }}">{{ $status[1] }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="rounded-circle bg-success-soft p-2 mr-2">
+                                                        <i class="fas fa-book text-success"></i>
+                                                    </div>
+                                                    <span class="text-muted">{{ $classe['matiere'] }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="rounded-circle bg-warning-soft p-2 mr-2">
+                                                        <i class="fas fa-clock text-warning"></i>
+                                                    </div>
+                                                    <span class="text-muted">{{ substr($classe['heure_debut'], 0, 5) }} - {{ substr($classe['heure_fin'], 0, 5) }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle bg-info-soft p-2 mr-2">
+                                                        <i class="fas fa-users text-info"></i>
+                                                    </div>
+                                                    <span class="text-muted">Effectif : <span class="badge badge-info">{{ $classe['effectif'] }}</span></span>
+                                                </div>
                                             </div>
-                                            <span class="badge badge-primary">En cours</span>
-                                        </div>
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="rounded-circle bg-success-soft p-2 mr-2">
-                                                <i class="fas fa-book text-success"></i>
-                                            </div>
-                                            <span class="text-muted">{{ $classe['matiere'] }}</span>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded-circle bg-warning-soft p-2 mr-2">
-                                                <i class="fas fa-clock text-warning"></i>
-                                            </div>
-                                            <span class="text-muted">{{ substr($classe['heure_debut'], 0, 5) }} - {{ substr($classe['heure_fin'], 0, 5) }}</span>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        @endforeach
+                                @endforeach
                     </div>
                 @endif
             @endif

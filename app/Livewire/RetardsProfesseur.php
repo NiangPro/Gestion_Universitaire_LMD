@@ -61,16 +61,19 @@ class RetardsProfesseur extends Component
         $this->classes = Cour::where('professeur_id', Auth::id())
             ->where('semaine_id', $jourSemaine)
             ->whereHas('classe')
-            ->with(['classe', 'matiere'])
+            ->with(['classe.filiere', 'matiere'])
             ->get()
             ->map(function($cours) {
+                $effectif = Auth::user()->campus->etudiantsByClasseForCurrentAcademicYear($cours->classe_id)->count();
                 return [
                     'id' => $cours->classe_id,
                     'nom' => $cours->classe->nom,
+                    'filiere' => $cours->classe->filiere->nom,
                     'matiere' => $cours->matiere->nom,
                     'heure_debut' => $cours->heure_debut,
                     'heure_fin' => $cours->heure_fin,
-                    'cours_id' => $cours->id
+                    'cours_id' => $cours->id,
+                    'effectif' => $effectif
                 ];
             })
             ->unique('id')
