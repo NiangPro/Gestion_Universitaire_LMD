@@ -115,42 +115,62 @@ class Dashboard extends Component
     private function loadEleveData()
     {
         // Récupération de la classe actuelle de l'élève
-        $this->currentClasse = $this->user->classes()
-            ->wherePivot('academic_year_id', $this->currentAcademicYear->id)
-            ->first();
+        $this->currentClasse = $this->user->getCurrentClass();
 
         if ($this->currentClasse) {
+            $currentSemestre = $this->user->campus->currentSemestre();
+
             // Total des cours de sa classe
             $this->totalCours = Cour::where('classe_id', $this->currentClasse->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
                 ->count();
 
-            // Absences
-            $this->totalAbsences = Absence::where('etudiant_id', $this->user->id)
+            // Absences pour le semestre actif
+            $absencesQuery = Absence::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->where('status', 'absent')
-                ->count();
+                ->where('status', 'absent');
 
-            // Retards
-            $this->totalRetards = Retard::where('etudiant_id', $this->user->id)
+            if ($currentSemestre) {
+                $absencesQuery->where('semestre_id', $currentSemestre->id);
+            }
+
+            $this->totalAbsences = $absencesQuery->count();
+
+            // Retards pour le semestre actif
+            $retardsQuery = Retard::where('etudiant_id', $this->user->id)
+                ->where('academic_year_id', $this->currentAcademicYear->id);
+
+            if ($currentSemestre) {
+                $retardsQuery->where('semestre_id', $currentSemestre->id);
+            }
+
+            $this->totalRetards = $retardsQuery->count();
+
+            // Notes récentes pour le semestre actif
+            $notesQuery = Note::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->count();
+                ->with(['cours.matiere']);
 
-            // Notes récentes
-            $this->recentActivities = Note::where('etudiant_id', $this->user->id)
-                ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->with(['cours'])
-                ->latest()
-                ->take(5)
-                ->get();
+            if ($currentSemestre) {
+                $notesQuery->where('semestre_id', $currentSemestre->id);
+            }
 
-            // Calcul de la moyenne générale
-            $notes = Note::where('etudiant_id', $this->user->id)
-                ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->get();
+            $this->recentActivities = $notesQuery->latest()->take(5)->get();
 
-            if ($notes->count() > 0) {
-                $this->moyenneGenerale = round($notes->avg('note'), 2);
+            // Calcul de la moyenne générale pour le semestre actif
+            if ($currentSemestre) {
+                $notes = Note::where('etudiant_id', $this->user->id)
+                    ->where('academic_year_id', $this->currentAcademicYear->id)
+                    ->where('semestre_id', $currentSemestre->id)
+                    ->get();
+
+                if ($notes->count() > 0) {
+                    $this->moyenneGenerale = round($notes->avg('note'), 2);
+                } else {
+                    $this->moyenneGenerale = 0;
+                }
+            } else {
+                $this->moyenneGenerale = 0;
             }
         }
     }
@@ -174,30 +194,51 @@ class Dashboard extends Component
     private function loadEmploiDuTemps()
     {
         if ($this->currentClasse) {
-            $this->emploiDuTemps = Cour::where('classe_id', $this->currentClasse->id)
+            $currentSemestre = $this->user->campus->currentSemestre();
+            $coursQuery = Cour::where('classe_id', $this->currentClasse->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->with(['professeur', 'matiere', 'salle', 'semaine'])
+                ->where('statut', 'actif')
+                ->with([
+                    'professeur:id,nom,prenom',
+                    'matiere:id,nom,code',
+                    'salle:id,nom',
+                    'semaine:id,nom'
+                ])
                 ->orderBy('semaine_id')
-                ->orderBy('heure_debut')
-                ->get()
-                ->groupBy('semaine.nom');
+                ->orderBy('heure_debut');
+
+            if ($currentSemestre) {
+                $coursQuery->whereHas('matiere', function($query) use ($currentSemestre) {
+                    $query->whereHas('semestres', function($q) use ($currentSemestre) {
+                        $q->where('semestre_id', $currentSemestre->id);
+                    });
+                });
+            }
+
+            $this->emploiDuTemps = $coursQuery->get()->groupBy('semaine.nom');
         }
     }
 
     private function loadNotes()
     {
         if ($this->user->estEtudiant()) {
-            $notes = Note::where('etudiant_id', $this->user->id)
+            $currentSemestre = $this->user->campus->currentSemestre();
+            $notesQuery = Note::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->with(['cours.matiere'])
-                ->get();
+                ->with(['cours.matiere', 'typeEvaluation']);
+
+            if ($currentSemestre) {
+                $notesQuery->where('semestre_id', $currentSemestre->id);
+            }
+
+            $notes = $notesQuery->get();
 
             // Grouper les notes par matière et calculer les moyennes
             $this->moyennesParMatiere = $notes->groupBy('cours.matiere.nom')
                 ->map(function ($notesMatiere) {
                     return [
                         'notes' => $notesMatiere,
-                        'moyenne' => round($notesMatiere->avg('note'), 2)
+                        'moyenne' => $notesMatiere->count() > 0 ? round($notesMatiere->avg('note'), 2) : 0
                     ];
                 });
         }
@@ -287,6 +328,8 @@ class Dashboard extends Component
         }else if(Auth::user()->estProfesseur()){
             return view('livewire.dashboard.dashboard-professeur');
 
+        }else if(Auth::user()->estEtudiant()){
+            return view('livewire.dashboard.dashboard-etudiant');
         } else {
             return view('livewire.dashboard.dashboard');
         }

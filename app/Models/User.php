@@ -262,6 +262,25 @@ class User extends Authenticatable
         return $this->hasMany(Permission::class);
     }
 
+/**
+ * Get the current class of the student based on enrollment and current academic year
+ *
+ * @return \App\Models\Classe|null
+ */
+public function getCurrentClass()
+{
+    if (!$this->estEtudiant()) {
+        return null;
+    }
+
+    $inscription = $this->inscriptions()
+        ->where('academic_year_id', $this->campus->currentAcademicYear()->id)
+        ->latest()
+        ->first();
+
+    return $inscription ? $inscription->classe : null;
+}
+
     public function notes()
     {
         return $this->hasManyThrough(

@@ -30,5 +30,8 @@ class Matiere extends Model
         return $this->belongsTo(Campus::class, "campus_id");
     }
 
+    public function semestres(){
+        return $this->belongsToMany(Semestre::class, 'matiere_semestre', 'matiere_id', 'semestre_id');
+    }
 
 }
