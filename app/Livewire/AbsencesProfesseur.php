@@ -51,6 +51,9 @@ class AbsencesProfesseur extends Component
             ->with(['classe.filiere', 'matiere'])
             ->get()
             ->map(function($cours) {
+                $effectif = $cours->classe->etudiants()
+                    ->where('inscriptions.academic_year_id', Auth::user()->campus->currentAcademicYear()->id)
+                    ->count();
                 return [
                     'id' => $cours->classe_id,
                     'nom' => $cours->classe->nom,
@@ -58,7 +61,8 @@ class AbsencesProfesseur extends Component
                     'matiere' => $cours->matiere->nom,
                     'heure_debut' => $cours->heure_debut,
                     'heure_fin' => $cours->heure_fin,
-                    'cours_id' => $cours->id
+                    'cours_id' => $cours->id,
+                    'effectif' => $effectif
                 ];
             })
             ->unique('id')
