@@ -194,6 +194,8 @@
             </div>
         </div>
 
+        
+
         <!-- Actions rapides -->
         <div class="row mt-4">
             <div class="col-12">
@@ -206,12 +208,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 mb-3">
-                                <a href="{{ route('cours') }}" class="card action-card h-100">
+                                <a href="#" wire:click="toggleAbsenceModal" class="card action-card h-100">
                                     <div class="card-body text-center">
-                                        <div class="action-icon bg-primary text-white mb-3">
-                                            <i class="fas fa-book"></i>
+                                        <div class="action-icon bg-danger text-white mb-3">
+                                            <i class="fas fa-user-clock"></i>
                                         </div>
-                                        <h6 class="card-title mb-0">Gérer mes cours</h6>
+                                        <h6 class="card-title mb-0">Gestion des absences</h6>
                                     </div>
                                 </a>
                             </div>
@@ -236,12 +238,12 @@
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <a href="#" wire:click="toggleNotesModal" class="card action-card h-100">
+                                <a href="#" wire:click="toggleRetardModal" class="card action-card h-100">
                                     <div class="card-body text-center">
                                         <div class="action-icon bg-warning text-white mb-3">
-                                            <i class="fas fa-chart-line"></i>
+                                            <i class="fa fa-clock"></i>
                                         </div>
-                                        <h6 class="card-title mb-0">Statistiques notes</h6>
+                                        <h6 class="card-title mb-0">Gestion des retards</h6>
                                     </div>
                                 </a>
                             </div>
