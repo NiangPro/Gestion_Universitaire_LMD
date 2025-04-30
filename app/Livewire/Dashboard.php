@@ -22,6 +22,8 @@ class Dashboard extends Component
     public $outil;
     public $user;
     public $currentAcademicYear;
+    public $currentSemestre;
+    public $semestres = [];
     public $totalCours = 0;
     public $totalAbsences = 0;
     public $totalRetards = 0;
@@ -31,6 +33,7 @@ class Dashboard extends Component
     public $showNotesModal = false;
     public $emploiDuTemps;
     public $moyennesParMatiere = [];
+    public $moyennesParUE = [];
     public $totalEtudiants = 0;
     public $currentClasse;
     public $moyenneGenerale;
@@ -40,6 +43,10 @@ class Dashboard extends Component
     public $totalInscriptions = 0;
     public $montantTotal = 0;
     public $coursAujourdhui = [];
+    public $creditsValides = 0;
+    public $creditsTotaux = 0;
+    public $progressionCredits = 0;
+    public $selectedSemestre = null;
 
     public function mount()
     {
@@ -118,60 +125,83 @@ class Dashboard extends Component
         $this->currentClasse = $this->user->getCurrentClass();
 
         if ($this->currentClasse) {
-            $currentSemestre = $this->user->campus->currentSemestre();
+            // Chargement des semestres disponibles
+            $this->semestres = $this->user->campus->semestres;
 
-            // Total des cours de sa classe
+            // Définir le semestre actif
+            $this->currentSemestre = $this->selectedSemestre 
+                ? $this->semestres->firstWhere('id', $this->selectedSemestre)
+                : $this->user->campus->currentSemestre();
+
+            if (!$this->selectedSemestre && $this->currentSemestre) {
+                $this->selectedSemestre = $this->currentSemestre->id;
+            }
+
+            // Total des cours de sa classe pour le semestre
             $this->totalCours = Cour::where('classe_id', $this->currentClasse->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
+                ->whereHas('matiere.semestres', function($query) {
+                    $query->where('semestre_id', $this->selectedSemestre);
+                })
                 ->count();
 
-            // Absences pour le semestre actif
-            $absencesQuery = Absence::where('etudiant_id', $this->user->id)
+            // Absences pour le semestre sélectionné
+            $this->totalAbsences = Absence::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->where('status', 'absent');
+                ->where('semestre_id', $this->selectedSemestre)
+                ->where('status', 'absent')
+                ->count();
 
-            if ($currentSemestre) {
-                $absencesQuery->where('semestre_id', $currentSemestre->id);
-            }
-
-            $this->totalAbsences = $absencesQuery->count();
-
-            // Retards pour le semestre actif
-            $retardsQuery = Retard::where('etudiant_id', $this->user->id)
-                ->where('academic_year_id', $this->currentAcademicYear->id);
-
-            if ($currentSemestre) {
-                $retardsQuery->where('semestre_id', $currentSemestre->id);
-            }
-
-            $this->totalRetards = $retardsQuery->count();
-
-            // Notes récentes pour le semestre actif
-            $notesQuery = Note::where('etudiant_id', $this->user->id)
+            // Retards pour le semestre sélectionné
+            $this->totalRetards = Retard::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->with(['cours.matiere']);
+                ->where('semestre_id', $this->selectedSemestre)
+                ->count();
 
-            if ($currentSemestre) {
-                $notesQuery->where('semestre_id', $currentSemestre->id);
-            }
+            // Notes et statistiques
+            $notes = Note::where('etudiant_id', $this->user->id)
+                ->where('academic_year_id', $this->currentAcademicYear->id)
+                ->where('semestre_id', $this->selectedSemestre)
+                ->with(['cours.matiere', 'cours.ue', 'typeEvaluation'])
+                ->get();
 
-            $this->recentActivities = $notesQuery->latest()->take(5)->get();
+            // Notes récentes
+            $this->recentActivities = $notes->sortByDesc('created_at')->take(5);
 
-            // Calcul de la moyenne générale pour le semestre actif
-            if ($currentSemestre) {
-                $notes = Note::where('etudiant_id', $this->user->id)
-                    ->where('academic_year_id', $this->currentAcademicYear->id)
-                    ->where('semestre_id', $currentSemestre->id)
-                    ->get();
+            // Calcul des moyennes par matière
+            $this->moyennesParMatiere = $notes->groupBy('cours.matiere.nom')
+                ->map(function ($notesMatiere) {
+                    $moyenne = $notesMatiere->avg('note');
+                    $credits = $notesMatiere->first()->cours->matiere->credits;
+                    return [
+                        'notes' => $notesMatiere,
+                        'moyenne' => round($moyenne, 2),
+                        'credits' => $credits,
+                        'valides' => $moyenne >= 10
+                    ];
+                });
 
-                if ($notes->count() > 0) {
-                    $this->moyenneGenerale = round($notes->avg('note'), 2);
-                } else {
-                    $this->moyenneGenerale = 0;
-                }
-            } else {
-                $this->moyenneGenerale = 0;
-            }
+            // Calcul des moyennes par UE
+            $this->moyennesParUE = $notes->groupBy('cours.ue.nom')
+                ->map(function ($notesUE) {
+                    return [
+                        'moyenne' => round($notesUE->avg('note'), 2),
+                        'credits' => $notesUE->sum('cours.matiere.credits')
+                    ];
+                });
+
+            // Calcul de la moyenne générale
+            $this->moyenneGenerale = $notes->count() > 0 ? round($notes->avg('note'), 2) : 0;
+
+            // Calcul des crédits
+            $this->creditsTotaux = $this->moyennesParMatiere->sum('credits');
+            $this->creditsValides = $this->moyennesParMatiere
+                ->where('valides', true)
+                ->sum('credits');
+            
+            $this->progressionCredits = $this->creditsTotaux > 0
+                ? round(($this->creditsValides / $this->creditsTotaux) * 100)
+                : 0;
         }
     }
 

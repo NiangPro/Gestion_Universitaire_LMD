@@ -67,4 +67,16 @@ class Cour extends Model
     {
         return $this->hasMany(Note::class, 'cours_id');
     }
+
+    public function ue()
+    {
+        return $this->hasOneThrough(
+            UniteEnseignement::class,
+            Matiere::class,
+            'id', // Clé locale sur matieres
+            'id', // Clé locale sur unite_enseignements
+            'matiere_id', // Clé étrangère sur cours
+            'unite_enseignement_id' // Clé étrangère sur matieres
+        );
+    }
 }

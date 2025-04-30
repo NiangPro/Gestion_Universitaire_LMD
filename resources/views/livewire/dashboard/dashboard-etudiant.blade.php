@@ -1,17 +1,31 @@
 <div>
     <div class="container-fluid py-4">
-        <!-- En-tête avec fond dégradé -->
+        <!-- En-tête avec fond dégradé et sélecteur de semestre -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card bg-gradient-primary text-white shadow-lg">
-                    <div class="card-body py-4">
-                        <div class="d-flex align-items-center">
-                            <div class="mr-3">
-                                <i class="fas fa-user-graduate fa-3x"></i>
+                <div class="card bg-gradient-primary shadow-lg">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="mr-3">
+                                        <i class="fas fa-user-graduate fa-3x"></i>
+                                    </div>
+                                    <div>
+                                        <h1 class="h3 mb-2">Bienvenue, {{ $user->prenom }} {{ $user->nom }}</h1>
+                                        <p class="mb-0 opacity-8">Année académique : {{ date("d/m/Y", strtotime($currentAcademicYear->debut)) }} - {{ date("d/m/Y", strtotime($currentAcademicYear->fin)) }}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <h1 class="h3 mb-2">Bienvenue, {{ $user->prenom }} {{ $user->nom }}</h1>
-                                <p class="mb-0 opacity-8">Année académique : {{ date("d/m/Y", strtotime($currentAcademicYear->debut)) }} - {{ date("d/m/Y", strtotime($currentAcademicYear->fin)) }}</p>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="text-white">Semestre</label>
+                                    <select wire:model.live="selectedSemestre" class="form-control bg-white">
+                                        @foreach($semestres as $semestre)
+                                            <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -38,17 +52,29 @@
                 </div>
             </div>
 
-            <!-- Total Cours -->
+            <!-- Crédits Validés -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100">
+                <div class="card border-left-info shadow h-100">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Cours</div>
-                                <div class="h3 mb-0 font-weight-bold">{{ $totalCours }}</div>
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Crédits Validés</div>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <div class="h5 mb-0 mr-3 font-weight-bold">{{ $creditsValides }}/{{ $creditsTotaux }}</div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="progress progress-sm mr-2">
+                                            <div class="progress-bar bg-info" role="progressbar" 
+                                                style="width: {{ $progressionCredits }}%" 
+                                                aria-valuenow="{{ $progressionCredits }}" aria-valuemin="0" 
+                                                aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-book fa-2x text-gray-300"></i>
+                                <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -84,6 +110,41 @@
                             <div class="col-auto">
                                 <i class="fas fa-clock fa-2x text-gray-300"></i>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques par UE -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-chart-pie mr-2"></i>Moyennes par Unité d'Enseignement
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach($moyennesParUE as $ue => $data)
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="card border-left-{{ $data['moyenne'] >= 10 ? 'success' : 'danger' }} shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-{{ $data['moyenne'] >= 10 ? 'success' : 'danger' }} text-uppercase mb-1">{{ $ue }}</div>
+                                                    <div class="h5 mb-0 font-weight-bold">{{ number_format($data['moyenne'], 2) }}/20</div>
+                                                    <div class="text-xs text-muted mt-1">{{ $data['credits'] }} crédits</div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="h2 mb-0 font-weight-bold text-{{ $data['moyenne'] >= 10 ? 'success' : 'danger' }}">{{ round($data['moyenne']) }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
