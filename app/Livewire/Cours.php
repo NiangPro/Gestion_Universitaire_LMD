@@ -179,7 +179,11 @@ class Cours extends Component
     {
         $this->outil = new Outils();
         return view('livewire.cours.cours', [
-            "academicYears" => AcademicYear::where("campus_id", Auth::user()->campus_id)->orderBy("encours", "desc")->get(),
+            "academicYears" => AcademicYear::where("campus_id", Auth::user()->campus_id)
+                ->orderByDesc(function($query) {
+                    return $query->id == Auth::user()->campus->currentAcademicYear()->id;
+                })
+                ->get(),
             'professeurs' => User::where('role', 'professeur')->get(),
             'classes' => Classe::all(),
             'semaines' => Semaine::all(),

@@ -263,9 +263,7 @@ class Notes extends Component
             return collect();
         }
 
-        $currentAcademicYear = AcademicYear::where('campus_id', Auth::user()->campus_id)
-                                         ->where('encours', true)
-                                         ->first();
+        $currentAcademicYear = Auth::user()->campus->currentAcademicYear();
 
         if (!$currentAcademicYear) {
             return collect();

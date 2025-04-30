@@ -188,6 +188,32 @@
                 </li>
                 @endif
             @endif
+            @if(Auth()->user()->estEtudiant())
+                @if(Auth::user()->hasPermission('notes', 'view'))
+                <li>
+                    <a href="{{route('noteetudiant')}}" aria-expanded="false">
+                        <i class="fa fa-file"></i>
+                        <span class="nav-text">Notes</span>
+                    </a>
+                </li>
+                @endif
+                @if(Auth::user()->hasPermission('absences', 'view'))
+                <li>
+                    <a href="{{route('absence')}}" aria-expanded="false">
+                        <i class="fa fa-calendar-times"></i>
+                        <span class="nav-text">Absences</span>
+                    </a>
+                </li>
+                @endif
+                @if(Auth::user()->hasPermission('retards', 'view'))
+                <li>
+                    <a href="{{route('retard')}}" aria-expanded="false">
+                        <i class="fa fa-clock"></i>
+                        <span class="nav-text">Retards</span>
+                    </a>
+                </li>
+                @endif
+            @endif
 
             @if(Auth()->user()->estSuperAdmin())
                 <li>

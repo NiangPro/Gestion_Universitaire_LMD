@@ -32,12 +32,14 @@ use App\Livewire\Surveillant;
 use App\Livewire\UniteEnseignements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPaymentController;
+use App\Http\Middleware\EtudiantMiddleware;
 use App\Http\Middleware\ProfesseurMiddleware;
 use App\Livewire\Absences;
 use App\Livewire\AbsencesProfesseur;
 use App\Livewire\RetardsProfesseur;
 use App\Livewire\Acces;
 use App\Livewire\Contact;
+use App\Livewire\CoursEtudiant;
 use App\Livewire\Evaluations;
 use App\Livewire\Fonctionnalite;
 use App\Livewire\Notes;
@@ -46,6 +48,7 @@ use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
 use App\Livewire\EditNote;
+use App\Livewire\NoteEtudiant;
 use App\Livewire\NotesProfesseur;
 use App\Livewire\NotFound;
 
@@ -86,6 +89,13 @@ Route::middleware(['auth', ProfesseurMiddleware::class])->prefix('professeur')->
     Route::get("/notes", NotesProfesseur::class)->name("noteprofesseur");
     Route::get("/absences", AbsencesProfesseur::class)->name("absenceprofesseur");
     Route::get("/retards", RetardsProfesseur::class)->name("retardprofesseur");
+});
+
+// Routes Etudiants
+Route::middleware(['auth', EtudiantMiddleware::class])->prefix('etudiant')->group(function () {
+    Route::get("/cours", CoursEtudiant::class)->name("coursetudiant");
+    Route::get("/notes", NoteEtudiant::class)->name("noteetudiant");
+
 });
 
 // Routes Admin

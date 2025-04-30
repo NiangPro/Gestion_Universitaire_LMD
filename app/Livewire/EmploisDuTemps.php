@@ -119,7 +119,9 @@ class EmploisDuTemps extends Component
     {
         return view('livewire.schedule.emplois-du-temps', [
             "academicYears" => AcademicYear::where("campus_id", Auth::user()->campus_id)
-                ->orderBy("encours", "desc")
+                ->orderByDesc(function($query) {
+                    return $query->id == Auth::user()->campus->currentAcademicYear()->id;
+                })
                 ->get(),
             'semaines' => Semaine::all()
         ]);
