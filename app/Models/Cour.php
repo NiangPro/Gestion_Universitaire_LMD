@@ -48,6 +48,11 @@ class Cour extends Model
         return $this->belongsTo(AcademicYear::class, "academic_year_id");
     }
 
+    public function absences()
+    {
+        return $this->hasMany(Absence::class, 'cours_id');
+    }
+
     public function campus()
     {
         return $this->belongsTo(Campus::class, "campus_id");
