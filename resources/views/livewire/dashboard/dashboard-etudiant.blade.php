@@ -18,7 +18,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <div class="form-group mb-0">
                                     <label class="text-white">Semestre</label>
                                     <select wire:model.live="selectedSemestre" class="form-control bg-white">
                                         @foreach($semestres as $semestre)

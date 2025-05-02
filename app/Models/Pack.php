@@ -23,7 +23,8 @@ class Pack extends Model
 
     public function campuses()
     {
-        return $this->hasMany(Campus::class);
+        return $this->belongsToMany(Campus::class, 'subscriptions')
+            ->withPivot(['start_date', 'end_date', 'status', 'payment_status', 'amount_paid', 'payment_method', 'payment_reference']);
     }
 
     public function subscriptions()

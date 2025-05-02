@@ -9,9 +9,12 @@ use App\Models\Note;
 use App\Models\Absence;
 use App\Models\Retard;
 use App\Models\AcademicYear;
+use App\Models\Campus;
 use App\Models\Classe;
 use App\Models\Inscription;
 use App\Models\Outils;
+use App\Models\Pack;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -19,9 +22,30 @@ use Livewire\Attributes\Title;
 #[Title("Tableau de bord")]
 class Dashboard extends Component
 {
+    // Propriétés générales
     public $outil;
     public $user;
     public $currentAcademicYear;
+    
+    // Propriétés pour le SuperAdmin
+    public $totalCampus = 0;
+    public $revenusMensuels = 0;
+    public $totalPacks = 0;
+    public $totalUtilisateurs = 0;
+    public $activitesRecentes = [];
+    public $campusList = [];
+    
+    // Propriétés pour la gestion des campus
+    public $showCampusModal = false;
+    public $selectedCampus = null;
+    public $campusForm = [
+        'nom' => '',
+        'pack_id' => '',
+        'date_expiration' => '',
+        'statut' => 'actif'
+    ];
+    
+    // Propriétés existantes
     public $currentSemestre;
     public $semestres = [];
     public $totalCours = 0;
@@ -51,19 +75,18 @@ class Dashboard extends Component
     public function mount()
     {
         $this->user = Auth::user();
-        $campus = Auth::user()->campus;
         $this->outil = new Outils();
 
-        $this->outil->createTypeEvaluation();
-        
-        // Vérifie si l'utilisateur n'est pas superadmin et qu'il n'y a pas d'année académique active
-        if (!$this->user->estSuperAdmin() && !$campus->currentAcademicYear()) {
-            return;
-        }
-
-        if (!$this->user->estSuperAdmin()) {
+        if ($this->user->estSuperAdmin()) {
+            $this->loadSuperAdminData();
+        } else {
+            $campus = Auth::user()->campus;
+            if (!$campus->currentAcademicYear()) {
+                return;
+            }
             $currentAcademicYear = $campus->currentAcademicYear();
             $this->currentAcademicYear = $currentAcademicYear;
+            
             // Calcul du nombre d'étudiants pour l'année académique en cours
             $this->totalEtudiants = User::where('campus_id', $campus->id)
             ->where('role', 'etudiant')
@@ -148,20 +171,32 @@ class Dashboard extends Component
             // Absences pour le semestre sélectionné
             $this->totalAbsences = Absence::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->where('semestre_id', $this->selectedSemestre)
+                ->whereHas('cours', function($query) {
+                    $query->whereHas('matiere.semestres', function($q) {
+                        $q->where('semestre_id', $this->selectedSemestre);
+                    });
+                })
                 ->where('status', 'absent')
                 ->count();
 
             // Retards pour le semestre sélectionné
             $this->totalRetards = Retard::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->where('semestre_id', $this->selectedSemestre)
+                ->whereHas('cours', function($query) {
+                    $query->whereHas('matiere.semestres', function($q) {
+                        $q->where('semestre_id', $this->selectedSemestre);
+                    });
+                })
                 ->count();
 
             // Notes et statistiques
             $notes = Note::where('etudiant_id', $this->user->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->where('semestre_id', $this->selectedSemestre)
+                ->whereHas('cours', function($query) {
+                    $query->whereHas('matiere.semestres', function($q) {
+                        $q->where('semestre_id', $this->selectedSemestre);
+                    });
+                })
                 ->with(['cours.matiere', 'cours.ue', 'typeEvaluation'])
                 ->get();
 
@@ -347,22 +382,103 @@ class Dashboard extends Component
         }
     }
 
+    // Méthodes pour le SuperAdmin
+    private function loadSuperAdminData()
+    {
+        // Statistiques globales
+        $this->totalCampus = Campus::count();
+        $this->totalPacks = Pack::count();
+        $this->totalUtilisateurs = User::count();
+        
+        // Calcul des revenus mensuels
+        $this->revenusMensuels = Subscription::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount_paid');
+
+        // Liste des campus avec leurs informations
+        $this->campusList = Campus::with(['pack', 'users'])
+            ->withCount('users as total_users')
+            ->get()
+            ->map(function ($campus) {
+                $campus->statut = $campus->date_expiration > now() ? 'actif' : 'expiré';
+                return $campus;
+            });
+
+        // Activités récentes
+        $this->activitesRecentes = Activity::latest()->take(5)->get();
+    }
+
+    public function ajouterCampus()
+    {
+        $this->resetCampusForm();
+        $this->showCampusModal = true;
+    }
+
+    public function editerCampus($campusId)
+    {
+        $this->selectedCampus = Campus::find($campusId);
+        $this->campusForm = [
+            'nom' => $this->selectedCampus->nom,
+            'pack_id' => $this->selectedCampus->pack_id,
+            'date_expiration' => $this->selectedCampus->date_expiration->format('Y-m-d'),
+            'statut' => $this->selectedCampus->statut
+        ];
+        $this->showCampusModal = true;
+    }
+
+    public function sauvegarderCampus()
+    {
+        $this->validate([
+            'campusForm.nom' => 'required|string|max:255',
+            'campusForm.pack_id' => 'required|exists:packs,id',
+            'campusForm.date_expiration' => 'required|date|after:today',
+            'campusForm.statut' => 'required|in:actif,inactif'
+        ]);
+
+        if ($this->selectedCampus) {
+            $this->selectedCampus->update($this->campusForm);
+        } else {
+            Campus::create($this->campusForm);
+        }
+
+        $this->showCampusModal = false;
+        $this->loadSuperAdminData();
+    }
+
+    public function renouvelerAbonnement($campusId)
+    {
+        // Logique de renouvellement d'abonnement
+        $campus = Campus::find($campusId);
+        $campus->date_expiration = now()->addYear();
+        $campus->save();
+
+        $this->loadSuperAdminData();
+    }
+
+    private function resetCampusForm()
+    {
+        $this->selectedCampus = null;
+        $this->campusForm = [
+            'nom' => '',
+            'pack_id' => '',
+            'date_expiration' => '',
+            'statut' => 'actif'
+        ];
+    }
+
     #[Layout("components.layouts.app")]
     public function render()
     {
         if (Auth::user()->estSuperAdmin()) {
             return view('livewire.dashboard.dashboardSuperAdmin');
-        }else if(Auth::user()->estAdmin()){
+        } else if(Auth::user()->estAdmin()) {
             return view('livewire.dashboard.dashboard-admin');
-
-        }else if(Auth::user()->estProfesseur()){
+        } else if(Auth::user()->estProfesseur()) {
             return view('livewire.dashboard.dashboard-professeur');
-
-        }else if(Auth::user()->estEtudiant()){
+        } else if(Auth::user()->estEtudiant()) {
             return view('livewire.dashboard.dashboard-etudiant');
         } else {
             return view('livewire.dashboard.dashboard');
         }
-        
     }
 }

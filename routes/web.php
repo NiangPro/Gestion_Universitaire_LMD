@@ -35,6 +35,7 @@ use App\Http\Controllers\SubscriptionPaymentController;
 use App\Http\Middleware\EtudiantMiddleware;
 use App\Http\Middleware\ProfesseurMiddleware;
 use App\Livewire\Absences;
+use App\Livewire\AbsencesEtudiant;
 use App\Livewire\AbsencesProfesseur;
 use App\Livewire\RetardsProfesseur;
 use App\Livewire\Acces;
@@ -95,6 +96,7 @@ Route::middleware(['auth', ProfesseurMiddleware::class])->prefix('professeur')->
 Route::middleware(['auth', EtudiantMiddleware::class])->prefix('etudiant')->group(function () {
     Route::get("/cours", CoursEtudiant::class)->name("coursetudiant");
     Route::get("/notes", NoteEtudiant::class)->name("noteetudiant");
+    Route::get("/absences", AbsencesEtudiant::class)->name("absenceetudiant");
 
 });
 

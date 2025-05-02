@@ -93,6 +93,13 @@ class Campus extends Model
     {
         return $this->hasMany(TypeEvaluation::class);
     }
+
+    public function packs()
+    {
+        return $this->belongsToMany(Pack::class, 'subscriptions')
+            ->withPivot(['start_date', 'end_date', 'status', 'payment_status', 'amount_paid', 'payment_method', 'payment_reference'])
+            ->withTimestamps();
+    }
     public function evaluations()
     {
         return $this->hasMany(Evaluation::class);
@@ -160,6 +167,24 @@ class Campus extends Model
     public function hasActiveSubscription()
     {
         return $this->activeSubscription() !== null;
+    }
+
+    public function pack()
+    {
+        return $this->hasOneThrough(
+            Pack::class,
+            Subscription::class,
+            'campus_id',
+            'id',
+            'id',
+            'pack_id'
+        )
+        ->where('subscriptions.status', 'active')
+        ->where('subscriptions.payment_status', 'paid')
+        ->where('subscriptions.end_date', '>', now())
+        ->orderBy('subscriptions.created_at', 'desc')
+        ->select('packs.*')
+        ->first();
     }
 
     public function absences()
