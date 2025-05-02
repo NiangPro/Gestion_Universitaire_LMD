@@ -207,7 +207,7 @@
                 @endif
                 @if(Auth::user()->hasPermission('retards', 'view'))
                 <li>
-                    <a href="{{route('retard')}}" aria-expanded="false">
+                    <a href="{{route('retardetudiant')}}" aria-expanded="false">
                         <i class="fa fa-clock"></i>
                         <span class="nav-text">Retards</span>
                     </a>

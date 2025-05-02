@@ -52,6 +52,7 @@ use App\Livewire\EditNote;
 use App\Livewire\NoteEtudiant;
 use App\Livewire\NotesProfesseur;
 use App\Livewire\NotFound;
+use App\Livewire\RetardEtudiant;
 
 // Routes publiques
 Route::group([], function () {
@@ -97,6 +98,7 @@ Route::middleware(['auth', EtudiantMiddleware::class])->prefix('etudiant')->grou
     Route::get("/cours", CoursEtudiant::class)->name("coursetudiant");
     Route::get("/notes", NoteEtudiant::class)->name("noteetudiant");
     Route::get("/absences", AbsencesEtudiant::class)->name("absenceetudiant");
+    Route::get("/retards", RetardEtudiant::class)->name("retardetudiant");
 
 });
 
