@@ -73,6 +73,11 @@ class Cour extends Model
         return $this->hasMany(Note::class, 'cours_id');
     }
 
+    public function retards()
+    {
+        return $this->hasMany(Retard::class, 'cours_id');
+    }
+
     public function ue()
     {
         return $this->hasOneThrough(
