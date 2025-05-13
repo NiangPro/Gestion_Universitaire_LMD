@@ -249,6 +249,31 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all late arrivals for the current academic year
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function retardsAnneeEnCours()
+    {
+        return $this->hasMany(Retard::class, "etudiant_id")
+            ->where('academic_year_id', $this->campus->currentAcademicYear()->id)
+            ->orderBy('created_at', 'desc');
+    }
+
+/**
+ * Get student's late arrivals for current academic year and semester
+ */
+public function retardsAnneeEtSemestreEnCours()
+{
+    $currentAcademicYear = $this->campus->currentAcademicYear();
+    $currentSemester = $currentAcademicYear->currentSemester();
+
+    return $this->hasMany(Retard::class, "etudiant_id")
+        ->where('academic_year_id', $currentAcademicYear->id)
+        ->where('semester_id', $currentSemester->id);
+}
+
+    /**
      * Get payments for a specific academic year.
      */
     public function paiementsParAnnee($academic_year_id)
