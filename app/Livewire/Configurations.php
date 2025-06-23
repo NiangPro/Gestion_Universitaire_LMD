@@ -51,6 +51,10 @@ class Configurations extends Component
         "idsalle" => null
     ];
 
+    public $evaluation = [
+        "nom" => "",
+        "idtype" => null,
+    ];
 
     public $semestre = [
         "nom" => "",
@@ -61,6 +65,7 @@ class Configurations extends Component
     protected $messages = [
         "classe.nom.required" => "Le nom est requis",
         "classe.filiere_id.required" => "Le filière est requis",
+        "evaluation.nom.required" => "Le nom est requis",
         "ue.filiere_id.required" => "Le filière est requis",
         "filiere.nom.required" => "Le nom est requis",
         "filiere.departement_id.required" => "Le département est requis",
@@ -161,14 +166,23 @@ class Configurations extends Component
         $this->reset([$champ, "matieres"]);
     }
 
-    public function supprimerUe($id){
-        $ue = UniteEnseignement::where("id", $id)->first();
+    public function storeEvaluation(){
+        if ($this->evaluation["idtype"]) {
+            $this->validate(["evaluation.nom" => "required"]);
+            $type = TypeEvaluation::where("id", $this->evaluation["idtype"])->first();
 
-        $ue->is_deleting = true;
+            $type->nom = strtoupper($this->evaluation["nom"]);
 
-        $ue->save();
+            $type->save();
 
-        $this->dispatch("deleted");
+            $this->dispatch("updated");
+        }else{
+            $this->validate(["evaluation.nom" => "required"]);
+            TypeEvaluation::create(["nom" => strtoupper($this->evaluation["nom"]), "campus_id" => Auth::user()->campus_id]);
+            $this->dispatch("added");
+        }
+        
+        $this->reset(["evaluation"]);
     }
 
     public function getUe($id){

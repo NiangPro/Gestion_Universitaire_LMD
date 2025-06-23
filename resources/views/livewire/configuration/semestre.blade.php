@@ -62,7 +62,7 @@
                                             <hr>
                                             <form wire:submit='storeSemestre' action="" method="post" class="row">
                                                 @error('semestre.ordre') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
-                                                <input type="number" min="1" max="10" wire:model='semestre.ordre' required placeholder="Ordre" class="form-control col-md-8">
+                                                <input type="number" min="1" max="10" wire:model='semestre.ordre' required placeholder="Ordre (Ex: 1)" class="form-control col-md-8">
                                                 @if($semestre["idsemestre"])
                                                 <div class="col-md-4">
                                                     <i title="Actualiser" wire:click='initialiser("semestre")' style="cursor: pointer;" class="fa fa-refresh text-primary fa-x"></i>

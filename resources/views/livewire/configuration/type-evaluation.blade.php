@@ -26,14 +26,21 @@
                                 </li>
                                 @endforeach
                             </ul>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Nouveau type d'évaluation" wire:model="newTypeName">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" wire:click="add">Ajouter</button>
-                                    </div>
+                            <hr>
+                            <form wire:submit='storeEvaluation' action="" method="post" class="row">
+                                @error('evaluation.nom') <span class="col-md-12 text-danger">{{ $message }}</span> @enderror
+                                <input type="text" class="form-control col-md-8" placeholder="Nouveau type d'évaluation" wire:model="evaluation.nom">
+
+                                @if($evaluation["idtype"])
+                                <div class="col-md-4">
+                                    <i title="Actualiser" wire:click='initialiser("evaluation")' style="cursor: pointer;" class="fa fa-refresh text-primary fa-x"></i>
+                                    <button type="submit" class="btn btn-warning">Modifier</button>
                                 </div>
-                            </div>
+                                @else
+                                <button type="submit" class="btn btn-primary col-md-3"><i class="fa fa-plus"></i> Ajouter</button>
+                                @endif
+                            </form>
+                            
                         </div>
                     </div>
                 </div>
