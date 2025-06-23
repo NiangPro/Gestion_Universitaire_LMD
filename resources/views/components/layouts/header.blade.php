@@ -102,7 +102,7 @@
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="{{asset('storage/images/'.Auth()->user()->image)}}" alt="">
-                            {{ucfirst(Auth()->user()->prenom)}} {{ucfirst(Auth()->user()->nom)}} 
+                            {{mb_ucfirst(Auth()->user()->prenom)}}
                             
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
