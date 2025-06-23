@@ -45,7 +45,8 @@ class Note extends Model
 
     public function cours()
     {
-        return $this->belongsTo(Cour::class, 'matiere_id', 'matiere_id');
+        return $this->belongsTo(Cour::class, 'matiere_id', 'matiere_id')
+            ->where('academic_year_id', $this->academic_year_id);
     }
 
     public function typeEvaluation()

@@ -111,10 +111,32 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
-        'campus_id',
+        'campus_id', // Nullable pour les superadmins
         'matricule',
         'specialite',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'two_factor_confirmed_at' => 'datetime',
+        'password' => 'hashed',
+        'campus_id' => 'integer',
+    ];
+
+    /**
+     * Détermine si l'utilisateur a besoin d'un campus associé
+     *
+     * @return bool
+     */
+    public function requiresCampus()
+    {
+        return !$this->estSuperAdmin();
+    }
 
     public function campus(){
         return $this->belongsTo(Campus::class, "campus_id");
@@ -160,17 +182,6 @@ class User extends Authenticatable
         'remember_token',
         'two_factor_secret',
         'two_factor_recovery_codes',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'two_factor_confirmed_at' => 'datetime',
-        'password' => 'hashed',
     ];
 
     public function estSuperAdmin()

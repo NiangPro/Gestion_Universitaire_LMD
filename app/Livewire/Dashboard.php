@@ -121,25 +121,44 @@ class Dashboard extends Component
             ->where('academic_year_id', $this->currentAcademicYear->id)
             ->count();
 
-        // Nombre total d'élèves
-        // $this->totalEtudiants = User::whereHas('classes', function($query) {
-        //     $query->whereHas('cours', function($q) {
-        //         $q->where('professeur_id', $this->user->id)
-        //             ->where('academic_year_id', $this->currentAcademicYear->id);
-        //     });
-        // })->where('role', 'etudiant')->count();
+        // Nombre total d'élèves dans le campus du professeur
+        $campus = Auth::user()->campus;
+        if ($campus) {
+            $this->totalEtudiants = User::where('campus_id', $campus->id)
+                ->where('role', 'etudiant')
+                ->count();
+        } else {
+            $this->totalEtudiants = 0;
+        }
 
-        $this->totalEtudiants = Auth::user()->campus->etudiants->count();
-
-        // Dernières activités (notes, absences)
-        $this->recentActivities = Note::where('academic_year_id', $this->currentAcademicYear->id)
+        // Dernières activités (notes)
+        $this->recentActivities = Note::with(['etudiant', 'cours', 'cours.matiere'])
+            ->where('academic_year_id', $this->currentAcademicYear->id)
             ->whereHas('cours', function($query) {
                 $query->where('professeur_id', $this->user->id);
             })
-            ->with(['etudiant', 'cours'])
             ->latest()
             ->take(5)
-            ->get();
+            ->get()
+            ->map(function ($note) {
+                return [
+                    'id' => $note->id,
+                    'note' => $note->note,
+                    'created_at' => $note->created_at,
+                    'etudiant' => $note->etudiant ? [
+                        'id' => $note->etudiant->id,
+                        'nom' => $note->etudiant->nom,
+                        'prenom' => $note->etudiant->prenom
+                    ] : null,
+                    'cours' => $note->cours ? [
+                        'id' => $note->cours->id,
+                        'matiere' => $note->cours->matiere ? [
+                            'id' => $note->cours->matiere->id,
+                            'nom' => $note->cours->matiere->nom
+                        ] : null
+                    ] : null
+                ];
+            })->toArray();
     }
 
     private function loadEleveData()
@@ -396,16 +415,45 @@ class Dashboard extends Component
             ->sum('amount_paid');
 
         // Liste des campus avec leurs informations
-        $this->campusList = Campus::with(['pack', 'users'])
-            ->withCount('users as total_users')
+        $this->campusList = Campus::with(['subscriptions' => function($query) {
+            $query->where('status', 'active')
+                  ->where('payment_status', 'paid')
+                  ->where('end_date', '>', now())
+                  ->latest();
+        }])->withCount('users')
             ->get()
             ->map(function ($campus) {
-                $campus->statut = $campus->date_expiration > now() ? 'actif' : 'expiré';
-                return $campus;
+                $activeSubscription = $campus->activeSubscription();
+                return [
+                    'id' => $campus->id,
+                    'nom' => $campus->nom,
+                    'pack' => $activeSubscription ? $activeSubscription->pack->nom : 'Non défini',
+                    'total_users' => $campus->users_count,
+                    'date_expiration' => $activeSubscription ? $activeSubscription->end_date : null,
+                    'statut' => $activeSubscription ? 'actif' : 'expiré'
+                ];
             });
 
-        // Activités récentes
-        $this->activitesRecentes = Activity::latest()->take(5)->get();
+        // Activités récentes (inscriptions et abonnements)
+        $this->activitesRecentes = collect();
+        
+        // Récupérer les abonnements avec leurs campus associés
+        $subscriptions = Subscription::whereHas('campus')
+            ->with('campus:id,nom')
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        // Ajouter les abonnements aux activités récentes
+        foreach ($subscriptions as $subscription) {
+            $this->activitesRecentes->push([
+                'type' => 'abonnement',
+                'date' => $subscription->created_at,
+                'description' => "Nouvel abonnement pour " . $subscription->campus->nom,
+                'montant' => $subscription->amount_paid
+            ]);
+        }
+
     }
 
     public function ajouterCampus()

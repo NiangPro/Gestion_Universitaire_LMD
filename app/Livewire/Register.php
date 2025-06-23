@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Campus;
 use App\Models\Subscription;
 use App\Models\User;
-use App\Models\Historique;
 use App\Models\Outils;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;

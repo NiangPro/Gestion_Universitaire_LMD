@@ -183,7 +183,7 @@ class Campus extends Model
         ->where('subscriptions.payment_status', 'paid')
         ->where('subscriptions.end_date', '>', now())
         ->orderBy('subscriptions.created_at', 'desc')
-        ->select('packs.*')
+        ->select(['packs.*', 'subscriptions.end_date as date_expiration'])
         ->first();
     }
 
