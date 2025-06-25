@@ -121,6 +121,9 @@
                             @if(Auth::user()->hasPermission('retards', 'view'))
                             <li><a href="{{route('retard')}}">Retards</a></li>
                             @endif
+                            <!-- @if(Auth::user()->hasPermission('bulletins', 'view')) -->
+                            <li><a href="{{route('bulletin')}}">Bulletins</a></li>
+                            <!-- @endif -->
                             @if(Auth::user()->hasPermission('emploisdutemps', 'view'))
                             <li><a href="{{route('emploisdutemps')}}">Emplois du temps</a></li>
                             @endif

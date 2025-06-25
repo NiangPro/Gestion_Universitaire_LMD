@@ -13,7 +13,7 @@ use App\Models\User;
 use App\Models\Classe;
 use App\Models\Salle;
 use App\Models\Semaine;
-use App\Models\TypeEvaluation;
+use Illuminate\Support\Facades\DB;
 
 #[Title("Cours")]
 class Cours extends Component
@@ -180,9 +180,11 @@ class Cours extends Component
         $this->outil = new Outils();
         return view('livewire.cours.cours', [
             "academicYears" => AcademicYear::where("campus_id", Auth::user()->campus_id)
-                ->orderByDesc(function($query) {
-                    return $query->id == Auth::user()->campus->currentAcademicYear()->id;
-                })
+                ->orderBy(DB::raw("CASE 
+                    WHEN id = " . (Auth::user()->campus->currentAcademicYear()?->id ?? 0) . " THEN 1 
+                    ELSE 0 
+                END"), 'desc')
+                ->orderByDesc('id')
                 ->get(),
             'professeurs' => User::where('role', 'professeur')->get(),
             'classes' => Classe::all(),

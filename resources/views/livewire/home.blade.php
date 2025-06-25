@@ -17,7 +17,7 @@
                             De l'administration aux résultats, en passant par la communication.
                         </p>
                         <div class="d-flex gap-3 flex-wrap mb-5">
-                            <a href="{{ route('register', ['id' => 1]) }}" class="btn btn-light btn-lg px-4 rounded-pill hover-scale">
+                            <a href="{{ route('service') }}" class="btn btn-light btn-lg px-4 rounded-pill hover-scale">
                                 <i class="fas fa-play me-2"></i>Démarrer Gratuitement
                             </a>
                             <a href="#demo" class="btn btn-outline-light btn-lg px-4 rounded-pill hover-scale">

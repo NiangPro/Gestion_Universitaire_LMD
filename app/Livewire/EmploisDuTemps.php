@@ -6,9 +6,7 @@ use App\Models\AcademicYear;
 use App\Models\Classe;
 use App\Models\Cour;
 use App\Models\User;
-use App\Models\Salle;
 use App\Models\Semaine;
-use App\Models\TypeEvaluation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -119,9 +117,7 @@ class EmploisDuTemps extends Component
     {
         return view('livewire.schedule.emplois-du-temps', [
             "academicYears" => AcademicYear::where("campus_id", Auth::user()->campus_id)
-                ->orderByDesc(function($query) {
-                    return $query->id == Auth::user()->campus->currentAcademicYear()->id;
-                })
+                ->orderByRaw("CASE WHEN id = ? THEN 0 ELSE 1 END, id DESC", [Auth::user()->campus->currentAcademicYear()->id])
                 ->get(),
             'semaines' => Semaine::all()
         ]);
