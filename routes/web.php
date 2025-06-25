@@ -39,6 +39,7 @@ use App\Livewire\AbsencesEtudiant;
 use App\Livewire\AbsencesProfesseur;
 use App\Livewire\RetardsProfesseur;
 use App\Livewire\Acces;
+use App\Livewire\Bulletin;
 use App\Livewire\Contact;
 use App\Livewire\CoursEtudiant;
 use App\Livewire\Evaluations;
@@ -118,6 +119,7 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::get("/retards", Retards::class)->name("retard");
     Route::get("/abonnements", Abonnement::class)->name("abonnement");
     Route::get("/paiements", Paiements::class)->name("paiement");
+    Route::get("/bulletins", Bulletin::class)->name("bulletin");
     Route::get("/rapports", RapportPaiement::class)->name("rapport");
     Route::get("/acces", Acces::class)->name("acces");
 });

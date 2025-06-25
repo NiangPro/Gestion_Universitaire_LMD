@@ -256,5 +256,10 @@ class Campus extends Model
     {
         return $this->semestres()->where('is_active', true)->first();
     }
+
+    public function classesByAcademicYear($academicYearId)
+    {
+        return $this->classes()->where('academic_year_id', $academicYearId)->get();
+    }
     
 }
