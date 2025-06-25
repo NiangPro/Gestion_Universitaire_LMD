@@ -29,7 +29,7 @@
             </div>
         </form>
 
-        @if ($classe)
+        @if ($annee_academique && $classe)
             @if($etudiants->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
@@ -91,12 +91,12 @@
                 </div>
             @else
                 <div class="alert alert-info">
-                    Aucun étudiant trouvé dans cette classe.
+                    Aucun étudiant trouvé dans cette classe pour cette année académique.
                 </div>
             @endif
         @else
             <div class="alert alert-info">
-                Veuillez sélectionner une classe pour voir la liste des étudiants.
+                Veuillez sélectionner une année académique et une classe pour voir la liste des étudiants.
             </div>
         @endif
     </div>

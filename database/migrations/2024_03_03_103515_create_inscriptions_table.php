@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('medical_id')->nullable()->constrained('medicals')->onDelete('set null');
             $table->string('relation');
             $table->decimal('montant', 10, 2);
+            $table->decimal('montant_tenue', 10, 2)->nullable();
             $table->decimal('restant', 10, 2)->default(0);
             $table->enum('tenue', ['Payé', 'Avance', 'Pas encore'])->default('Pas encore');
             $table->text('commentaire')->nullable();

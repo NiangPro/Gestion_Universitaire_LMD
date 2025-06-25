@@ -171,6 +171,14 @@ class Etudiant extends Component
         $this->classe = $value;
     }
 
+    public function updatedAnneeAcademique($value)
+    {
+        $this->annee_academique = $value;
+        if ($this->annee_academique) {
+            $this->classes = \App\Models\Classe::where('academic_year_id', $this->annee_academique)->get();
+        }
+    }
+
     public function updatedClasseId($value)
     {
         if ($value) {
@@ -253,7 +261,11 @@ class Etudiant extends Component
 
     protected function loadClasses()
     {
-        $this->classes = Auth::user()->campus->classes;
+        if ($this->annee_academique) {
+            $this->classes = \App\Models\Classe::where('academic_year_id', $this->annee_academique)->get();
+        } else {
+            $this->classes = [];
+        }
     }
 
     protected function loadAcademicYears()
@@ -461,7 +473,6 @@ class Etudiant extends Component
                     $paiement->update([
                         'montant' => $this->montant,
                         'mode_paiement' => $this->mode_paiement,
-                        'montant_tenue' => $this->montant_tenue,
                         'observation' => $this->commentaire,
                         'status' => 'validé',
                         'date_paiement' => now(),
@@ -479,9 +490,9 @@ class Etudiant extends Component
                     'medical_id' => $medical_id,
                     'relation' => $this->relation,
                     'montant' => $this->montant,
+                    'montant_tenue' => $this->montant_tenue,
                     'restant' => $this->restant ?? 0,
                     'tenue' => $this->tenue,
-                    'montant_tenue' => $this->montant_tenue,
                     'commentaire' => $this->commentaire,
                     'status' => 'en_cours',
                     'date_inscription' => now()
@@ -493,7 +504,6 @@ class Etudiant extends Component
                     'montant' => $this->montant,
                     'type_paiement' => 'inscription',
                     'mode_paiement' => $this->mode_paiement,
-                    'montant_tenue' => $this->montant_tenue,
                     'observation' => $this->commentaire,
                     'status' => 'validé',
                     'campus_id' => Auth::user()->campus_id,
@@ -508,16 +518,25 @@ class Etudiant extends Component
 
             DB::commit();
             Log::info('Transaction validée avec succès');
-            // Réinitialiser le formulaire
-            $this->reset();
+
+            $this->annee_academique = Auth::user()->campus->currentAcademicYear()->id;
+            $this->classe = $this->classe_id;
+            $this->status = "list";
+
+            $this->loadEtudiants();
+
+            $this->dispatch('saved');
+
+            $this->reset([
+                'nom', 'prenom', 'username', 'sexe', 'date_naissance', 'lieu_naissance', 'nationalite', 'adresse', 'ville', 'email', 'tel',
+                'etablissement_precedant', 'classe_id', 'montant', 'restant', 'tenue', 'montant_tenue', 'mode_paiement', 'commentaire',
+                'maladie', 'description_maladie', 'traitement', 'nom_medecin', 'telephone_medecin',
+                'type_tuteur', 'tuteur_id', 'nom_tuteur', 'prenom_tuteur', 'adresse_tuteur', 'tel_tuteur', 'profession_tuteur', 'relation',
+                'inscription_id', 'matricule', 'etat'
+            ]);
             
             // Recharger les années académiques
             $this->loadAcademicYears();
-            
-            // Notification de succès
-            $this->dispatch('saved');
-            // Redirection vers la liste des étudiants
-            return redirect()->route('etudiants');
         
         } catch (\Exception $e) {
             DB::rollBack();
@@ -554,15 +573,19 @@ class Etudiant extends Component
         }
     }
 
-    public function updatedAnneeAcademique()
-    {
-        $this->loadEtudiants();
-    }
-
     protected function loadEtudiants()
     {
+        if (!$this->annee_academique || !$this->classe) {
+            $this->etudiants = collect();
+            return;
+        }
+
         $query = User::where('role', 'etudiant')
-            ->where('campus_id', Auth::user()->campus_id);
+            ->where('campus_id', Auth::user()->campus_id)
+            ->whereHas('inscriptions', function($q) {
+                $q->where('academic_year_id', $this->annee_academique)
+                  ->where('classe_id', $this->classe);
+            });
 
         if ($this->search) {
             $query->where(function($q) {
@@ -667,16 +690,24 @@ class Etudiant extends Component
 
             DB::commit();
 
-            // Réinitialiser le formulaire
-            $this->reset([
-                'matricule', 'classe_id', 'etat', 'montant', 'restant', 'tenue', 'commentaire'
-            ]);
+            // Mettre à jour les filtres pour afficher la liste de la classe et de l'année de la réinscription
+            $this->annee_academique = Auth::user()->campus->currentAcademicYear()->id;
+            $this->classe = $this->classe_id;
+            $this->status = "list";
+
+            // Recharger la liste filtrée
+            $this->loadEtudiants();
 
             // Message de succès
             $this->dispatch('saved');
 
-            // Redirection vers la liste des étudiants
-            return redirect()->route('etudiants');
+            // Réinitialiser le formulaire (sauf les filtres)
+            $this->reset([
+                'matricule', 'classe_id', 'etat', 'montant', 'restant', 'tenue', 'commentaire'
+            ]);
+
+            // On ne fait plus de redirection ici
+            // return redirect()->route('etudiants');
 
         } catch (\Exception $e) {
             DB::rollBack();
