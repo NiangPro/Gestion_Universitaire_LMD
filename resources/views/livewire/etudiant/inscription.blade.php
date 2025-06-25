@@ -227,6 +227,24 @@
                         </div>
                     @endif
                     <div class="form-group">
+                        <label class="text-label">Mode de paiement</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"> <i class="fa-solid fa-money-bill-wave" style="font-size:15px;"></i> </span>
+                            </div>
+                            <select class="form-control" id="mode_paiement" name="mode_paiement" wire:model.live="mode_paiement">
+                                <option value="">Selectionné Affiche le champ Montant tenue seulement si la tenue est "Payé" ou "Avance" :le mode de paiement</option>
+                                <option value="Espèces">Espèces</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Virement">Virement</option>
+                                <option value="Wave">Wave</option>
+                                <option value="Orange Money">Orange Money</option>
+                                <option value="Free Money">Free Money</option>
+                            </select>
+                            @error('mode_paiement') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="text-label">Tenue</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -241,6 +259,18 @@
                             @error('tenue') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
                     </div>
+                    @if($tenue === 'Payé' || $tenue === 'Avance')
+                        <div class="form-group">
+                            <label class="text-label">Montant tenue</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-shirt"></i></span>
+                                </div>
+                                <input type="number" min="0" step="0.01" id="montant_tenue" name="montant_tenue" class="form-control @error('montant_tenue') is-invalid @enderror" wire:model="montant_tenue" placeholder="Montant de la tenue">
+                                @error('montant_tenue') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                    @endif
                     <div class="form-group">
                         <label class="text-label">Commentaire</label>
                         <div class="input-group">

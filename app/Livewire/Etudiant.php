@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Inscription;
 use App\Models\AcademicYear;
 use App\Models\Medical;
+use App\Models\Paiement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -76,6 +77,12 @@ class Etudiant extends Component
 
     #[Rule('required|in:Payé,Avance,Pas encore')]
     public $tenue;
+
+    #[Rule('nullable|numeric|min:0')]
+    public $montant_tenue;
+
+    #[Rule('required|in:Espèces,Cheque,Virement,Wave,Orange Money,Free Money')]
+    public $mode_paiement;
 
     #[Rule('nullable|string')]
     public $commentaire;
@@ -328,6 +335,7 @@ class Etudiant extends Component
                 // Validation du paiement
                 'montant' => 'required|numeric|min:0',
                 'tenue' => 'required|in:Payé,Avance,Pas encore',
+                'mode_paiement' => 'required_unless:tenue,Pas encore',
                 'commentaire' => 'nullable|string',
                 
                 // Validation du tuteur
@@ -436,11 +444,30 @@ class Etudiant extends Component
                     'montant' => $this->montant,
                     'restant' => $this->restant ?? 0,
                     'tenue' => $this->tenue,
+                    'montant_tenue' => $this->montant_tenue,
                     'commentaire' => $this->commentaire,
                     'status' => 'en_cours',
                     'date_inscription' => now()
                 ]);
                 Log::info('Inscription mise à jour', ['inscription_id' => $inscription->id]);
+
+                // Mettre à jour le paiement associé à l'inscription
+                $paiement = Paiement::where('user_id', $inscription->user_id)
+                    ->where('type_paiement', 'inscription')
+                    ->where('academic_year_id', $inscription->academic_year_id)
+                    ->first();
+
+                if ($paiement) {
+                    $paiement->update([
+                        'montant' => $this->montant,
+                        'mode_paiement' => $this->mode_paiement,
+                        'montant_tenue' => $this->montant_tenue,
+                        'observation' => $this->commentaire,
+                        'status' => 'validé',
+                        'date_paiement' => now(),
+                    ]);
+                    Log::info('Paiement d\'inscription mis à jour', ['paiement_id' => $paiement->id]);
+                }
             } else {
                 // Créer une nouvelle inscription
                 $inscription = Inscription::create([
@@ -454,12 +481,30 @@ class Etudiant extends Component
                     'montant' => $this->montant,
                     'restant' => $this->restant ?? 0,
                     'tenue' => $this->tenue,
+                    'montant_tenue' => $this->montant_tenue,
                     'commentaire' => $this->commentaire,
                     'status' => 'en_cours',
                     'date_inscription' => now()
                 ]);
                 Log::info('Inscription créée', ['inscription_id' => $inscription->id]);
+
+                Paiement::create([
+                    'user_id' => $user->id,
+                    'montant' => $this->montant,
+                    'type_paiement' => 'inscription',
+                    'mode_paiement' => $this->mode_paiement,
+                    'montant_tenue' => $this->montant_tenue,
+                    'observation' => $this->commentaire,
+                    'status' => 'validé',
+                    'campus_id' => Auth::user()->campus_id,
+                    'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
+                    'date_paiement' => now(),
+                    'reference' => Paiement::genererReference(),
+                ]);
+                Log::info('Paiement d\'inscription créé pour l\'utilisateur', ['user_id' => $user->id]);
+            
             }
+
 
             DB::commit();
             Log::info('Transaction validée avec succès');
@@ -646,11 +691,9 @@ class Etudiant extends Component
     
     public function edit($etudiantId)
     {
-        
         $etudiant = User::with('inscriptions', 'medical')
             ->where('role', 'etudiant')
             ->findOrFail($etudiantId);
-          
 
         $inscription = $etudiant->inscriptions()->latest()->first();
 
@@ -661,7 +704,37 @@ class Etudiant extends Component
             $this->montant = $inscription->montant;
             $this->restant = $inscription->restant;
             $this->tenue = $inscription->tenue;
+            $this->montant_tenue = $inscription->montant_tenue;
             $this->commentaire = $inscription->commentaire;
+
+            // Déterminer l'état du paiement de l'inscription
+            if ($this->montant > 0) {
+                $this->etat = ($this->restant > 0) ? 'Avance' : 'Payé';
+            } else {
+                $this->etat = '';
+            }
+
+            // Charger le paiement associé à l'inscription pour trouver le mode de paiement
+            $paiement = Paiement::where('user_id', $etudiant->id)
+                ->where('type_paiement', 'inscription')
+                ->where('academic_year_id', $inscription->academic_year_id)
+                ->first();
+            if ($paiement) {
+                $this->mode_paiement = $paiement->mode_paiement;
+            } else {
+                $this->mode_paiement = '';
+            }
+        } else {
+            // Valeurs par défaut si pas d'inscription
+            $this->inscription_id = null;
+            $this->classe_id = '';
+            $this->relation = '';
+            $this->montant = '';
+            $this->restant = '';
+            $this->tenue = '';
+            $this->montant_tenue = '';
+            $this->commentaire = '';
+            $this->mode_paiement = '';
         }
 
         // Charger les propriétés de l'utilisateur
@@ -679,7 +752,7 @@ class Etudiant extends Component
         $this->etablissement_precedant = $etudiant->etablissement_precedant;
 
         // Charger les propriétés du tuteur
-        $tuteur = User::find($inscription->tuteur_id);
+        $tuteur = User::find($inscription->tuteur_id ?? null);
         if ($tuteur) {
             $this->type_tuteur = 'Existant';
             $this->tuteur_id = $tuteur->id;
@@ -690,6 +763,7 @@ class Etudiant extends Component
             $this->profession_tuteur = $tuteur->profession;
         } else {
             $this->type_tuteur = 'Nouveau';
+            $this->tuteur_id = null;
             $this->nom_tuteur = '';
             $this->prenom_tuteur = '';
             $this->adresse_tuteur = '';
@@ -710,6 +784,15 @@ class Etudiant extends Component
             $this->traitement = 'Non';
             $this->nom_medecin = '';
             $this->telephone_medecin = '';
+        }
+
+        $this->status = "add";
+    }
+
+    public function updatedTenue($value)
+    {
+        if ($value === 'Pas encore') {
+            $this->montant_tenue = 0;
         }
     }
 

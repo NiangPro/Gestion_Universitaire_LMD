@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("type_paiement");
             $table->string("mode_paiement");
             $table->decimal("montant");
+            $table->decimal("montant_tenue")->nullable();
             $table->string("reference")->nullable();
             $table->string("observation")->nullable();
             $table->date("date_paiement")->nullable();
