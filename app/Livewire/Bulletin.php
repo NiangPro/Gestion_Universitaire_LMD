@@ -50,10 +50,12 @@ class Bulletin extends Component
         $this->students = [];
         
         if ($value) {
-            $this->students = User::whereHas('classes', function($query) {
-                $query->where('classe_id', $this->selectedClasse)
-                      ->where('academic_year_id', $this->selectedYear);
-            })->get();
+            $this->students = User::where('role', 'etudiant')
+                ->whereHas('inscriptions', function($query) {
+                    $query->where('classe_id', $this->selectedClasse)
+                          ->where('academic_year_id', $this->selectedYear);
+                })
+                ->get();
         }
     }
 
