@@ -144,8 +144,8 @@ class User extends Authenticatable
 
     public function classes()
     {
-        return $this->belongsToMany(Classe::class, 'classe_eleve')
-            ->withPivot('academic_year_id')
+        return $this->belongsToMany(Classe::class, 'inscriptions', 'user_id', 'classe_id')
+            ->withPivot(['academic_year_id', 'montant', 'restant', 'status'])
             ->withTimestamps();
     }
 
