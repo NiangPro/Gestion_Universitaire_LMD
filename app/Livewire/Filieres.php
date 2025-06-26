@@ -154,7 +154,7 @@ class Filieres extends Component
         if ($this->id) {
             $a = Filiere::where("id", $this->id)->first();
 
-            $a->nom = strtoupper($this->nom);
+            $a->nom = mb_strtoupper($this->nom);
             $a->departement_id = $this->departement_id;
 
             $a->save();
@@ -163,7 +163,7 @@ class Filieres extends Component
             $this->dispatch("update");
         }else{
             Filiere::create([
-                "nom" => strtoupper($this->nom),
+                "nom" => mb_strtoupper($this->nom),
                 "departement_id" => $this->departement_id,
                 "campus_id" => Auth::user()->campus_id
             ]);

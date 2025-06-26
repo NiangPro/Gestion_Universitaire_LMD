@@ -69,7 +69,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="rounded-circle bg-primary text-white p-2 me-3 text-center" 
                                                          style="width: 40px; height: 40px; line-height: 24px;">
-                                                        {{ strtoupper(substr($dept->nom, 0, 1)) }}
+                                                        {{ mb_strtoupper(substr($dept->nom, 0, 1)) }}
                                                     </div>
                                                     <div>
                                                         <h6 class="mb-0">{{ $dept->nom }}</h6>
