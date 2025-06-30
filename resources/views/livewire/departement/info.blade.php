@@ -21,7 +21,7 @@
                     @if($departement->responsable)
                         <div class="mx-auto rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mb-3"
                              style="width: 80px; height: 80px; font-size: 2rem;">
-                            {{ strtoupper(substr($departement->responsable->prenom, 0, 1)) }}
+                            {{ mb_strtoupper(substr($departement->responsable->prenom, 0, 1)) }}
                         </div>
                         <h4>{{ $departement->responsable->prenom }} {{ $departement->responsable->nom }}</h4>
                         <p class="text-muted mb-3">Responsable du département</p>
@@ -156,7 +156,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle bg-primary text-white p-3 me-3"
                                          style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
-                                        {{ strtoupper(substr($prof->prenom, 0, 1)) }}
+                                        {{ mb_strtoupper(substr($prof->prenom, 0, 1)) }}
                                     </div>
                                     <div>
                                         <h6 class="mb-1">{{ $prof->prenom }} {{ $prof->nom }}</h6>

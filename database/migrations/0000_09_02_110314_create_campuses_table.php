@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string("email");
             $table->integer("statut")->default(1);
             $table->string("image")->nullable();
+            $table->string("tampon")->nullable();
+            $table->string("signature")->nullable();
+            $table->string("responsable")->nullable();
             $table->boolean("is_deleting")->default(false);
             $table->timestamps();
         });

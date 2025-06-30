@@ -51,7 +51,7 @@ class Note extends Model
 
     public function typeEvaluation()
     {
-        return $this->belongsTo(TypeEvaluation::class);
+        return $this->belongsTo(TypeEvaluation::class, 'type_evaluation_id');
     }
    
 }

@@ -254,7 +254,9 @@
                 <ul aria-expanded="false">
                     <li><a href="{{route('profil')}}">Profil</a></li>
                     <li><a href="{{route('abonnement')}}">Abonnement</a></li>
-                    <li><a href="./app-calender.html">Général</a></li>
+                    @if(Auth()->user()->estAdmin())
+                    <li><a href="{{route('general')}}">Général</a></li>
+                    @endif
                 </ul>
             </li>
         </ul>

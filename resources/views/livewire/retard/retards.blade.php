@@ -81,7 +81,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="avatar-sm me-3">
                                         <div class="avatar-title rounded-circle bg-primary-subtle text-primary">
-                                            {{ strtoupper(substr($retard->etudiant->prenom, 0, 1)) }}
+                                            {{ mb_strtoupper(substr($retard->etudiant->prenom, 0, 1)) }}
                                         </div>
                                     </div>
                                     <div>

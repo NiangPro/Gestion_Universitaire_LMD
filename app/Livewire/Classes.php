@@ -226,7 +226,8 @@ class Classes extends Component
                 'mensualite' => $this->mensualite,
                 'type_periode' => $this->type_periode,
                 'duree' => $this->duree,
-                'campus_id' => Auth::user()->campus_id
+                'campus_id' => Auth::user()->campus_id,
+                'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
             ]);
 
             $this->outil->addHistorique("Création de la nouvelle classe {$this->nom}", "add");

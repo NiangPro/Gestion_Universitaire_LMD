@@ -19,6 +19,9 @@ class Campus extends Model
         "image",
         "is_deleting",
         "statut",
+        "tampon",
+        "signature",
+        "responsable",
     ];
 
     public function users()
