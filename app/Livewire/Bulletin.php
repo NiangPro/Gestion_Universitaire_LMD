@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\AcademicYear;
 use App\Models\Classe;
 use App\Models\Note;
+use App\Models\Semestre;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -60,19 +61,106 @@ class Bulletin extends Component
     }
 
     #[Layout("components.layouts.app")]
+    public function calculerMoyenneMatiere($notes)
+    {
+        $totalCoef = 0;
+        $totalPoints = 0;
+
+        foreach ($notes as $note) {
+            $coef = $note->typeEvaluation->coefficient ?? 1;
+            $totalCoef += $coef;
+            $totalPoints += $note->note * $coef;
+        }
+
+        return $totalCoef > 0 ? $totalPoints / $totalCoef : 0;
+    }
+
+    public function calculerMoyenneUE($matieres)
+    {
+        $totalCredits = 0;
+        $totalPoints = 0;
+
+        foreach ($matieres as $matiere) {
+            $moyenneMatiere = $this->calculerMoyenneMatiere($matiere['notes']);
+            $totalCredits += $matiere['credit'];
+            $totalPoints += $moyenneMatiere * $matiere['credit'];
+        }
+
+        return $totalCredits > 0 ? $totalPoints / $totalCredits : 0;
+    }
+
     public function render()
     {
         $bulletin = null;
         if ($this->selectedStudent) {
-            $bulletin = Note::with(['matiere', 'etudiant'])
+            $notes = Note::with(['matiere.uniteEnseignement', 'etudiant', 'typeEvaluation', 'semestre'])
                 ->where('etudiant_id', $this->selectedStudent)
                 ->where('academic_year_id', $this->selectedYear)
-                ->get()
-                ->groupBy('semestre_id');
+                ->get();
+
+            $notesParSemestre = $notes->groupBy('semestre_id');
+            $bulletin = [];
+
+            foreach ($notesParSemestre as $semestreId => $notesParMatiere) {
+                $notesGroupees = $notesParMatiere->groupBy('matiere_id');
+                $ues = [];
+                foreach ($notesGroupees as $matiereId => $notesMatiere) {
+                    
+                    $matiere = $notesMatiere->first()->matiere;
+                    $ueId = $matiere->unite_enseignement_id;
+
+                    if (!isset($ues[$ueId])) {
+                        $ues[$ueId] = [
+                            'nom' => $matiere->uniteEnseignement->nom ?? 'Non assigné',
+                            'matieres' => [],
+                            'credit_total' => 0
+                        ];
+                    }
+
+                    $moyenneMatiere = $this->calculerMoyenneMatiere($notesMatiere);
+                    $ues[$ueId]['matieres'][] = [
+                        'nom' => $matiere->nom,
+                        'credit' => $matiere->credit,
+                        'coefficient' => $matiere->coefficient,
+                        'notes' => $notesMatiere,
+                        'moyenne' => $moyenneMatiere
+                    ];
+                    $ues[$ueId]['credit_total'] += $matiere->credit;
+                }
+
+                foreach ($ues as &$ue) {
+                    $ue['moyenne'] = $this->calculerMoyenneUE($ue['matieres']);
+                }
+
+                $bulletin[$semestreId] = [
+                    'semestre' => $notesParMatiere->first()->semestre,
+                    'ues' => $ues
+                ];
+            }
+        }
+
+        $academicYear = null;
+        $etudiant = null;
+        $classe = null;
+        $semestre = null;
+
+        if ($this->selectedStudent && $this->selectedYear) {
+            $academicYear = AcademicYear::find($this->selectedYear);
+            $etudiant = User::find($this->selectedStudent);
+            $classe = Classe::find($this->selectedClasse);
+            $semestre = $bulletin ? array_key_first($bulletin) : null;
+            if ($semestre) {
+                $semestre = Semestre::find($semestre);
+            }
         }
 
         return view('livewire.bulletin.bulletin', [
-            'bulletin' => $bulletin
+            'bulletin' => $bulletin,
+            'ues' => $bulletin && $semestre ? $bulletin[$semestre->id]['ues'] : [],
+            'academicYear' => $academicYear,
+            'etudiant' => $etudiant,
+            'classe' => $classe,
+            'semestre' => $semestre
         ]);
     }
 }

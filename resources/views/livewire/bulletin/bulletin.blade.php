@@ -54,6 +54,13 @@
 
     <!-- Affichage du bulletin -->
     @if($selectedStudent && $bulletin)
-    @include("livewire.bulletin.info")
+    @include("livewire.bulletin.info", [
+        'bulletin' => $bulletin,
+        'ues' => $ues,
+        'academicYear' => $academicYear,
+        'etudiant' => $etudiant,
+        'classe' => $classe,
+        'semestre' => $semestre
+    ])
     @endif
 </div>

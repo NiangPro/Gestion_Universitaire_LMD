@@ -2,30 +2,30 @@
   <!-- Header -->
   <div class="row mb-3">
     <div class="col-6">
-      <h4 class="heading">ISI DAKAR</h4>
+      <h4 class="heading">{{ auth()->user()->campus->nom }}</h4>
     </div>
     <div class="col-6 text-right">
       <h5 class="heading">Bulletin de Notes</h5>
-      <p><strong>Année scolaire :</strong> 2017-2018<br>
-         <strong>Semestre :</strong> 3</p>
+      <p><strong>Année scolaire :</strong> {{ date('Y', strtotime($academicYear->debut)) }} - {{ date('Y', strtotime($academicYear->fin)) }}<br>
+         <strong>Semestre :</strong> {{ $semestre->numero }}</p>
     </div>
   </div>
 
   <!-- Infos personnelles -->
   <div class="row mb-3">
     <div class="col-md-4">
-      <p><strong>Matricule :</strong> GLO6BT859<br>
-         <strong>Nom et Prénom :</strong> Bassirou NIANG<br>
-         <strong>Sexe :</strong> Masculin</p>
+      <p><strong>Matricule :</strong> {{ $etudiant->matricule }}<br>
+         <strong>Nom et Prénom :</strong> {{ $etudiant->nom }} {{ $etudiant->prenom }} <br>
+         <strong>Sexe :</strong> {{ $etudiant->sexe }}</p>
     </div>
     <div class="col-md-4">
-      <p><strong>Date de naissance :</strong> 18/03/1993<br>
-         <strong>Lieu :</strong> Guédiawaye</p>
+      <p><strong>Date de naissance :</strong> {{ $etudiant->date_naissance ? date('d/m/Y', strtotime($etudiant->date_naissance)) : 'Non renseigné' }}<br>
+         <strong>Lieu :</strong> {{ $etudiant->lieu_naissance ?? 'Non renseigné' }}</p>
     </div>
     <div class="col-md-4">
-      <p><strong>Mention :</strong> Informatique<br>
-         <strong>Spécialité :</strong> Génie Logiciel<br>
-         <strong>Grade :</strong> Licence</p>
+      <p><strong>Mention :</strong> {{ $classe->filiere->departement->nom }}<br>
+         <strong>Spécialité :</strong> {{ $classe->filiere->nom }}<br>
+         <strong>Grade :</strong> {{ $classe->niveau }}
     </div>
   </div>
 
@@ -52,50 +52,80 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="table-secondary">
-        <td rowspan="1">UE3.2.1</td>
-        <td>Algorithmique et Langage</td>
-        <td>19</td><td>13</td><td>15</td><td>15.2</td><td>15</td><td>15.12</td><td>15.12</td><td>7</td>
-      </tr>
-      <tr>
-        <td rowspan="1">UE3.2.2</td>
-        <td>Architecture Système</td>
-        <td>13</td><td>9</td><td>12</td><td>10.4</td><td>12</td><td>10.96</td><td>10.96</td><td>6</td>
-      </tr>
-      <tr>
-        <td rowspan="2">UE3.2.3</td>
-        <td>Système d'information</td>
-        <td>11</td><td>8</td><td>10</td><td>8.8</td><td>10</td><td>9.28</td><td>9.28</td><td>5</td>
-      </tr>
-      <tr>
-        <td>Base de données</td>
-        <td>10</td><td>11</td><td>14</td><td>11.2</td><td>14</td><td>12.32</td><td>12.32</td><td>5</td>
-      </tr>
-      <tr>
-        <td rowspan="1">UE3.2.4</td>
-        <td>Connaissances générales</td>
-        <td>15.5</td><td>14.5</td><td>14.5</td><td>14.7</td><td>14.5</td><td>14.62</td><td>14.62</td><td>7</td>
-      </tr>
+      @foreach($ues as $ueId => $ue)
+        @foreach($ue['matieres'] as $index => $matiere)
+          <tr class="{{ $loop->first ? 'table-secondary' : '' }}">
+            @if($loop->first)
+              <td rowspan="{{ count($ue['matieres']) }}">{{ $ue['nom'] }}</td>
+            @endif
+            <td>{{ $matiere['nom'] }}</td>
+            @php
+              $notes = collect($matiere['notes'])->sortBy('typeEvaluation.ordre');
+              $cc = $notes->firstWhere('typeEvaluation.code', 'CC');
+              $exam = $notes->firstWhere('typeEvaluation.code', 'EXAM');
+            @endphp
+            <td>{{ $cc ? number_format($cc->note, 2) : '-' }}</td>
+            <td>{{ $exam ? number_format($exam->note, 2) : '-' }}</td>
+            <td>{{ $matiere['coefficient'] }}</td>
+            <td>{{ number_format($matiere['moyenne'], 2) }}</td>
+            <td>{{ $matiere['credit'] }}</td>
+            <td>{{ number_format($ue['moyenne'], 2) }}</td>
+            <td>{{ number_format($matiere['moyenne'], 2) }}</td>
+            <td>{{ $matiere['credit'] }}</td>
+          </tr>
+        @endforeach
+      @endforeach
     </tbody>
   </table>
 
   <!-- Résumé -->
   <div class="row mt-3">
     <div class="col-md-6">
-      <p><strong>Total crédits obtenus :</strong> 30 / 30</p>
+      @php
+        $totalCreditsObtenus = collect($ues)->sum(function($ue) {
+          return collect($ue['matieres'])->sum(function($matiere) {
+            return $matiere['moyenne'] >= 10 ? $matiere['credit'] : 0;
+          });
+        });
+        $totalCredits = collect($ues)->sum(function($ue) {
+          return collect($ue['matieres'])->sum('credit');
+        });
+        $moyenneGenerale = collect($ues)->sum(function($ue) {
+          return $ue['moyenne'] * collect($ue['matieres'])->sum('credit');
+        }) / $totalCredits;
+      @endphp
+      <p><strong>Total crédits obtenus :</strong> {{ $totalCreditsObtenus }} / {{ $totalCredits }}</p>
     </div>
     <div class="col-md-6 text-right">
-      <p><strong>Moyenne Générale :</strong> 14.21</p>
+      <p><strong>Moyenne Générale :</strong> {{ number_format($moyenneGenerale, 2) }}</p>
     </div>
   </div>
 
   <!-- Appréciation -->
   <div class="row">
     <div class="col-md-6">
-      <p><strong>Appréciation du conseil de classe :</strong><br>Bon travail. Semestre validé.</p>
+      <p><strong>Appréciation du conseil de classe :</strong><br>
+      @if($moyenneGenerale >= 16)
+        Excellent travail. Félicitations !
+      @elseif($moyenneGenerale >= 14)
+        Très bon travail. Continuez ainsi !
+      @elseif($moyenneGenerale >= 12)
+        Bon travail. Semestre validé.
+      @elseif($moyenneGenerale >= 10)
+        Travail satisfaisant. Semestre validé.
+      @else
+        Des efforts supplémentaires sont nécessaires.
+      @endif
+      </p>
     </div>
     <div class="col-md-6">
-      <p><strong>Décision du jury :</strong><br>Admis</p>
+      <p><strong>Décision du jury :</strong><br>
+      @if($moyenneGenerale >= 10 && ($totalCreditsObtenus / $totalCredits) >= 0.8)
+        Admis
+      @else
+        Ajourné
+      @endif
+      </p>
     </div>
   </div>
 
@@ -104,32 +134,23 @@
     <thead class="thead-light">
       <tr>
         <th>UE</th>
-        <th>UE1</th>
-        <th>UE2</th>
-        <th>UE3</th>
-        <th>UE4</th>
-        <th>UE5</th>
-        <th>UE6</th>
-        <th>UE7</th>
-        <th>UE8</th>
+        @foreach($ues as $ue)
+          <th>{{ $ue['nom'] }}</th>
+        @endforeach
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>Moyenne</td>
-        <td>15.12</td>
-        <td>10.96</td>
-        <td>10.8</td>
-        <td>14.62</td>
-        <td>0</td><td>0</td><td>0</td><td>0</td>
+        @foreach($ues as $ue)
+          <td>{{ number_format($ue['moyenne'], 2) }}</td>
+        @endforeach
       </tr>
       <tr>
         <td>Crédits</td>
-        <td>7</td>
-        <td>6</td>
-        <td>10</td>
-        <td>7</td>
-        <td>0</td><td>0</td><td>0</td><td>0</td>
+        @foreach($ues as $ue)
+          <td>{{ $ue['credit_total'] }}</td>
+        @endforeach
       </tr>
     </tbody>
   </table>

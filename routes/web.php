@@ -50,6 +50,7 @@ use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
 use App\Livewire\EditNote;
+use App\Livewire\General;
 use App\Livewire\NoteEtudiant;
 use App\Livewire\NotesProfesseur;
 use App\Livewire\NotFound;
@@ -122,6 +123,7 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::get("/bulletins", Bulletin::class)->name("bulletin");
     Route::get("/rapports", RapportPaiement::class)->name("rapport");
     Route::get("/acces", Acces::class)->name("acces");
+    Route::get("/general", General::class)->name("general");
 });
 
 // Routes communes Super Admin et Admin
