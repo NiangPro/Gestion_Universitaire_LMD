@@ -6,16 +6,16 @@
         <form>
             <div class="row mb-3">
                 <div class="col-md-4">
-                    <select wire:model.live="annee_academique" class="form-control">
+                    <select wire:model.live="filter_annee_academique" class="form-control">
                         <option value="">Année académique</option>    
                         @foreach ($academic_years as $academicYear)
                             <option value="{{ $academicYear->id }}">{{ $academicYear->debut }} - {{ $academicYear->fin }}</option>
                         @endforeach
                     </select>
                 </div>
-                @if($annee_academique)
+                @if($filter_annee_academique)
                     <div class="col-md-4">
-                        <select wire:model.live="classe" class="form-control">
+                        <select wire:model.live="filter_classe" class="form-control">
                             <option value="">Classe</option>
                             @foreach ($classes as $classe)
                                 <option value="{{ $classe->id }}">{{ $classe->nom }} -> {{ $classe->filiere->nom }} </option>
@@ -29,7 +29,7 @@
             </div>
         </form>
 
-        @if ($annee_academique && $classe)
+        @if ($filter_annee_academique && $filter_classe)
             @if($etudiants->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">

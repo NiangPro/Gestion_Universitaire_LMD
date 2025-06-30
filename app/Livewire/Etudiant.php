@@ -134,7 +134,8 @@ class Etudiant extends Component
     public $academic_years = [];
 
     // Propriétés pour la liste et le filtrage
-    public $annee_academique = '';
+    public $filter_annee_academique = '';
+    public $filter_classe = '';
     public $search = '';
     public $etudiants;
     public $perPage = 10;
@@ -157,26 +158,50 @@ class Etudiant extends Component
         $this->status = $status;
 
         if ($status == "add") {
-            $this->title = "Formulaire d'ajout année académique";
+            $this->title = "Formulaire d'ajout d'un étudiant";
+            
+            // Réinitialiser complètement le formulaire et ses validations
+            $this->reset([
+                'nom', 'prenom', 'username', 'sexe', 'date_naissance', 'lieu_naissance', 'nationalite', 'adresse', 'ville', 'email', 'tel',
+                'etablissement_precedant', 'classe_id', 'montant', 'restant', 'tenue', 'montant_tenue', 'mode_paiement', 'commentaire',
+                'maladie', 'description_maladie', 'traitement', 'nom_medecin', 'telephone_medecin',
+                'type_tuteur', 'tuteur_id', 'nom_tuteur', 'prenom_tuteur', 'adresse_tuteur', 'tel_tuteur', 'profession_tuteur', 'relation',
+                'inscription_id', 'matricule', 'etat'
+            ]);
+            $this->resetValidation();
+
+            // Charger les dépendances pour le formulaire avec l'année en cours
+            $currentAcademicYearId = Auth::user()->campus?->currentAcademicYear()?->id;
+            if ($currentAcademicYearId) {
+                $this->classes = \App\Models\Classe::where('academic_year_id', $currentAcademicYearId)->get();
+            } else {
+                $this->classes = [];
+            }
+            $this->loadTuteurs();
+
         }elseif($status == "edit"){
-            $this->title = "Formulaire d'édition année académique";
+            $this->title = "Formulaire d'édition d'un étudiant";
         }else{
-            $this->title = "Liste des années académiques";
+            $this->title = "Liste des étudiants";
         }
     }
     
     // Méthodes existantes
     public function updatedClasse($value)
     {
-        $this->classe = $value;
+        $this->filter_classe = $value;
     }
 
-    public function updatedAnneeAcademique($value)
+    public function updatedFilterAnneeAcademique($value)
     {
-        $this->annee_academique = $value;
-        if ($this->annee_academique) {
-            $this->classes = \App\Models\Classe::where('academic_year_id', $this->annee_academique)->get();
+        $this->filter_annee_academique = $value;
+        if ($this->filter_annee_academique) {
+            $this->classes = \App\Models\Classe::where('academic_year_id', $this->filter_annee_academique)->get();
+        } else {
+            $this->classes = [];
         }
+        $this->filter_classe = ''; // Réinitialiser le filtre de classe
+        $this->loadEtudiants();
     }
 
     public function updatedClasseId($value)
@@ -224,21 +249,25 @@ class Etudiant extends Component
         }
     }
 
-
-
-    // Nouvelles méthodes pour l'inscription
-        // ... existing code ...
-
-
     public function mount()
     {
         $this->outils = new Outils;
-        $this->outils->initCountries(); // Assurez-vous que les pays sont initialisés
+        $this->outils->initCountries();
         $this->loadCampuses();
-        $this->loadClasses();
         $this->loadAcademicYears();
+        $this->loadPays();
+
+        // Définir les filtres par défaut pour la liste
+        if (Auth::user()->campus && Auth::user()->campus->currentAcademicYear()) {
+            $this->filter_annee_academique = Auth::user()->campus->currentAcademicYear()->id;
+        }
+
+        // Charger les classes pour le filtre de la liste
+        if ($this->filter_annee_academique) {
+            $this->classes = \App\Models\Classe::where('academic_year_id', $this->filter_annee_academique)->get();
+        }
+        
         $this->loadEtudiants();
-        $this->loadPays(); // Charger les pays
     }
 
     protected function loadPays()
@@ -246,7 +275,6 @@ class Etudiant extends Component
         $this->pays = \App\Models\Country::orderBy('nom_fr')->get();
         $this->nationalite = 'Sénégal'; // Sélectionner le Sénégal par défaut
     }
-// ... existing code ...
 
     protected function loadCampuses()
     {
@@ -261,11 +289,9 @@ class Etudiant extends Component
 
     protected function loadClasses()
     {
-        if ($this->annee_academique) {
-            $this->classes = \App\Models\Classe::where('academic_year_id', $this->annee_academique)->get();
-        } else {
-            $this->classes = [];
-        }
+        // Cette méthode est maintenant vide car la logique est gérée directement
+        // dans mount, changeStatus, edit et updatedFilterAnneeAcademique
+        // pour éviter les conflits.
     }
 
     protected function loadAcademicYears()
@@ -515,12 +541,12 @@ class Etudiant extends Component
             
             }
 
-
             DB::commit();
             Log::info('Transaction validée avec succès');
 
-            $this->annee_academique = Auth::user()->campus->currentAcademicYear()->id;
-            $this->classe = $this->classe_id;
+            // Réinitialiser les filtres pour afficher le nouvel étudiant
+            $this->filter_annee_academique = Auth::user()->campus->currentAcademicYear()->id;
+            $this->filter_classe = $this->classe_id;
             $this->status = "list";
 
             $this->loadEtudiants();
@@ -575,7 +601,7 @@ class Etudiant extends Component
 
     protected function loadEtudiants()
     {
-        if (!$this->annee_academique || !$this->classe) {
+        if (!$this->filter_annee_academique || !$this->filter_classe) {
             $this->etudiants = collect();
             return;
         }
@@ -583,8 +609,8 @@ class Etudiant extends Component
         $query = User::where('role', 'etudiant')
             ->where('campus_id', Auth::user()->campus_id)
             ->whereHas('inscriptions', function($q) {
-                $q->where('academic_year_id', $this->annee_academique)
-                  ->where('classe_id', $this->classe);
+                $q->where('academic_year_id', $this->filter_annee_academique)
+                  ->where('classe_id', $this->filter_classe);
             });
 
         if ($this->search) {
@@ -691,8 +717,8 @@ class Etudiant extends Component
             DB::commit();
 
             // Mettre à jour les filtres pour afficher la liste de la classe et de l'année de la réinscription
-            $this->annee_academique = Auth::user()->campus->currentAcademicYear()->id;
-            $this->classe = $this->classe_id;
+            $this->filter_annee_academique = Auth::user()->campus->currentAcademicYear()->id;
+            $this->filter_classe = $this->classe_id;
             $this->status = "list";
 
             // Recharger la liste filtrée
@@ -729,6 +755,8 @@ class Etudiant extends Component
         $inscription = $etudiant->inscriptions()->latest()->first();
 
         if ($inscription) {
+            // Charger les classes de l'année de l'inscription pour le formulaire
+            $this->classes = \App\Models\Classe::where('academic_year_id', $inscription->academic_year_id)->get();
             $this->inscription_id = $inscription->id;
             $this->classe_id = $inscription->classe_id;
             $this->relation = $inscription->relation;
@@ -818,6 +846,8 @@ class Etudiant extends Component
         }
 
         $this->status = "add";
+        $this->title = "Formulaire d'édition d'un étudiant";
+        $this->loadTuteurs();
     }
 
     public function updatedTenue($value)
@@ -830,7 +860,10 @@ class Etudiant extends Component
     #[Layout("components.layouts.app")]
     public function render()
     {
-        $this->loadEtudiants();
+        // Rafraîchir la liste des étudiants à chaque rendu pour les filtres
+        if ($this->status === 'list') {
+            $this->loadEtudiants();
+        }
         
         return view('livewire.etudiant.etudiant');
     }
