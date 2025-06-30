@@ -132,16 +132,16 @@
                                                 <div class="col-md-4 mb-3">
                                                     <select wire:model.live="type_evaluation_id" class="form-control">
                                                         <option value="">4. Sélectionner le type d'évaluation</option>
-                                                        @foreach(Auth::user()->campus->typeEvaluations as $type)
-                                                            <option value="{{ $type->id }}">{{ $type->nom }}</option>
+                                                        @foreach($typeEvaluations as $typeEval)
+                                                            <option value="{{ $typeEval->id }}">{{ $typeEval->nom }}</option>
                                                         @endforeach
                                                     </select>
-                                                    @error('type_evaluation') <span class="text-danger">{{ $message }}</span> @enderror
+                                                    @error('type_evaluation_id') <span class="text-danger">{{ $message }}</span> @enderror
                                                 </div>
                                             @endif
 
                     <!-- Semestre (visible uniquement si type d'évaluation sélectionné) -->
-                    @if(!empty($matiere_id) && !empty($type_evaluation))
+                    @if(!empty($matiere_id) && !empty($type_evaluation_id))
                         <div class="col-md-4 mb-3">
                             <select wire:model.live="semestre_id" class="form-control">
                                 <option value="">5. Sélectionner le semestre</option>
@@ -180,12 +180,13 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Type d'évaluation</label>
-                                            <select wire:model="editNote.type_evaluation" class="form-control">
-                                                <option value="CC">Contrôle Continu</option>
-                                                <option value="TP">Travaux Pratiques</option>
-                                                <option value="Examen">Examen</option>
+                                            <select wire:model="editNote.type_evaluation_id" class="form-control">
+                                                <option value="">Sélectionner le type d'évaluation</option>
+                                                @foreach($typeEvaluations as $typeEval)
+                                                    <option value="{{ $typeEval->id }}">{{ $typeEval->nom }}</option>
+                                                @endforeach
                                             </select>
-                                            @error('editNote.type_evaluation') <span class="text-danger">{{ $message }}</span> @enderror
+                                            @error('editNote.type_evaluation_id') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
 

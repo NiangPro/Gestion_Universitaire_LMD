@@ -171,14 +171,14 @@ class Configurations extends Component
             $this->validate(["evaluation.nom" => "required"]);
             $type = TypeEvaluation::where("id", $this->evaluation["idtype"])->first();
 
-            $type->nom = strtoupper($this->evaluation["nom"]);
+            $type->nom = mb_strtoupper($this->evaluation["nom"]);
 
             $type->save();
 
             $this->dispatch("updated");
         }else{
             $this->validate(["evaluation.nom" => "required"]);
-            TypeEvaluation::create(["nom" => strtoupper($this->evaluation["nom"]), "campus_id" => Auth::user()->campus_id]);
+            TypeEvaluation::create(["nom" => mb_strtoupper($this->evaluation["nom"]), "campus_id" => Auth::user()->campus_id]);
             $this->dispatch("added");
         }
         
@@ -208,7 +208,7 @@ class Configurations extends Component
             $this->validate(["ue.nom" => "required","ue.credit" => "required","ue.filiere_id" => "required"]);
             $ue = UniteEnseignement::where("id", $this->ue["idue"])->first();
 
-            $ue->nom = strtoupper($this->ue["nom"]);
+            $ue->nom = mb_strtoupper($this->ue["nom"]);
             $ue->credit = $this->ue["credit"];
 
             $ue->save();
@@ -228,7 +228,7 @@ class Configurations extends Component
         }else{
             $this->validate(["ue.nom" => "required","ue.credit" => "required","ue.filiere_id" => "required","ue.disciplines" => "required"]);
 
-            $ue = UniteEnseignement::create(["filiere_id" => $this->ue["filiere_id"],"nom" => strtoupper($this->ue["nom"]), "credit" =>$this->ue["credit"], "campus_id" => Auth::user()->campus_id]);
+            $ue = UniteEnseignement::create(["filiere_id" => $this->ue["filiere_id"],"nom" => mb_strtoupper($this->ue["nom"]), "credit" =>$this->ue["credit"], "campus_id" => Auth::user()->campus_id]);
 
             foreach ($this->ue["disciplines"] as $d) {
                 Matiere::create(["nom"=> $d, "unite_enseignement_id" => $ue->id, "campus_id" => Auth::user()->campus_id]);
@@ -264,13 +264,13 @@ class Configurations extends Component
         if ($this->departement["iddepartement"]) {
             $departement = Departement::where("id", $this->departement["iddepartement"])->first();
 
-            $departement->nom = strtoupper($this->departement["nom"]);
+            $departement->nom = mb_strtoupper($this->departement["nom"]);
 
             $departement->save();
 
             $this->dispatch("updated");
         }else{
-            Departement::create(["nom" => strtoupper($this->departement["nom"]), "campus_id" => Auth::user()->campus_id]);
+            Departement::create(["nom" => mb_strtoupper($this->departement["nom"]), "campus_id" => Auth::user()->campus_id]);
             $this->dispatch("added");
         }
         
@@ -300,13 +300,13 @@ class Configurations extends Component
         if ($this->salle["idsalle"]) {
             $salle = Salle::where("id", $this->salle["idsalle"])->first();
 
-            $salle->nom = strtoupper($this->salle["nom"]);
+            $salle->nom = mb_strtoupper($this->salle["nom"]);
 
             $salle->save();
 
             $this->dispatch("updated");
         }else{
-            Salle::create(["nom" => strtoupper($this->salle["nom"]), "campus_id" => Auth::user()->campus_id]);
+            Salle::create(["nom" => mb_strtoupper($this->salle["nom"]), "campus_id" => Auth::user()->campus_id]);
             $this->dispatch("added");
         }
         
@@ -341,14 +341,14 @@ class Configurations extends Component
         if ($this->filiere["idfiliere"]) {
             $filiere = Filiere::where("id", $this->filiere["idfiliere"])->first();
 
-            $filiere->nom = strtoupper($this->filiere["nom"]);
+            $filiere->nom = mb_strtoupper($this->filiere["nom"]);
             $filiere->departement_id = $this->filiere["departement_id"];
 
             $filiere->save();
 
             $this->dispatch("updated");
         }else{
-            Filiere::create(["nom" => strtoupper($this->filiere["nom"]), "departement_id" => $this->filiere["departement_id"], "campus_id" => Auth::user()->campus_id]);
+            Filiere::create(["nom" => mb_strtoupper($this->filiere["nom"]), "departement_id" => $this->filiere["departement_id"], "campus_id" => Auth::user()->campus_id]);
             $this->dispatch("added");
         }
         
@@ -379,14 +379,14 @@ class Configurations extends Component
         if ($this->classe["idclasse"]) {
             $classe = Classe::where("id", $this->classe["idclasse"])->first();
 
-            $classe->nom = strtoupper($this->classe["nom"]);
+            $classe->nom = mb_strtoupper($this->classe["nom"]);
             $classe->filiere_id = $this->classe["filiere_id"];
 
             $classe->save();
 
             $this->dispatch("updated");
         }else{
-            Classe::create(["nom" => strtoupper($this->classe["nom"]), "campus_id" => Auth::user()->campus_id, "filiere_id" => $this->classe["filiere_id"]]);
+            Classe::create(["nom" => mb_strtoupper($this->classe["nom"]), "campus_id" => Auth::user()->campus_id, "filiere_id" => $this->classe["filiere_id"]]);
             $this->dispatch("added");
         }
         

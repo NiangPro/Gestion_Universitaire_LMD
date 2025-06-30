@@ -116,7 +116,7 @@ class Notes extends Component
         
         $this->editNote = [
             'valeur' => $note->note,
-            'type_evaluation' => $note->type_evaluation,
+            'type_evaluation_id' => $note->type_evaluation_id,
             'semestre_id' => $note->semestre_id,
             'observation' => $note->observation
         ];
@@ -133,7 +133,7 @@ class Notes extends Component
             $this->validate([
                 'classe_id' => 'required',
                 'matiere_id' => 'required',
-                'type_evaluation' => 'required',
+                'type_evaluation_id' => 'required',
                 'semestre_id' => 'required',
             ]);
 
@@ -147,7 +147,7 @@ class Notes extends Component
                     'etudiant_id' => $etudiantId,
                     'matiere_id' => $this->matiere_id,
                     'academic_year_id' => Auth::user()->campus->currentAcademicYear()->id,
-                    'type_evaluation' => $this->type_evaluation,
+                    'type_evaluation_id' => $this->type_evaluation_id,
                     'note' => $noteData['note'],
                     'observation' => $noteData['observation'] ?? null,
                     'semestre_id' => $this->semestre_id,
@@ -158,14 +158,14 @@ class Notes extends Component
             // Ajouter à l'historique
             $this->outil = new Outils();
             $this->outil->addHistorique(
-                "Ajout des notes en {$this->type_evaluation} pour la matière ID: {$this->matiere_id}, Semestre ID: {$this->semestre_id}",
+                "Ajout des notes pour la matière ID: {$this->matiere_id}, Semestre ID: {$this->semestre_id}",
                 "create"
             );
 
             // Réinitialiser les variables
             $this->reset([
                 'notes',
-                'type_evaluation',
+                'type_evaluation_id',
                 'semestre_id',
                 'matiere_id',
                 'ue_id',
@@ -323,9 +323,10 @@ class Notes extends Component
         }
     }
 
-    public function updatedTypeEvaluation($value)
+    public function updatedTypeEvaluationId($value)
     {
         $this->semestre_id = null;
+        $this->loadEtudiants();
         $this->dispatch('refresh-component');
     }
 
@@ -342,7 +343,7 @@ class Notes extends Component
     {
         $this->validate([
             'editNote.valeur' => 'required|numeric|between:0,20',
-            'editNote.type_evaluation' => 'required',
+            'editNote.type_evaluation_id' => 'required',
             'editNote.semestre_id' => 'required'
         ]);
 
@@ -350,7 +351,7 @@ class Notes extends Component
             $note = Note::find($this->editNoteId);
             $note->update([
                 'note' => $this->editNote['valeur'],
-                'type_evaluation' => $this->editNote['type_evaluation'],
+                'type_evaluation_id' => $this->editNote['type_evaluation_id'],
                 'semestre_id' => $this->editNote['semestre_id'],
                 'observation' => $this->editNote['observation'] ?? null
             ]);
@@ -376,7 +377,7 @@ class Notes extends Component
         $this->editNoteId = null;
         $this->editNote = [
             'valeur' => '',
-            'type_evaluation' => '',
+            'type_evaluation_id' => '',
             'semestre_id' => '',
             'observation' => ''
         ];
