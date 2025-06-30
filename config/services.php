@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'photoroom' => [
+        'key' => env('PHOTOROOM_API_KEY'),
+    ],
+
 ];
