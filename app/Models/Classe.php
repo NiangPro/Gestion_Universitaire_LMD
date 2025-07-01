@@ -18,6 +18,7 @@ class Classe extends Model
         "type_periode",
         "duree",
         "academic_year_id",
+        "is_active",
         "cout_formation",
         "cout_inscription",
         "mensualite",

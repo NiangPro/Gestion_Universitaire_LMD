@@ -39,7 +39,7 @@
             @if(!$showModal)
                 <!-- Filtres pour la liste des notes -->
             <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <select wire:model.live="academic_year_id" class="form-control">
                         <option value="">Sélectionner l'année académique</option>
                         @foreach($academic_years as $year)
@@ -53,7 +53,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <select wire:model.live="classe_id" class="form-control" wire:change="loadEtudiants">
                         <option value="">Sélectionner une classe</option>
                         @foreach($classes as $classe)
@@ -63,14 +63,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <select wire:model.live="semestre_id" class="form-control">
-                        <option value="">Sélectionner le semestre</option>
-                        @foreach($semestres as $semestre)
-                            <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                        @endforeach
-                    </select>
-                </div>
+
             </div>
 
             <div class="row mb-3">
@@ -140,18 +133,7 @@
                                                 </div>
                                             @endif
 
-                    <!-- Semestre (visible uniquement si type d'évaluation sélectionné) -->
-                    @if(!empty($matiere_id) && !empty($type_evaluation_id))
-                        <div class="col-md-4 mb-3">
-                            <select wire:model.live="semestre_id" class="form-control">
-                                <option value="">5. Sélectionner le semestre</option>
-                            @foreach($semestres as $semestre)
-                                <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                            @endforeach
-                        </select>
-                        @error('semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
-                    </div>
-                    @endif
+
                 </div>
             @endif
             <!-- Indicateur de chargement -->
@@ -199,18 +181,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Semestre</label>
-                                            <select wire:model="editNote.semestre_id" class="form-control">
-                                                <option value="">Sélectionner le semestre</option>
-                                                @foreach($semestres as $semestre)
-                                                    <option value="{{ $semestre->id }}">{{ $semestre->nom }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('editNote.semestre_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-                                    </div>
+
                                 </div>
 
                                 <div class="form-group mt-3">
@@ -227,7 +198,7 @@
                     </div>
                 @else
                     <!-- Formulaire d'ajout existant -->
-                    @if(!empty($classe_id) && !empty($ue_id) && !empty($matiere_id) && !empty($type_evaluation) && !empty($semestre_id))
+                    @if(!empty($classe_id) && !empty($ue_id) && !empty($matiere_id) && !empty($type_evaluation))
                         <div class="mt-4">
                             <div class="alert alert-info">
                                 <strong>Saisie des notes pour :</strong><br>

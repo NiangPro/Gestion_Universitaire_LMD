@@ -38,10 +38,9 @@ class Bulletin extends Component
         $this->students = [];
         
         if ($value) {
-            $this->classes = Auth::user()->campus->classes;
-            // $this->classes = Classe::where('academic_year_id', $value)
-            //     ->where('campus_id', Auth::user()->campus_id)
-            //     ->get();
+            $this->classes = Classe::where('academic_year_id', $value)
+                ->where('campus_id', Auth::user()->campus_id)
+                ->get();
         }
     }
 
