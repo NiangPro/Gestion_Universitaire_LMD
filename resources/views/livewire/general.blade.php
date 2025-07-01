@@ -10,17 +10,29 @@
                 <div class="row align-items-center">
                     @if($campus->tampon)
                         <div class="col-md-3 mb-3">
-                            <div class="border p-2 text-center">
+                            <div class="border p-2 text-center position-relative">
                                 <img src="{{ Storage::url($campus->tampon) }}" alt="Tampon" class="img-fluid" style="max-height: 150px;">
+                                <button wire:click="deleteImage('tampon')" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     @endif
                     <div class="col">
-                        <div class="custom-file">
+                        <div class="custom-file mb-2">
                             <input type="file" wire:model="tampon" accept="image/*" class="custom-file-input" id="tamponFile">
                             <label class="custom-file-label" for="tamponFile">Choisir un fichier</label>
                         </div>
                         @error('tampon') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        @if($tampon)
+                            <div class="border p-2 text-center mt-2">
+                                <p class="small text-muted mb-1">Aperçu de l'image sélectionnée :</p>
+                                <img src="{{ $tampon->temporaryUrl() }}" alt="Aperçu du tampon" class="img-fluid" style="max-height: 150px;">
+                            </div>
+                            <button type="button" wire:click="saveTampon" class="btn btn-primary mt-2">
+                                <i class="fas fa-save mr-1"></i> Enregistrer le tampon
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -31,17 +43,29 @@
                 <div class="row align-items-center">
                     @if($campus->signature)
                         <div class="col-md-3 mb-3">
-                            <div class="border p-2 text-center">
+                            <div class="border p-2 text-center position-relative">
                                 <img src="{{ Storage::url($campus->signature) }}" alt="Signature" class="img-fluid" style="max-height: 150px;">
+                                <button wire:click="deleteImage('signature')" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     @endif
                     <div class="col">
-                        <div class="custom-file">
+                        <div class="custom-file mb-2">
                             <input type="file" wire:model="signature" accept="image/*" class="custom-file-input" id="signatureFile">
                             <label class="custom-file-label" for="signatureFile">Choisir un fichier</label>
                         </div>
                         @error('signature') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        @if($signature)
+                            <div class="border p-2 text-center mt-2">
+                                <p class="small text-muted mb-1">Aperçu de l'image sélectionnée :</p>
+                                <img src="{{ $signature->temporaryUrl() }}" alt="Aperçu de la signature" class="img-fluid" style="max-height: 150px;">
+                            </div>
+                            <button type="button" wire:click="saveSignature" class="btn btn-primary mt-2">
+                                <i class="fas fa-save mr-1"></i> Enregistrer la signature
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
