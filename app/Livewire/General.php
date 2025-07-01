@@ -28,26 +28,50 @@ class General extends Component
         $this->responsable = $this->campus->responsable;
     }
 
-    public function updatedTampon()
+    public function saveTampon()
     {
+        if (!$this->tampon) {
+            $this->dispatch('notify', ['message' => 'Veuillez sélectionner une image', 'type' => 'error']);
+            return;
+        }
         $this->validate([
-            'tampon' => 'image|max:1024',
+            'tampon' => 'required|image|max:1024',
         ]);
 
         $oldTampon = $this->campus->tampon;
-        $filename = $this->tampon->store('images', 'public');
+        $filename = 'images/' . uniqid() . '.jpg';
+        $this->tampon->storeAs('public', $filename);
         $this->removeBackground($filename, 'tampon', $oldTampon);
+    }
+
+    public function saveSignature()
+    {
+        if (!$this->signature) {
+            $this->dispatch('notify', ['message' => 'Veuillez sélectionner une image', 'type' => 'error']);
+            return;
+        }
+        $this->validate([
+            'signature' => 'required|image|max:1024',
+        ]);
+
+        $oldSignature = $this->campus->signature;
+        $filename = 'images/' . uniqid() . '.jpg';
+        $this->signature->storeAs('public', $filename);
+        $this->removeBackground($filename, 'signature', $oldSignature);
+    }
+
+    public function updatedTampon()
+    {
+        $this->validateOnly('tampon', [
+            'tampon' => 'image|max:1024',
+        ]);
     }
 
     public function updatedSignature()
     {
-        $this->validate([
+        $this->validateOnly('signature', [
             'signature' => 'image|max:1024',
         ]);
-
-        $oldSignature = $this->campus->signature;
-        $filename = $this->signature->store('images', 'public');
-        $this->removeBackground($filename, 'signature', $oldSignature);
     }
 
     protected function removeBackground($filename, $type, $oldValue)
@@ -63,12 +87,15 @@ class General extends Component
         )->post('https://api.photoroom.com/v1/removebg');
 
         if ($response->successful()) {
-            $outputFilename = 'images/' . $type . '_' . time() . '.png';
+            $outputFilename = 'images/' . $type . '_' . uniqid() . '.jpg';
             Storage::disk('public')->put($outputFilename, $response->body());
             
-            $this->campus->update([
-                $type => $outputFilename
-            ]);
+            if ($type === 'tampon') {
+                $this->campus->tampon = $outputFilename;
+            } else {
+                $this->campus->signature = $outputFilename;
+            }
+            $this->campus->save();
 
             Storage::disk('public')->delete($filename);
             $oldPath = $oldValue ? Storage::url($oldValue) : 'aucune';
@@ -92,6 +119,21 @@ class General extends Component
 
         $oldResponsable = $this->campus->getOriginal('responsable');
         $this->dispatch('notify', ['message' => 'Responsable mis à jour avec succès. Ancienne valeur : ' . $oldResponsable]);
+    }
+
+    public function deleteImage($type)
+    {
+        if (!in_array($type, ['tampon', 'signature'])) {
+            $this->dispatch('notify', ['message' => 'Type d\'image invalide', 'type' => 'error']);
+            return;
+        }
+
+        $oldImage = $this->campus->{$type};
+        if ($oldImage) {
+            Storage::disk('public')->delete($oldImage);
+            $this->campus->update([$type => null]);
+            $this->dispatch('notify', ['message' => 'Image supprimée avec succès']);
+        }
     }
 
     #[Layout("components.layouts.app")]
