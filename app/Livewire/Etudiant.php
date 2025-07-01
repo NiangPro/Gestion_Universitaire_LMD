@@ -153,6 +153,18 @@ class Etudiant extends Component
     public $campuses = [];
     public $inscription_id = null;
     public $pays = [];
+
+    public function updatedMontant($value){
+        if ($this->etat === "Avance" && $this->classe_id) {
+            $classe = \App\Models\Classe::find($this->classe_id);
+            if ($classe) {
+                $this->restant = $classe->cout_inscription - floatval($value);
+                if ($this->restant < 0) {
+                    $this->restant = 0;
+                }
+            }
+        }
+    }
     
     public function changeStatus($status){
         $this->status = $status;

@@ -157,7 +157,7 @@
                             <select class="form-control @error('classe_id') is-invalid @enderror" id="classe_id" name="classe_id" wire:model.live="classe_id">
                                 <option value="">Selectionné la classe</option>
                                 @foreach ($classes as $classe)
-                                    <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
+                                    <option value="{{ $classe->id }}">{{ $classe->nom }} ({{ $classe->filiere->nom }}) </option>
                                 @endforeach
                             </select>
                             @error('classe_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -220,7 +220,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa-solid fa-money-bill-wave" style="font-size:15px;"></i> </span>
                                     </div>
-                                    <input type="number" id="restant" name="restant" wire:model.live="restant" class="form-control" value="" id="" name="val-username">
+                                    <input type="number" id="restant" name="restant" wire:model.live="restant" class="form-control" value="" readonly style="background:#f5f5f5;">
                                 </div>
                                 @error('restant') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>
@@ -233,7 +233,7 @@
                                 <span class="input-group-text"> <i class="fa-solid fa-money-bill-wave" style="font-size:15px;"></i> </span>
                             </div>
                             <select class="form-control" id="mode_paiement" name="mode_paiement" wire:model.live="mode_paiement">
-                                <option value="">Selectionné Affiche le champ Montant tenue seulement si la tenue est "Payé" ou "Avance" :le mode de paiement</option>
+                                <option value="">Selectionner le mode de paiement</option>
                                 <option value="Espèces">Espèces</option>
                                 <option value="Cheque">Cheque</option>
                                 <option value="Virement">Virement</option>
