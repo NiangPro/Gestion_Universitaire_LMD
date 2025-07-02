@@ -105,7 +105,7 @@
                         <div class="activity-feed">
                             @forelse($activitesRecentes ?? [] as $activite)
                                 <div class="feed-item pb-3">
-                                    <div class="text-gray-600 small">{{ $activite->created_at->diffForHumans() }}</div>
+                                    <div class="text-gray-600 small">{{ \Carbon\Carbon::parse($activite->created_at)->diffForHumans() }}</div>
                                     <div>{{ $activite->description }}</div>
                                 </div>
                             @empty

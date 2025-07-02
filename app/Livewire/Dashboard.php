@@ -424,12 +424,12 @@ class Dashboard extends Component
             ->get()
             ->map(function ($campus) {
                 $activeSubscription = $campus->activeSubscription();
-                return [
+                return (object)[
                     'id' => $campus->id,
                     'nom' => $campus->nom,
-                    'pack' => $activeSubscription ? $activeSubscription->pack->nom : 'Non défini',
+                    'pack' => (object)['nom' => $activeSubscription ? $activeSubscription->pack->nom : 'Non défini'],
                     'total_users' => $campus->users_count,
-                    'date_expiration' => $activeSubscription ? $activeSubscription->end_date : null,
+                    'date_expiration' => $activeSubscription ? $activeSubscription->end_date : now(),
                     'statut' => $activeSubscription ? 'actif' : 'expiré'
                 ];
             });
@@ -446,12 +446,12 @@ class Dashboard extends Component
             
         // Ajouter les abonnements aux activités récentes
         foreach ($subscriptions as $subscription) {
-            $this->activitesRecentes->push([
+            $this->activitesRecentes[] = (object)[
                 'type' => 'abonnement',
-                'date' => $subscription->created_at,
+                'created_at' => $subscription->created_at,
                 'description' => "Nouvel abonnement pour " . $subscription->campus->nom,
                 'montant' => $subscription->amount_paid
-            ]);
+            ];
         }
 
     }
