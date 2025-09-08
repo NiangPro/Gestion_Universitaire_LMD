@@ -216,6 +216,12 @@
                     </a>
                 </li>
                 @endif
+                <li>
+                    <a href="{{route('emploidutempsetudiant')}}" aria-expanded="false">
+                        <i class="fa fa-calendar"></i>
+                        <span class="nav-text">Emploi du temps</span>
+                    </a>
+                </li>
             @endif
 
             @if(Auth()->user()->estSuperAdmin())

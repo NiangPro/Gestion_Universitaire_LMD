@@ -81,6 +81,12 @@ class User extends Authenticatable
      */
     public function estProfesseur()
     {
+        // Log pour le débogage
+        logger()->info('Vérification du rôle professeur', [
+            'user_id' => $this->id,
+            'role' => $this->role,
+            'is_prof' => $this->role === 'professeur'
+        ]);
         return $this->role === 'professeur';
     }
 

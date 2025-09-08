@@ -74,91 +74,177 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $this->user = Auth::user();
-        $this->outil = new Outils();
+        try {
+            $this->user = Auth::user();
+            $this->outil = new Outils();
 
-        if ($this->user->estSuperAdmin()) {
-            $this->loadSuperAdminData();
-        } else {
-            $campus = Auth::user()->campus;
-            if (!$campus->currentAcademicYear()) {
+            // Log pour le débogage
+            logger()->info('Initialisation du dashboard', [
+                'user_id' => $this->user->id,
+                'role' => $this->user->role,
+                'campus_id' => $this->user->campus_id
+            ]);
+
+            if ($this->user->estSuperAdmin()) {
+                $this->loadSuperAdminData();
                 return;
             }
-            $currentAcademicYear = $campus->currentAcademicYear();
-            $this->currentAcademicYear = $currentAcademicYear;
-            
-            // Calcul du nombre d'étudiants pour l'année académique en cours
-            $this->totalEtudiants = User::where('campus_id', $campus->id)
-            ->where('role', 'etudiant')
-            ->whereHas('inscriptions', function($query) use ($currentAcademicYear) {
-                $query->where('academic_year_id', $currentAcademicYear->id)
-                    ->where('status', 'en_cours');
-            })
-            ->count();
-        }
-        
-        if ($this->user->estProfesseur()) {
-            $this->loadProfesseurData();
-        }else if($this->user->estAdmin()){
-            if ($this->currentAcademicYear) {
+
+            // Vérification du campus
+            $campus = $this->user->campus;
+            if (!$campus) {
+                logger()->error('Campus non trouvé', [
+                    'user_id' => $this->user->id,
+                    'campus_id' => $this->user->campus_id
+                ]);
+                return;
+            }
+
+            // Vérification de l'année académique
+            $this->currentAcademicYear = $campus->currentAcademicYear();
+            if (!$this->currentAcademicYear) {
+                logger()->error('Année académique non trouvée', [
+                    'user_id' => $this->user->id,
+                    'campus_id' => $campus->id
+                ]);
+                return;
+            }
+
+            // Log de l'année académique
+            logger()->info('Année académique chargée', [
+                'user_id' => $this->user->id,
+                'campus_id' => $campus->id,
+                'academic_year_id' => $this->currentAcademicYear->id
+            ]);
+
+            // Chargement des données selon le rôle
+            if ($this->user->estProfesseur()) {
+                logger()->info('Chargement des données du professeur', [
+                    'user_id' => $this->user->id,
+                    'campus_id' => $campus->id,
+                    'academic_year_id' => $this->currentAcademicYear->id
+                ]);
+                $this->loadProfesseurData();
+            } else if ($this->user->estAdmin()) {
                 $this->loadStatistiques();
                 $this->loadInscriptionsRecentes();
                 $this->loadCoursAujourdhui();
+            } else if ($this->user->estEtudiant()) {
+                $this->loadEleveData();
             }
-        } else if ($this->user->estEtudiant()) {
-            $this->loadEleveData();
+
+            $this->outil->createTypeEvaluation();
+
+        } catch (\Exception $e) {
+            logger()->error('Erreur dans mount', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
-
-       $this->outil->createTypeEvaluation();
-
-        
     }
 
     private function loadProfesseurData()
     {
-        // Récupération des cours du professeur pour l'année en cours
-        $this->totalCours = Cour::where('professeur_id', $this->user->id)
-            ->where('academic_year_id', $this->currentAcademicYear->id)
-            ->count();
+        try {
+            // Vérification de l'utilisateur
+            if (!$this->user) {
+                logger()->error('Utilisateur non trouvé');
+                return;
+            }
 
-        // Nombre total d'élèves dans le campus du professeur
-        $campus = Auth::user()->campus;
-        if ($campus) {
-            $this->totalEtudiants = User::where('campus_id', $campus->id)
-                ->where('role', 'etudiant')
-                ->count();
-        } else {
+            // Log des informations de l'utilisateur
+            logger()->info('Informations utilisateur', [
+                'user_id' => $this->user->id,
+                'role' => $this->user->role,
+                'estProfesseur' => $this->user->estProfesseur()
+            ]);
+
+            // Vérification du campus
+            $campus = $this->user->campus;
+            if (!$campus) {
+                logger()->error('Campus non trouvé', ['user_id' => $this->user->id]);
+                return;
+            }
+
+            // Log des informations du campus
+            logger()->info('Informations campus', [
+                'campus_id' => $campus->id,
+                'campus_nom' => $campus->nom
+            ]);
+
+            // Vérification de l'année académique
+            $currentAcademicYear = AcademicYear::where('campus_id', $campus->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if (!$currentAcademicYear) {
+                logger()->error('Aucune année académique trouvée', [
+                    'user_id' => $this->user->id,
+                    'campus_id' => $campus->id
+                ]);
+                $this->totalCours = 0;
+                return;
+            }
+
+            // Log des informations de l'année académique
+            logger()->info('Informations année académique', [
+                'academic_year_id' => $currentAcademicYear->id,
+                'debut' => $currentAcademicYear->debut,
+                'fin' => $currentAcademicYear->fin,
+                'encours' => $currentAcademicYear->encours
+            ]);
+
+            // Construction et exécution de la requête pour compter les cours
+            $query = Cour::query()
+                ->where('professeur_id', $this->user->id)
+                ->where('campus_id', $campus->id)
+                ->where('academic_year_id', $currentAcademicYear->id)
+                ->whereIn('statut', ['actif', 'encours']);
+
+            // Log de la requête SQL
+            logger()->info('Requête SQL pour le comptage des cours', [
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings()
+            ]);
+
+            // Exécution de la requête et récupération des cours
+            $cours = $query->get();
+            $this->totalCours = $cours->count();
+
+            // Log des détails de chaque cours trouvé
+            foreach ($cours as $cour) {
+                logger()->info('Détails du cours', [
+                    'cours_id' => $cour->id,
+                    'matiere_id' => $cour->matiere_id,
+                    'classe_id' => $cour->classe_id,
+                    'statut' => $cour->statut,
+                    'academic_year_id' => $cour->academic_year_id
+                ]);
+            }
+
+            // Log du résultat final
+            logger()->info('Résultat du comptage des cours', [
+                'total_cours' => $this->totalCours
+            ]);
+
+            // Calcul du nombre total d'élèves
+            $this->totalEtudiants = User::where([
+                'campus_id' => $campus->id,
+                'role' => 'etudiant'
+            ])->count();
+
+            logger()->info('Nombre total d\'étudiants', [
+                'total_etudiants' => $this->totalEtudiants
+            ]);
+
+        } catch (\Exception $e) {
+            logger()->error('Erreur dans loadProfesseurData', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->totalCours = 0;
             $this->totalEtudiants = 0;
         }
-
-        // Dernières activités (notes)
-        $this->recentActivities = Note::with(['etudiant', 'cours', 'cours.matiere'])
-            ->where('academic_year_id', $this->currentAcademicYear->id)
-            ->whereHas('cours', function($query) {
-                $query->where('professeur_id', $this->user->id);
-            })
-            ->latest()
-            ->take(5)
-            ->get()
-            ->map(function ($note) {
-                return [
-                    'id' => $note->id,
-                    'note' => $note->note,
-                    'created_at' => $note->created_at,
-                    'etudiant' => $note->etudiant ? [
-                        'id' => $note->etudiant->id,
-                        'nom' => $note->etudiant->nom,
-                        'prenom' => $note->etudiant->prenom
-                    ] : null,
-                    'cours' => $note->cours ? [
-                        'id' => $note->cours->id,
-                        'matiere' => $note->cours->matiere ? [
-                            'id' => $note->cours->matiere->id,
-                            'nom' => $note->cours->matiere->nom
-                        ] : null
-                    ] : null
-                ];
-            })->toArray();
     }
 
     private function loadEleveData()
@@ -281,7 +367,7 @@ class Dashboard extends Component
             $currentSemestre = $this->user->campus->currentSemestre();
             $coursQuery = Cour::where('classe_id', $this->currentClasse->id)
                 ->where('academic_year_id', $this->currentAcademicYear->id)
-                ->where('statut', 'actif')
+                ->whereIn('statut', ['actif', 'encours'])
                 ->with([
                     'professeur:id,nom,prenom',
                     'matiere:id,nom,code',
@@ -392,6 +478,8 @@ class Dashboard extends Component
 
             $this->coursAujourdhui = Cour::where('campus_id', $campus->id)
                 ->where('academic_year_id', $currentAcademicYear->id)
+                ->where('professeur_id', $this->user->id)
+                ->whereIn('statut', ['actif', 'encours'])
                 ->whereHas('semaine', function($query) use ($jourFr) {
                     $query->where('jour', $jourFr);
                 })

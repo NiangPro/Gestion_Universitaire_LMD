@@ -15,31 +15,41 @@ class RetardEtudiant extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $search = '';
-    public $filterDate = '';
-    public $filterJustifie = '';
-    public $retardStats = [];
+    public $date = '';
+    public $justification = '';
 
-    public function updatedSearch()
+    protected $queryString = [
+        'date' => ['except' => ''],
+        'justification' => ['except' => '']
+    ];
+
+    public $retardStats = [
+        'total' => 0,
+        'justifies' => 0,
+        'non_justifies' => 0,
+        'mois_courant' => 0
+    ];
+
+    public function mount()
+    {
+        $this->loadRetardStats();
+    }
+
+    public function updatedDate($value)
     {
         $this->resetPage();
     }
 
-    public function updatedFilterDate()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedFilterJustifie()
+    public function updatedJustification($value)
     {
         $this->resetPage();
     }
 
     private function loadRetardStats()
     {
-        $etudiant = Auth::user()->etudiant;
-        
-        if (!$etudiant) {
+        $user = Auth::user();
+
+        if (!$user || !$user->estEtudiant()) {
             $this->retardStats = [
                 'total' => 0,
                 'justifies' => 0,
@@ -49,27 +59,48 @@ class RetardEtudiant extends Component
             return;
         }
 
+        // Vérifier si l'étudiant a une inscription valide pour l'année en cours
+        $inscription = $user->inscriptions()
+            ->where('academic_year_id', $user->campus->currentAcademicYear()->id)
+            ->where('status', 'en_cours')
+            ->first();
+
+        if (!$inscription) {
+            $this->retardStats = [
+                'total' => 0,
+                'justifies' => 0,
+                'non_justifies' => 0,
+                'mois_courant' => 0
+            ];
+            return;
+        }
+
+        $currentAcademicYearId = $user->campus->currentAcademicYear()->id;
+
         $this->retardStats = [
-            'total' => Retard::where('etudiant_id', $etudiant->id)->count(),
-            'justifies' => Retard::where('etudiant_id', $etudiant->id)->where('justifie', true)->count(),
-            'non_justifies' => Retard::where('etudiant_id', $etudiant->id)->where('justifie', false)->count(),
-            'mois_courant' => Retard::where('etudiant_id', $etudiant->id)
+            'total' => Retard::where('etudiant_id', $user->id)
+                ->where('academic_year_id', $currentAcademicYearId)
+                ->count(),
+            'justifies' => Retard::where('etudiant_id', $user->id)
+                ->where('academic_year_id', $currentAcademicYearId)
+                ->where('justifie', true)
+                ->count(),
+            'non_justifies' => Retard::where('etudiant_id', $user->id)
+                ->where('academic_year_id', $currentAcademicYearId)
+                ->where('justifie', false)
+                ->count(),
+            'mois_courant' => Retard::where('etudiant_id', $user->id)
+                ->where('academic_year_id', $currentAcademicYearId)
                 ->whereMonth('date', now()->month)
                 ->count()
         ];
     }
 
-    public function mount()
-    {
-        $this->loadRetardStats();
-    }
-
-    #[Layout('components.layouts.app')]
     public function render()
     {
-        $etudiant = Auth::user()->etudiant;
-        
-        if (!$etudiant) {
+        $user = Auth::user();
+
+        if (!$user || !$user->estEtudiant()) {
             $query = Retard::where('id', 0); // Crée une requête vide
             $retards = $query->paginate(10);
             return view('livewire.etudiant.retard-etudiant', [
@@ -77,28 +108,35 @@ class RetardEtudiant extends Component
             ]);
         }
 
-        $query = Retard::where('etudiant_id', $etudiant->id)
-            ->with(['cours' => function($query) {
-                $query->withDefault();
-            }, 'cours.matiere' => function($query) {
-                $query->withDefault(['nom' => 'Non spécifié']);
-            }]);
+        // Vérifier si l'étudiant a une inscription valide pour l'année en cours
+        $inscription = $user->inscriptions()
+            ->where('academic_year_id', $user->campus->currentAcademicYear()->id)
+            ->where('status', 'en_cours')
+            ->first();
 
-        if ($this->search) {
-            $query->whereHas('cours.matiere', function($q) {
-                $q->where('nom', 'like', '%' . $this->search . '%');
-            });
+        if (!$inscription) {
+            $query = Retard::where('id', 0); // Crée une requête vide
+            $retards = $query->paginate(10);
+            return view('livewire.etudiant.retard-etudiant', [
+                'retards' => $retards
+            ]);
         }
 
-        if ($this->filterDate) {
-            $query->whereDate('date', $this->filterDate);
+        $query = Retard::where('etudiant_id', $user->id)
+            ->where('academic_year_id', $user->campus->currentAcademicYear()->id)
+            ->with(['cours.matiere'])
+            ->orderBy('date', 'desc');
+
+        if ($this->date) {
+            $query->whereDate('date', $this->date);
         }
 
-        if ($this->filterJustifie !== '') {
-            $query->where('justifie', $this->filterJustifie == '1');
+        if ($this->justification !== '') {
+            $query->where('justifie', $this->justification === 'justifie');
         }
 
-        $retards = $query->latest()->paginate(10);
+        $retards = $query->paginate(10);
+        $this->loadRetardStats();
 
         return view('livewire.etudiant.retard-etudiant', [
             'retards' => $retards

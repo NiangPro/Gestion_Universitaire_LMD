@@ -50,6 +50,8 @@ use App\Livewire\RapportPaiement;
 use App\Livewire\Retards;
 use App\Livewire\Services;
 use App\Livewire\EditNote;
+use App\Livewire\EmploiDuTempsEtudiant;
+use App\Livewire\EmploiDuTempsProfesseur;
 use App\Livewire\General;
 use App\Livewire\NoteEtudiant;
 use App\Livewire\NotesProfesseur;
@@ -93,6 +95,7 @@ Route::middleware(['auth', ProfesseurMiddleware::class])->prefix('professeur')->
     Route::get("/notes", NotesProfesseur::class)->name("noteprofesseur");
     Route::get("/absences", AbsencesProfesseur::class)->name("absenceprofesseur");
     Route::get("/retards", RetardsProfesseur::class)->name("retardprofesseur");
+    Route::get("/emploi_du_temps", EmploiDuTempsProfesseur::class)->name("emploidutempsprofesseur");
 });
 
 // Routes Etudiants
@@ -101,6 +104,7 @@ Route::middleware(['auth', EtudiantMiddleware::class])->prefix('etudiant')->grou
     Route::get("/notes", NoteEtudiant::class)->name("noteetudiant");
     Route::get("/absences", AbsencesEtudiant::class)->name("absenceetudiant");
     Route::get("/retards", RetardEtudiant::class)->name("retardetudiant");
+    Route::get("/emploi_du_temps", EmploiDuTempsEtudiant::class)->name("emploidutempsetudiant");
 
 });
 
