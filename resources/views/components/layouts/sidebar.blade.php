@@ -190,6 +190,12 @@
                     </a>
                 </li>
                 @endif
+                <li>
+                    <a href="{{route('emploidutempsprofesseur')}}" aria-expanded="false">
+                        <i class="fa fa-calendar"></i>
+                        <span class="nav-text">Emploi du temps</span>
+                    </a>
+                </li>
             @endif
             @if(Auth()->user()->estEtudiant())
                 @if(Auth::user()->hasPermission('notes', 'view'))
